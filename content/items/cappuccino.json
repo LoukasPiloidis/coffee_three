@@ -1,0 +1,42 @@
+{
+  "slug": "cappuccino",
+  "title": {
+    "en": "Cappuccino",
+    "el": "Καπουτσίνο"
+  },
+  "description": {},
+  "category": "coffees",
+  "price": 2.4,
+  "available": true,
+  "displayOrder": 1,
+  "optionGroups": [
+    {
+      "name": {
+        "en": "Sugar",
+        "el": "Ζάχαρη"
+      },
+      "selectionType": "single",
+      "required": true,
+      "options": [
+        {
+          "name": {
+            "en": "No sugar",
+            "el": "Σκέτος"
+          }
+        },
+        {
+          "name": {
+            "en": "Some sugar",
+            "el": "Μέτριος"
+          }
+        },
+        {
+          "name": {
+            "en": "A lot of sugar",
+            "el": "Γλυκός"
+          }
+        }
+      ]
+    }
+  ]
+}

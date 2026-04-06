@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "espresso",
+  "title": {
+    "en": "Espresso",
+    "el": "Εσπρέσσο"
+  },
+  "description": {},
+  "category": "coffees",
+  "price": 1.4,
+  "displayOrder": -1,
+  "optionGroups": []
+}

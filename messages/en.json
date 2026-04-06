@@ -1,0 +1,79 @@
+{
+  "common": {
+    "appName": "Café",
+    "cart": "Cart",
+    "checkout": "Checkout",
+    "profile": "Profile",
+    "staff": "Staff",
+    "addToCart": "Add to cart",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "language": "Language"
+  },
+  "menu": {
+    "title": "Menu",
+    "empty": "No items available.",
+    "unavailable": "Unavailable"
+  },
+  "item": {
+    "quantity": "Quantity",
+    "comments": "Comments",
+    "commentsPlaceholder": "Anything we should know?",
+    "required": "Required"
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is empty.",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "proceed": "Proceed to checkout",
+    "remove": "Remove"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "guest": "Continue as guest",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "contactHint": "Provide either email or phone",
+    "address": "Address",
+    "postcode": "Postcode",
+    "city": "City",
+    "notes": "Order notes",
+    "paymentMethod": "Payment method",
+    "cash": "Cash",
+    "card": "Card",
+    "submit": "Place order",
+    "errors": {
+      "closed": "We are currently closed. Please try again during opening hours.",
+      "minOrder": "Minimum order amount not met.",
+      "outOfArea": "Sorry, we don't deliver to this postcode.",
+      "contactRequired": "Please provide either an email or a phone number."
+    }
+  },
+  "order": {
+    "status": "Order status",
+    "received": "Received",
+    "preparing": "Preparing",
+    "on_its_way": "On its way",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "staff": {
+    "title": "Orders",
+    "noOrders": "No active orders.",
+    "markPreparing": "Start preparing",
+    "markOnItsWay": "Send out",
+    "markCompleted": "Complete",
+    "cancel": "Cancel"
+  },
+  "profile": {
+    "title": "My profile",
+    "addresses": "Saved addresses",
+    "recentOrders": "Recent orders",
+    "reorder": "Reorder"
+  }
+}

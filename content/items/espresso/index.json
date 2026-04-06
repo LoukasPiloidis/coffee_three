@@ -1,0 +1,10 @@
+{
+  "title": { "en": "Espresso", "el": "Εσπρέσο" },
+  "description": { "en": "A classic single shot.", "el": "Κλασσικός μονός." },
+  "category": "coffees",
+  "price": 2.4,
+  "image": null,
+  "available": true,
+  "displayOrder": 1,
+  "optionGroups": []
+}
