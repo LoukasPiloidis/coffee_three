@@ -1,3 +1,9 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
 services:
   db:
     image: postgres:17-alpine
@@ -13,6 +19,32 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    logging: *default-logging
+
+  db-backup:
+    # Runs pg_dump on a schedule and rotates daily/weekly/monthly backups.
+    # Backups live in the db-backups volume on the same VPS — acceptable
+    # risk per deploy decision (VPS loss == bigger problem anyway).
+    image: prodrigestivill/postgres-backup-local:17-alpine
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-coffee}
+      POSTGRES_USER: ${POSTGRES_USER:-coffee}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-coffee}
+      POSTGRES_EXTRA_OPTS: "--clean --if-exists"
+      # Every day at 03:00 UTC
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 14
+      BACKUP_KEEP_WEEKS: 8
+      BACKUP_KEEP_MONTHS: 12
+      HEALTHCHECK_PORT: 8080
+    volumes:
+      - db-backups:/backups
+    logging: *default-logging
 
   migrate:
     build:
@@ -27,6 +59,7 @@ services:
     # Run migrations then exit. Script lives alongside the app in the image.
     command: ["node", "scripts/migrate.mjs"]
     restart: "no"
+    logging: *default-logging
 
   app:
     build:
@@ -52,6 +85,7 @@ services:
     # Content is baked into the image; for live Keystatic edits in dev you can mount:
     # volumes:
     #   - ./content:/app/content
+    logging: *default-logging
 
   caddy:
     image: caddy:2-alpine
@@ -65,8 +99,37 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
       - caddy-config:/config
+    logging: *default-logging
+
+  alloy:
+    # Tails all Docker container logs via the Docker socket and ships them
+    # to Grafana Cloud Loki. Also exposes host metrics. Set the LOKI_* /
+    # PROM_* vars in .env to enable; otherwise the container will crash-loop
+    # harmlessly (local json-file logs still work).
+    image: grafana/alloy:latest
+    restart: unless-stopped
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    environment:
+      LOKI_URL: ${LOKI_URL:-}
+      LOKI_USERNAME: ${LOKI_USERNAME:-}
+      LOKI_PASSWORD: ${LOKI_PASSWORD:-}
+      PROM_URL: ${PROM_URL:-}
+      PROM_USERNAME: ${PROM_USERNAME:-}
+      PROM_PASSWORD: ${PROM_PASSWORD:-}
+      HOSTNAME_LABEL: ${HOSTNAME_LABEL:-coffee-three}
+    volumes:
+      - ./alloy-config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - alloy-data:/var/lib/alloy/data
+    logging: *default-logging
 
 volumes:
   db-data:
+  db-backups:
   caddy-data:
   caddy-config:
+  alloy-data:
