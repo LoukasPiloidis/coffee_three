@@ -290,26 +290,42 @@ cd coffee_three
 ```
 
 If the repo is **private**, either make it public temporarily, or use a
-GitHub deploy key:
+GitHub deploy key. **All commands in this subsection run on the VPS as
+`deploy`** — the deploy key authorizes this specific machine to clone, so the
+keypair must be generated on the VPS, not on your laptop.
 
-```bash
-ssh-keygen -t ed25519 -f ~/.ssh/github_deploy -N ""
-cat ~/.ssh/github_deploy.pub
-```
+1. **On the VPS**, generate a fresh keypair and print the public half:
 
-Copy that output, then on GitHub: **Repo → Settings → Deploy keys → Add
-deploy key** → paste. Read-only is fine. Then on the VPS:
+   ```bash
+   ssh-keygen -t ed25519 -f ~/.ssh/github_deploy -N ""
+   cat ~/.ssh/github_deploy.pub
+   ```
 
-```bash
-cat >> ~/.ssh/config <<'EOF'
-Host github.com
-  IdentityFile ~/.ssh/github_deploy
-  StrictHostKeyChecking no
-EOF
-chmod 600 ~/.ssh/config
-git clone git@github.com:<your-username>/coffee_three.git
-cd coffee_three
-```
+2. **In your browser**, copy the printed `ssh-ed25519 …` line and add it on
+   GitHub: **Repo → Settings → Deploy keys → Add deploy key**. Title it
+   something like `coffee-three-vps`. Leave "Allow write access" off.
+
+3. **Back on the VPS**, tell SSH to use that key for `github.com`, then
+   clone:
+
+   ```bash
+   cat >> ~/.ssh/config <<'EOF'
+   Host github.com
+     IdentityFile ~/.ssh/github_deploy
+     StrictHostKeyChecking no
+   EOF
+   chmod 600 ~/.ssh/config
+
+   # Sanity check — should print "Hi <user>/coffee_three! …"
+   ssh -T git@github.com
+
+   git clone git@github.com:<your-username>/coffee_three.git
+   cd coffee_three
+   ```
+
+   If `ssh -T` says `Permission denied (publickey)`, the deploy key wasn't
+   added correctly on GitHub — re-check that the pubkey you pasted matches
+   `cat ~/.ssh/github_deploy.pub` on the VPS exactly.
 
 ---
 

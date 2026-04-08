@@ -90,6 +90,8 @@ services:
     restart: unless-stopped
     depends_on:
       - app
+    environment:
+      CADDY_DOMAIN: ${CADDY_DOMAIN}
     ports:
       - "80:80"
       - "443:443"
