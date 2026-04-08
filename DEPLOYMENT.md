@@ -562,7 +562,62 @@ docker compose down && docker compose up -d   # full restart
 docker compose exec db psql -U coffee -d coffee
 ```
 
-### 13.5 Freeing disk (eventually)
+### 13.5 Promoting a user to staff
+
+The first user to sign up with the email in `STAFF_EMAIL` is auto-promoted
+to the `staff` role by `databaseHooks.user.create.after` in `src/auth.ts`.
+For anyone else — adding a second staff member, fixing an account that
+signed up before `STAFF_EMAIL` was set, or recovering from a typo — promote
+them manually with this one-liner:
+
+1. **From your laptop**, SSH into the VPS as the `deploy` user:
+
+   ```bash
+   ssh deploy@<your VPS IP>
+   ```
+
+2. **On the VPS**, change into the project directory (where
+   `docker-compose.yml` lives — without this, `docker compose` doesn't know
+   which stack to talk to):
+
+   ```bash
+   cd ~/coffee_three
+   ```
+
+3. **Run the promotion query** through the running `db` container. Replace
+   `you@your-domain.com` with the user's exact email (case-insensitive
+   match, but otherwise verbatim — no aliases):
+
+   ```bash
+   docker compose exec db psql -U coffee -d coffee \
+     -c "UPDATE \"user\" SET role='staff' WHERE lower(email)=lower('you@your-domain.com');"
+   ```
+
+   Note the **quoted `"user"`** — `user` is a reserved word in Postgres, so
+   it has to be wrapped in double quotes. The command should print
+   `UPDATE 1`. If it prints `UPDATE 0`, the email doesn't match any row —
+   double-check spelling and that the person has already signed up at least
+   once.
+
+4. **Verify** (optional):
+
+   ```bash
+   docker compose exec db psql -U coffee -d coffee \
+     -c "SELECT email, role FROM \"user\" WHERE role='staff';"
+   ```
+
+5. **Tell the user to sign out and back in.** Better-auth caches the role on
+   the session row, so an existing session still says `customer` until they
+   re-authenticate. After signing in again, they can hit
+   `https://your-domain.com/staff`.
+
+To **demote** someone, swap `'staff'` for `'customer'` in the same UPDATE.
+To delete the account entirely, `DELETE FROM "user" WHERE email='…';` —
+that cascades to their `session`, `account`, `addresses`, and detaches
+their orders (orders are kept with `user_id` set to NULL by the FK's
+`ON DELETE SET NULL`, so order history isn't lost).
+
+### 13.6 Freeing disk (eventually)
 
 Old Docker images pile up over time. Every few months:
 
@@ -577,14 +632,14 @@ df -h /
 docker system df
 ```
 
-### 13.6 Monitoring
+### 13.7 Monitoring
 
 - **Uptime**: sign up at https://uptimerobot.com (free), add a monitor for
   `https://your-domain.com`, alert to your email if it goes down.
 - **Host resources**: SSH in and check `htop`, `df -h`, `docker stats`. At
   this scale a once-a-week glance is plenty.
 
-### 13.7 Rotating secrets
+### 13.8 Rotating secrets
 
 If a secret leaks:
 
@@ -645,13 +700,11 @@ docker compose up -d app
 
 ### Staff dashboard returns 403
 
-The first sign-in with `STAFF_EMAIL` is what promotes the user. If you signed
-in with a different email first, or `STAFF_EMAIL` was wrong at the time:
-
-```bash
-docker compose exec db psql -U coffee -d coffee \
-  -c "UPDATE \"user\" SET role='staff' WHERE email='you@your-domain.com';"
-```
+Auto-promotion fires once, the moment a user with `STAFF_EMAIL` first signs
+up. If the account already existed before `STAFF_EMAIL` was set, or the
+email was a typo, the row's `role` is still `customer`. Promote it manually
+following [§13.5 Promoting a user to staff](#135-promoting-a-user-to-staff),
+then have the user sign out and back in.
 
 ### The VPS is slow / out of memory
 
