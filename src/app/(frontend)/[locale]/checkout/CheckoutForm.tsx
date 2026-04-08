@@ -8,16 +8,27 @@ import { formatPrice, type Locale } from "@/lib/menu-types";
 import type { PlaceOrderInput } from "@/lib/orders";
 import { submitOrderAction } from "./actions";
 
+export type SavedAddress = {
+  id: string;
+  label: string | null;
+  street: string;
+  city: string;
+  postcode: string;
+  notes: string | null;
+};
+
 type Props = {
   locale: Locale;
   loggedInEmail: string | null;
   loggedInName: string | null;
+  savedAddresses: SavedAddress[];
 };
 
 export default function CheckoutForm({
   locale,
   loggedInEmail,
   loggedInName,
+  savedAddresses,
 }: Props) {
   const t = useTranslations("checkout");
   const tErr = useTranslations("checkout.errors");
@@ -30,11 +41,31 @@ export default function CheckoutForm({
   const [name, setName] = useState(loggedInName ?? "");
   const [email, setEmail] = useState(loggedInEmail ?? "");
   const [phone, setPhone] = useState("");
-  const [street, setStreet] = useState("");
-  const [city, setCity] = useState("");
-  const [postcode, setPostcode] = useState("");
+  const [selectedAddressId, setSelectedAddressId] = useState<string>(
+    savedAddresses[0]?.id ?? ""
+  );
+  const [street, setStreet] = useState(savedAddresses[0]?.street ?? "");
+  const [city, setCity] = useState(savedAddresses[0]?.city ?? "");
+  const [postcode, setPostcode] = useState(savedAddresses[0]?.postcode ?? "");
   const [notes, setNotes] = useState("");
   const [payment, setPayment] = useState<"cash" | "card">("cash");
+  const [saveAddress, setSaveAddress] = useState(false);
+
+  function onPickSavedAddress(id: string) {
+    setSelectedAddressId(id);
+    if (id === "") {
+      setStreet("");
+      setCity("");
+      setPostcode("");
+      return;
+    }
+    const a = savedAddresses.find((x) => x.id === id);
+    if (a) {
+      setStreet(a.street);
+      setCity(a.city);
+      setPostcode(a.postcode);
+    }
+  }
 
   if (cart.lines.length === 0) {
     return (
@@ -74,8 +105,11 @@ export default function CheckoutForm({
       notes: notes.trim() || null,
     };
 
+    // Don't bother re-saving an address that came from the picker.
+    const shouldSave = saveAddress && selectedAddressId === "";
+
     startTransition(async () => {
-      const result = await submitOrderAction(input);
+      const result = await submitOrderAction(input, shouldSave);
       if (result.ok) {
         cartStore.clear();
         router.push(`/order/${result.token}`);
@@ -125,11 +159,31 @@ export default function CheckoutForm({
             {!loggedInEmail && <div className="field__hint">{t("contactHint")}</div>}
           </div>
 
+          {savedAddresses.length > 0 && (
+            <div className="field">
+              <label>{t("savedAddress")}</label>
+              <select
+                value={selectedAddressId}
+                onChange={(e) => onPickSavedAddress(e.target.value)}
+              >
+                {savedAddresses.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.label ?? a.street} — {a.street}, {a.city} {a.postcode}
+                  </option>
+                ))}
+                <option value="">{t("newAddress")}</option>
+              </select>
+            </div>
+          )}
+
           <div className="field">
             <label>{t("address")}</label>
             <input
               value={street}
-              onChange={(e) => setStreet(e.target.value)}
+              onChange={(e) => {
+                setStreet(e.target.value);
+                setSelectedAddressId("");
+              }}
               required
             />
           </div>
@@ -139,7 +193,10 @@ export default function CheckoutForm({
               <label>{t("city")}</label>
               <input
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
+                onChange={(e) => {
+                  setCity(e.target.value);
+                  setSelectedAddressId("");
+                }}
                 required
               />
             </div>
@@ -147,7 +204,10 @@ export default function CheckoutForm({
               <label>{t("postcode")}</label>
               <input
                 value={postcode}
-                onChange={(e) => setPostcode(e.target.value)}
+                onChange={(e) => {
+                  setPostcode(e.target.value);
+                  setSelectedAddressId("");
+                }}
                 required
               />
             </div>
@@ -157,6 +217,24 @@ export default function CheckoutForm({
             <label>{t("notes")}</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
           </div>
+
+          {loggedInEmail && selectedAddressId === "" && (
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                fontSize: "0.9rem",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={saveAddress}
+                onChange={(e) => setSaveAddress(e.target.checked)}
+              />
+              {t("saveAddress")}
+            </label>
+          )}
 
           <div className="option-group">
             <div className="option-group__label">{t("paymentMethod")}</div>

@@ -14,7 +14,7 @@ dashboard for personnel. See `requirements.md` for the original brief.
 - **Keystatic 0.5** — local storage in dev, **cloud storage** in prod when
   `NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT` is set; menu lives in `content/`, no DB
 - **Drizzle ORM 0.45 + postgres.js 3** — Postgres only
-- **Auth.js 5 (beta)** + `@auth/drizzle-adapter` — Resend magic link
+- **better-auth 1.x** with its Drizzle adapter — email + password, sessions in Postgres
 - **Pure CSS** design system — **no Tailwind**, no component library
 - **pnpm** package manager
 - Runtime: Node 22, Postgres 17
@@ -60,12 +60,12 @@ src/
     staff/                     staff dashboard (outside locale)
     keystatic/                 CMS admin UI mount
     api/
-      auth/[...nextauth]/      Auth.js handler
+      auth/[...all]/           better-auth handler
       keystatic/[...params]/   Keystatic route handler
       orders/[token]/          public order status (GET)
       staff/orders/            staff orders list (GET, role-gated)
     globals.css                full design system (CSS variables, all classes)
-  auth.ts                      Auth.js config, role promotion event
+  auth.ts                      better-auth config (email/password, role promotion via databaseHooks)
   components/
     SiteHeader.tsx             header w/ logo + locale switcher + cart link
     LocaleSwitcher.tsx         client component, preserves pathname
@@ -166,13 +166,12 @@ See `.env.example` (local dev) and `.env.production.example` (deploy):
 - `DATABASE_URL` — postgres connection string (required)
 - `AUTH_SECRET` — `openssl rand -base64 32`
 - `AUTH_URL` — site URL (required in production)
-- `AUTH_RESEND_KEY` — Resend API key (free tier: 3k emails/mo, 100/day)
-- `EMAIL_FROM` — e.g. `Coffee Three <no-reply@domain>`
-- `STAFF_EMAIL` — email address auto-promoted to `staff` role on sign in
-- `DEV_STAFF_BYPASS` — set to `1` in `.env.local` to skip all staff auth on
+- `STAFF_EMAIL` — email address auto-promoted to `staff` role the first time
+  it signs up (handled in `databaseHooks.user.create.after` in `src/auth.ts`)
+- `DEV_STAFF_BYPASS` — set to `1` in `.env` to skip all staff auth on
   `/staff`, `/api/staff/*`, and `updateStatusAction`. Only honored when
-  `NODE_ENV !== "production"`. Lets you work on the dashboard without a
-  Resend round-trip. Centralized in `src/lib/staff-auth.ts`.
+  `NODE_ENV !== "production"`. Lets you work on the dashboard without
+  creating an account. Centralized in `src/lib/staff-auth.ts`.
 - `CADDY_DOMAIN` — prod domain for the Caddy reverse proxy
 - `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` — docker-compose db
 

@@ -1,12 +1,12 @@
 import "server-only";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 
 /**
  * Returns true if the current request should be allowed to access staff
  * endpoints. In production this requires an authenticated user with
  * `role === "staff"`. In non-production, setting `DEV_STAFF_BYPASS=1`
  * short-circuits the check so you can work on the dashboard without
- * configuring Resend + a real email round-trip.
+ * needing a real account.
  */
 export async function isStaffAuthorized(): Promise<boolean> {
   if (
@@ -15,9 +15,8 @@ export async function isStaffAuthorized(): Promise<boolean> {
   ) {
     return true;
   }
-  const session = await auth();
-  // @ts-expect-error custom role field on session.user
-  return session?.user?.role === "staff";
+  const session = await getSession();
+  return (session?.user as { role?: string } | undefined)?.role === "staff";
 }
 
 export function isDevStaffBypassActive(): boolean {

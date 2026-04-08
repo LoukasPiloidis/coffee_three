@@ -1,7 +1,7 @@
 # Coffee Three
 
 Mobile-first bilingual (EL/EN) ordering site for Coffee Three. Menu managed
-via Keystatic (git), orders in Postgres, email magic-link auth via Resend.
+via Keystatic (git), orders in Postgres, email + password auth via better-auth.
 
 ## Stack
 
@@ -9,7 +9,7 @@ via Keystatic (git), orders in Postgres, email magic-link auth via Resend.
 - next-intl (EL default, EN)
 - Keystatic (git-mode CMS)
 - Drizzle ORM + PostgreSQL
-- Auth.js v5 + Resend magic link
+- better-auth (email + password, sessions in Postgres)
 - Pure CSS design system (brand palette in `src/app/globals.css`)
 - Docker Compose (app + postgres + Caddy) for Contabo VPS deploy
 
@@ -25,7 +25,7 @@ docker run -d --name coffee-pg -p 5432:5432 \
 
 # 3. env
 cp .env.example .env.local
-# fill in DATABASE_URL, AUTH_SECRET, AUTH_RESEND_KEY, EMAIL_FROM, STAFF_EMAIL
+# fill in DATABASE_URL, AUTH_SECRET, AUTH_URL, STAFF_EMAIL
 
 # 4. run migrations
 pnpm exec drizzle-kit generate   # regenerate if schema changed
@@ -66,7 +66,7 @@ src/app/(frontend)/      customer-facing [locale] routes
 src/app/staff/           staff dashboard (outside locale, EN)
 src/app/keystatic/       CMS admin UI
 src/app/api/             route handlers (auth, orders, staff, keystatic)
-src/auth.ts              Auth.js config
+src/auth.ts              better-auth config
 src/components/          SiteHeader, LocaleSwitcher
 src/db/                  Drizzle schema + client
 src/i18n/                next-intl routing + navigation

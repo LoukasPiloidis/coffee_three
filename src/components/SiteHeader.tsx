@@ -1,13 +1,13 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { auth } from "@/auth";
+import { getSession } from "@/lib/session";
 import LocaleSwitcher from "./LocaleSwitcher";
 import CartLink from "./CartLink";
 
 export default async function SiteHeader({ locale }: { locale: string }) {
   const t = await getTranslations("common");
-  const session = await auth();
+  const session = await getSession();
   const isSignedIn = !!session?.user?.id;
   const userHref = isSignedIn ? "/profile" : "/signin";
   const userLabel = isSignedIn ? t("profile") : t("signIn");

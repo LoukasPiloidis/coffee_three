@@ -11,7 +11,22 @@
     "cancel": "Ακύρωση",
     "signIn": "Σύνδεση",
     "signOut": "Αποσύνδεση",
+    "signUp": "Δημιουργία λογαριασμού",
     "language": "Γλώσσα"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Κωδικός",
+    "name": "Όνομα",
+    "signInTitle": "Σύνδεση",
+    "signUpTitle": "Δημιουργία λογαριασμού",
+    "noAccount": "Δεν έχετε λογαριασμό;",
+    "haveAccount": "Έχετε ήδη λογαριασμό;",
+    "submit": "Συνέχεια",
+    "submitting": "Παρακαλώ περιμένετε…",
+    "passwordHint": "Τουλάχιστον 8 χαρακτήρες",
+    "errorInvalid": "Λάθος email ή κωδικός.",
+    "errorGeneric": "Κάτι πήγε στραβά. Δοκιμάστε ξανά."
   },
   "menu": {
     "title": "Κατάλογος",
@@ -40,6 +55,9 @@
     "phone": "Τηλέφωνο",
     "contactHint": "Δώστε email ή τηλέφωνο",
     "address": "Διεύθυνση",
+    "savedAddress": "Αποθηκευμένη διεύθυνση",
+    "newAddress": "Νέα διεύθυνση",
+    "saveAddress": "Αποθήκευση στο προφίλ μου",
     "postcode": "Τ.Κ.",
     "city": "Πόλη",
     "notes": "Σημειώσεις παραγγελίας",
@@ -73,6 +91,15 @@
   "profile": {
     "title": "Το προφίλ μου",
     "addresses": "Αποθηκευμένες διευθύνσεις",
+    "addAddress": "Προσθήκη διεύθυνσης",
+    "deleteAddress": "Διαγραφή",
+    "addressLabel": "Ετικέτα",
+    "addressLabelPlaceholder": "Σπίτι, Δουλειά, …",
+    "addressStreet": "Οδός",
+    "addressCity": "Πόλη",
+    "addressPostcode": "Τ.Κ.",
+    "addressNotes": "Σημειώσεις",
+    "addressErrorGeneric": "Αποτυχία αποθήκευσης. Δοκιμάστε ξανά.",
     "recentOrders": "Πρόσφατες παραγγελίες",
     "reorder": "Επαναπαραγγελία"
   }

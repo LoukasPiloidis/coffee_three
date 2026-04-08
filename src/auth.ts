@@ -1,48 +1,54 @@
-import NextAuth from "next-auth";
-import Resend from "next-auth/providers/resend";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
-import { users, accounts, sessions, verificationTokens } from "@/db/schema";
+import { user, session, account, verification } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
+export const auth = betterAuth({
+  database: drizzleAdapter(db, {
+    provider: "pg",
+    schema: { user, session, account, verification },
   }),
-  providers: [
-    Resend({
-      apiKey: process.env.AUTH_RESEND_KEY,
-      from: process.env.EMAIL_FROM,
-    }),
-  ],
-  session: { strategy: "database" },
-  pages: {
-    signIn: "/signin",
-    verifyRequest: "/signin/verify",
+  secret: process.env.AUTH_SECRET,
+  baseURL: process.env.AUTH_URL,
+  trustedOrigins: process.env.AUTH_URL ? [process.env.AUTH_URL] : undefined,
+  emailAndPassword: {
+    enabled: true,
+    autoSignIn: true,
+    minPasswordLength: 8,
   },
-  callbacks: {
-    async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        // @ts-expect-error role is a custom field
-        session.user.role = (user as { role?: string }).role ?? "customer";
-      }
-      return session;
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "customer",
+        input: false, // never settable from the client
+      },
+      phone: {
+        type: "string",
+        required: false,
+      },
     },
   },
-  events: {
-    async signIn({ user }) {
-      // Promote configured staff email to staff role on first sign in
-      const staffEmail = process.env.STAFF_EMAIL?.toLowerCase();
-      if (staffEmail && user.email?.toLowerCase() === staffEmail && user.id) {
-        await db
-          .update(users)
-          .set({ role: "staff" })
-          .where(eq(users.id, user.id));
-      }
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (createdUser) => {
+          // Promote configured staff email to staff role on creation.
+          const staffEmail = process.env.STAFF_EMAIL?.toLowerCase();
+          if (
+            staffEmail &&
+            createdUser.email?.toLowerCase() === staffEmail
+          ) {
+            await db
+              .update(user)
+              .set({ role: "staff" })
+              .where(eq(user.id, createdUser.id));
+          }
+        },
+      },
     },
   },
 });
+
+export type Session = typeof auth.$Infer.Session;

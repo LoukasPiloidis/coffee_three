@@ -11,7 +11,22 @@
     "cancel": "Cancel",
     "signIn": "Sign in",
     "signOut": "Sign out",
+    "signUp": "Create account",
     "language": "Language"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "signInTitle": "Sign in",
+    "signUpTitle": "Create an account",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "submit": "Continue",
+    "submitting": "Working…",
+    "passwordHint": "At least 8 characters",
+    "errorInvalid": "Invalid email or password.",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "menu": {
     "title": "Menu",
@@ -40,6 +55,9 @@
     "phone": "Phone",
     "contactHint": "Provide either email or phone",
     "address": "Address",
+    "savedAddress": "Saved address",
+    "newAddress": "New address",
+    "saveAddress": "Save this address to my profile",
     "postcode": "Postcode",
     "city": "City",
     "notes": "Order notes",
@@ -73,6 +91,15 @@
   "profile": {
     "title": "My profile",
     "addresses": "Saved addresses",
+    "addAddress": "Add address",
+    "deleteAddress": "Delete",
+    "addressLabel": "Label",
+    "addressLabelPlaceholder": "Home, Work, …",
+    "addressStreet": "Street",
+    "addressCity": "City",
+    "addressPostcode": "Postcode",
+    "addressNotes": "Notes",
+    "addressErrorGeneric": "Could not save address. Please try again.",
     "recentOrders": "Recent orders",
     "reorder": "Reorder"
   }

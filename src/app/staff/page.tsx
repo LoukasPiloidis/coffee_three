@@ -1,41 +1,26 @@
-import { auth, signIn, signOut } from "@/auth";
 import StaffDashboard from "./StaffDashboard";
+import StaffSignInForm from "./StaffSignInForm";
+import { staffSignOutAction } from "./actions";
 import { isDevStaffBypassActive } from "@/lib/staff-auth";
+import { getSession } from "@/lib/session";
 
 export default async function StaffPage() {
   const devBypass = isDevStaffBypassActive();
-  const session = devBypass ? null : await auth();
+  const session = devBypass ? null : await getSession();
 
   if (!devBypass && !session?.user) {
     return (
       <main className="page">
         <div className="container stack-md" style={{ maxWidth: "400px" }}>
           <h1 className="page__title">Staff sign in</h1>
-          <form
-            action={async (formData) => {
-              "use server";
-              await signIn("resend", {
-                email: formData.get("email"),
-                redirectTo: "/staff",
-              });
-            }}
-            className="card stack-md"
-          >
-            <div className="field">
-              <label>Email</label>
-              <input type="email" name="email" required />
-            </div>
-            <button className="btn btn--primary btn--block">
-              Send magic link
-            </button>
-          </form>
+          <StaffSignInForm />
         </div>
       </main>
     );
   }
 
-  // @ts-expect-error custom role field
-  if (!devBypass && session!.user!.role !== "staff") {
+  const role = (session?.user as { role?: string } | undefined)?.role;
+  if (!devBypass && role !== "staff") {
     return (
       <main className="page">
         <div className="container">
@@ -43,13 +28,7 @@ export default async function StaffPage() {
             You are signed in as {session!.user!.email}, but this account does
             not have staff access.
           </div>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/staff" });
-            }}
-            style={{ marginTop: "1rem" }}
-          >
+          <form action={staffSignOutAction} style={{ marginTop: "1rem" }}>
             <button className="btn btn--ghost">Sign out</button>
           </form>
         </div>
@@ -70,12 +49,7 @@ export default async function StaffPage() {
         >
           <h1>Orders{devBypass && " (dev bypass)"}</h1>
           {!devBypass && (
-            <form
-              action={async () => {
-                "use server";
-                await signOut({ redirectTo: "/staff" });
-              }}
-            >
+            <form action={staffSignOutAction}>
               <button className="btn btn--ghost btn--small">Sign out</button>
             </form>
           )}
