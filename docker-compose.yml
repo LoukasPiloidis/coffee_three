@@ -99,35 +99,8 @@ services:
       - caddy-config:/config
     logging: *default-logging
 
-  alloy:
-    # Tails all Docker container logs via the Docker socket and ships them
-    # to Grafana Cloud Loki. Also exposes host metrics. Set the LOKI_* /
-    # PROM_* vars in .env to enable; otherwise the container will crash-loop
-    # harmlessly (local json-file logs still work).
-    image: grafana/alloy:latest
-    restart: unless-stopped
-    command:
-      - run
-      - --server.http.listen-addr=0.0.0.0:12345
-      - --storage.path=/var/lib/alloy/data
-      - /etc/alloy/config.alloy
-    environment:
-      LOKI_URL: ${LOKI_URL:-}
-      LOKI_USERNAME: ${LOKI_USERNAME:-}
-      LOKI_PASSWORD: ${LOKI_PASSWORD:-}
-      PROM_URL: ${PROM_URL:-}
-      PROM_USERNAME: ${PROM_USERNAME:-}
-      PROM_PASSWORD: ${PROM_PASSWORD:-}
-      HOSTNAME_LABEL: ${HOSTNAME_LABEL:-coffee-three}
-    volumes:
-      - ./alloy-config.alloy:/etc/alloy/config.alloy:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - alloy-data:/var/lib/alloy/data
-    logging: *default-logging
-
 volumes:
   db-data:
   db-backups:
   caddy-data:
   caddy-config:
-  alloy-data:

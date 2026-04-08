@@ -36,7 +36,6 @@ A single Contabo VPS running, inside Docker:
 - **migrate** — runs database migrations on each deploy, then exits
 - **caddy** — reverse proxy with automatic HTTPS (Let's Encrypt)
 - **db-backup** — daily `pg_dump`, rotated (14 daily / 8 weekly / 12 monthly)
-- **alloy** — ships container logs + host metrics to Grafana Cloud
 
 Publicly reachable at `https://your-domain.com`.
 
@@ -50,8 +49,7 @@ Create these before you start. All free or cheap.
    ~$10/year. You need to be able to edit its DNS records.
 2. **Contabo account** — https://contabo.com
 3. **Keystatic Cloud account** — https://keystatic.cloud (CMS for the menu in prod)
-4. **Grafana Cloud account** — https://grafana.com (logs + metrics; free tier is fine)
-5. **A GitHub account** with the `coffee_three` repo pushed to it (private is fine)
+4. **A GitHub account** with the `coffee_three` repo pushed to it (private is fine)
 
 You also need, on your local machine:
 
@@ -257,23 +255,7 @@ step 9, where you'll paste them into `.env`.
 4. In the project settings, connect it to your GitHub repo for the menu
    content to sync via git. Follow the in-app instructions.
 
-### 7.2 Grafana Cloud
-
-1. Sign up at https://grafana.com and create a new stack.
-2. Inside the stack dashboard, go to **Connections** → **Add new connection**
-   → search for **"Hosted logs"** (Loki). Click it and follow the "Forward
-   logs from my application" / "Using an API token" path:
-   - Copy the **URL** — it'll look like
-     `https://logs-prod-xxx.grafana.net/loki/api/v1/push`. This is `LOKI_URL`.
-   - Copy the **User** (a 6-digit number). This is `LOKI_USERNAME`.
-   - Generate an **API token** with the `logs:write` scope. Copy the
-     `glc_...` value. This is `LOKI_PASSWORD`.
-3. Repeat for **"Hosted Prometheus metrics"** to get `PROM_URL`,
-   `PROM_USERNAME`, `PROM_PASSWORD`. (You can reuse the same token if it has
-   both `logs:write` and `metrics:write` scopes.)
-4. Save all six values.
-
-### 7.3 Generate AUTH_SECRET
+### 7.2 Generate AUTH_SECRET
 
 On your laptop (or on the VPS, doesn't matter):
 
@@ -283,7 +265,7 @@ openssl rand -base64 32
 
 Copy the output. This is `AUTH_SECRET`.
 
-### 7.4 Pick a strong POSTGRES_PASSWORD
+### 7.3 Pick a strong POSTGRES_PASSWORD
 
 Another random string — anything secure:
 
@@ -362,19 +344,6 @@ CADDY_DOMAIN=your-domain.com
 
 # Keystatic Cloud project identifier
 NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT=your-team/coffee-three
-
-# Grafana Cloud — logs
-LOKI_URL=https://logs-prod-xxx.grafana.net/loki/api/v1/push
-LOKI_USERNAME=000000
-LOKI_PASSWORD=glc_...
-
-# Grafana Cloud — metrics
-PROM_URL=https://prometheus-prod-xxx.grafana.net/api/prom/push
-PROM_USERNAME=000000
-PROM_PASSWORD=glc_...
-
-# A label to identify this VPS in Grafana dashboards
-HOSTNAME_LABEL=coffee-three-prod
 ```
 
 Save (`Ctrl+O`, enter, `Ctrl+X`).
@@ -398,13 +367,13 @@ docker compose up -d --build
 What happens:
 
 1. Docker pulls base images (`postgres:17-alpine`, `caddy:2-alpine`,
-   `grafana/alloy`, `prodrigestivill/postgres-backup-local`).
+   `prodrigestivill/postgres-backup-local`).
 2. It builds the app image from the `Dockerfile` — this runs `pnpm install`
    and `pnpm build`. **First build takes 5–10 minutes.** Subsequent builds
    reuse cached layers and take ~1 minute.
 3. `db` starts, waits for healthcheck.
 4. `migrate` runs, creates all tables, exits.
-5. `app`, `caddy`, `db-backup`, `alloy` start.
+5. `app`, `caddy`, `db-backup` start.
 6. Caddy reaches out to Let's Encrypt, gets a TLS cert, starts serving HTTPS.
    **This only works if your DNS is correct** (step 4).
 
@@ -472,17 +441,7 @@ initial categories/items from the repo's `content/` directory.
 5. You should land on the order status page at `/order/<token>`.
 6. On the staff dashboard, the order should appear within 6 seconds.
 
-### 11.6 Logs are flowing to Grafana Cloud
-
-In Grafana Cloud → **Explore** → pick the Loki data source → query:
-
-```
-{host="coffee-three-prod"}
-```
-
-You should see logs from `app`, `db`, `caddy`, etc. within a minute.
-
-### 11.7 The first backup ran
+### 11.6 The first backup ran
 
 The backup runs at the configured schedule (`@daily`, midnight container
 time). To force one immediately:
@@ -538,7 +497,7 @@ docker compose up -d --build
 - Only the `app` image rebuilds (the other services don't change).
 - `migrate` will re-run — migrations are idempotent (`scripts/migrate.mjs`
   tracks applied ones in a `_migrations` table).
-- Caddy, db, alloy, db-backup keep running untouched.
+- Caddy, db, db-backup keep running untouched.
 
 Downtime during a deploy is ~5 seconds while the new `app` container takes
 over.
@@ -554,9 +513,25 @@ docker compose logs -f app
 
 # Last 200 lines of the db
 docker compose logs --tail 200 db
+
+# Last hour, capped at 500 lines
+docker compose logs --since 1h --tail 500 app
+
+# Search across one service
+docker compose logs app | grep -i error
+
+# Since a specific timestamp (RFC3339)
+docker compose logs --since 2026-04-08T08:00 app
 ```
 
-Or just use Grafana Cloud — it's nicer for historical queries.
+Logs are stored on disk by Docker's `json-file` driver, rotated at
+**10 MB × 5 files per service** (configured in `docker-compose.yml`). That
+gives you ~50 MB of recent history per container, fully searchable from
+SSH. No third-party log shipper required.
+
+If you ever want a small web UI for browsing logs without leaving the
+browser, [Dozzle](https://dozzle.dev) is a single self-hosted container
+with no DB — drop it into `docker-compose.yml` later if needed.
 
 ### 13.3 Restarting things
 
@@ -590,15 +565,14 @@ docker system df
 
 - **Uptime**: sign up at https://uptimerobot.com (free), add a monitor for
   `https://your-domain.com`, alert to your email if it goes down.
-- **Grafana Cloud**: you can build a dashboard from the host metrics
-  (CPU/memory/disk) that Alloy is shipping. The free tier includes pre-built
-  Node Exporter dashboards — import them and point them at your `host` label.
+- **Host resources**: SSH in and check `htop`, `df -h`, `docker stats`. At
+  this scale a once-a-week glance is plenty.
 
 ### 13.7 Rotating secrets
 
 If a secret leaks:
 
-1. Regenerate it (Grafana token, etc.).
+1. Regenerate it.
 2. Update `.env` on the VPS.
 3. `docker compose up -d` — the affected container restarts with new env.
 
@@ -660,18 +634,8 @@ in with a different email first, or `STAFF_EMAIL` was wrong at the time:
 
 ```bash
 docker compose exec db psql -U coffee -d coffee \
-  -c "UPDATE users SET role='staff' WHERE email='you@your-domain.com';"
+  -c "UPDATE \"user\" SET role='staff' WHERE email='you@your-domain.com';"
 ```
-
-### "No logs in Grafana Cloud"
-
-```bash
-docker compose logs alloy | tail -50
-```
-
-Look for 401s (wrong credentials) or connection errors. If it says
-`LOKI_URL unset`, your `.env` didn't get picked up — make sure you ran
-`docker compose up -d` after editing it.
 
 ### The VPS is slow / out of memory
 
@@ -704,10 +668,9 @@ Don't run this in anger once you have real orders.
 
 Files created/modified by this deployment (relative to repo root):
 
-- `docker-compose.yml` — service definitions for app, db, caddy, db-backup, alloy
+- `docker-compose.yml` — service definitions for app, db, caddy, db-backup
 - `Caddyfile` — reverse proxy + auto-HTTPS config
 - `Dockerfile` — multi-stage build for the Next.js standalone output
-- `alloy-config.alloy` — Grafana Alloy config for log + metric shipping
 - `.env.production.example` — template for the `.env` you create on the VPS
 - `.env` — **never commit this**, it's gitignored; holds all real secrets
 - `scripts/migrate.mjs` — idempotent migration runner, invoked by the `migrate` service
