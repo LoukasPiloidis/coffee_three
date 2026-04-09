@@ -122,7 +122,7 @@ export async function placeOrder(
     .values({
       publicToken: token,
       userId: input.contact.userId ?? null,
-      guestName: input.contact.userId ? null : input.contact.name,
+      guestName:  input.contact.name,
       guestEmail: input.contact.email,
       guestPhone: input.contact.phone,
       deliveryStreet: input.delivery.street,

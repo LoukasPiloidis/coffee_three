@@ -10,13 +10,8 @@ export async function submitOrderAction(
   saveAddress = false
 ): Promise<PlaceOrderResult> {
   const session = await getSession();
-  if (session?.user?.id) {
-    input.contact.userId = session.user.id;
-    if (session.user.email) input.contact.email = session.user.email;
-    if (session.user.name) input.contact.name = session.user.name;
-  } else {
-    input.contact.userId = null;
-  }
+  input.contact.userId = session?.user.id ?? null;
+  
 
   const result = await placeOrder(input);
 
