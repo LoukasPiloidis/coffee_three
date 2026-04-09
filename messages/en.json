@@ -131,6 +131,7 @@
     "addressNotes": "Notes",
     "addressErrorGeneric": "Could not save address. Please try again.",
     "recentOrders": "Recent orders",
-    "reorder": "Reorder"
+    "reorder": "Reorder",
+    "view": "View"
   }
 }

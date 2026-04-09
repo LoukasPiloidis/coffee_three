@@ -1,7 +1,7 @@
 "use server";
 
 import { randomBytes } from "crypto";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { orders, orderItems } from "@/db/schema";
 import { getItem, getSettings } from "./menu";
@@ -153,7 +153,23 @@ export async function placeOrder(
   return { ok: true, token };
 }
 
+// Orders auto-complete one hour after they are placed. Both the staff list
+// endpoint and the public order status endpoint call this before reading,
+// so it runs lazily without a cron job. Cancelled orders are untouched.
+export async function autoCompleteStaleOrders() {
+  await db
+    .update(orders)
+    .set({ status: "completed", updatedAt: new Date() })
+    .where(
+      and(
+        inArray(orders.status, ["received", "preparing", "on_its_way"]),
+        lt(orders.createdAt, sql`now() - interval '1 hour'`)
+      )
+    );
+}
+
 export async function getOrderByToken(token: string) {
+  await autoCompleteStaleOrders();
   const [order] = await db
     .select()
     .from(orders)

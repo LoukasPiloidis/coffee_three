@@ -133,9 +133,6 @@ export default async function ProfilePage({
                           {formatPrice(o.totalCents / 100, loc)}
                         </div>
                       </div>
-                      <span className={`status-pill status-pill--${o.status}`}>
-                        {o.status}
-                      </span>
                     </div>
                     <div
                       style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}
@@ -162,7 +159,7 @@ export default async function ProfilePage({
                         href={`/order/${o.publicToken}`}
                         className="btn btn--ghost btn--small"
                       >
-                        View
+                        {t("view")}
                       </Link>
                       <ReorderButton
                         items={items.map((i) => {

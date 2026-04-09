@@ -25,18 +25,19 @@ type OrderDTO = {
   }[];
 };
 
-// "on_its_way" is no longer part of the staff flow — kept in the type only
-// to handle legacy rows. Staff goes received → preparing → completed.
+// Staff flow: received → preparing → on_its_way. After on_its_way, orders
+// auto-complete one hour after they were placed (handled server-side), so
+// staff never has to mark "completed" manually.
 const NEXT_STATUS: Record<OrderDTO["status"], OrderDTO["status"] | null> = {
   received: "preparing",
-  preparing: "completed",
+  preparing: "on_its_way",
   on_its_way: null,
   completed: null,
   cancelled: null,
 };
 const NEXT_LABEL: Record<OrderDTO["status"], string> = {
   received: "Έναρξη ετοιμασίας",
-  preparing: "Ολοκλήρωση",
+  preparing: "Αποστολή",
   on_its_way: "",
   completed: "",
   cancelled: "",

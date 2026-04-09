@@ -18,23 +18,24 @@ type OrderDTO = {
   }[];
 };
 
-// Customer-facing flow has 3 steps. The third step is the "completed" status
-// internally (was previously "on_its_way") but is presented to customers as
-// "On its way" — staff treat it as the terminal happy state.
-const STEPS: OrderDTO["status"][] = ["received", "preparing", "completed"];
+// Customer-facing flow has 4 steps.
+const STEPS: OrderDTO["status"][] = [
+  "received",
+  "preparing",
+  "on_its_way",
+  "completed",
+];
 
-// Translation key to display for each step in the customer view.
 const DISPLAY_KEY: Record<OrderDTO["status"], string> = {
   received: "received",
   preparing: "preparing",
-  completed: "on_its_way",
   on_its_way: "on_its_way",
+  completed: "completed",
   cancelled: "cancelled",
 };
 
-// Map a raw status to its position in STEPS (legacy on_its_way → completed).
 function statusToStep(s: OrderDTO["status"]): OrderDTO["status"] {
-  return s === "on_its_way" ? "completed" : s;
+  return s;
 }
 
 export default function OrderStatusView({

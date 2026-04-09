@@ -3,11 +3,14 @@ import { desc } from "drizzle-orm";
 import { db } from "@/db";
 import { orders, orderItems } from "@/db/schema";
 import { isStaffAuthorized } from "@/lib/staff-auth";
+import { autoCompleteStaleOrders } from "@/lib/orders";
 
 export async function GET() {
   if (!(await isStaffAuthorized())) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  await autoCompleteStaleOrders();
 
   const rows = await db
     .select()
