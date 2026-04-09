@@ -33,6 +33,9 @@ export default async function CheckoutPage({
       locale={locale as "en" | "el"}
       loggedInEmail={session?.user?.email ?? null}
       loggedInName={session?.user?.name ?? null}
+      loggedInPhone={
+        (session?.user as { phone?: string | null } | undefined)?.phone ?? null
+      }
       savedAddresses={savedAddresses}
     />
   );

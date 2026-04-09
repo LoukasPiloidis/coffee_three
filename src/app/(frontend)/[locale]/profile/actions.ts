@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { addresses } from "@/db/schema";
+import { addresses, user } from "@/db/schema";
 import { getSession } from "@/lib/session";
 
 export async function signOutAction(redirectTo: string) {
@@ -43,6 +43,55 @@ export async function addAddressAction(
     postcode,
     notes: input.notes.trim() || null,
   });
+
+  revalidatePath("/[locale]/profile", "page");
+  return { ok: true };
+}
+
+export type UpdateAccountInput = {
+  email: string;
+  phone: string;
+};
+
+export async function updateAccountAction(
+  input: UpdateAccountInput
+): Promise<
+  | { ok: true }
+  | { ok: false; error: "unauthenticated" | "invalidEmail" | "emailTaken" | "generic" }
+> {
+  const session = await getSession();
+  if (!session?.user?.id) return { ok: false, error: "unauthenticated" };
+
+  const email = input.email.trim().toLowerCase();
+  const phone = input.phone.trim();
+
+  // Simple sanity check — better-auth normally handles email validation
+  // during sign up, but we're updating directly.
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+    return { ok: false, error: "invalidEmail" };
+  }
+
+  // Enforce uniqueness manually to return a friendly error (the DB
+  // constraint would otherwise surface as a generic failure).
+  if (email !== session.user.email.toLowerCase()) {
+    const [existing] = await db
+      .select({ id: user.id })
+      .from(user)
+      .where(eq(user.email, email))
+      .limit(1);
+    if (existing && existing.id !== session.user.id) {
+      return { ok: false, error: "emailTaken" };
+    }
+  }
+
+  try {
+    await db
+      .update(user)
+      .set({ email, phone: phone || null, updatedAt: new Date() })
+      .where(eq(user.id, session.user.id));
+  } catch {
+    return { ok: false, error: "generic" };
+  }
 
   revalidatePath("/[locale]/profile", "page");
   return { ok: true };

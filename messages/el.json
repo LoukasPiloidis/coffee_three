@@ -54,6 +54,7 @@
     "name": "Όνομα",
     "email": "Email",
     "phone": "Τηλέφωνο",
+    "phoneHint": "Απαιτείται για τον διανομέα σε περίπτωση ανάγκης",
     "contactHint": "Δώστε email ή τηλέφωνο",
     "address": "Διεύθυνση",
     "savedAddress": "Αποθηκευμένη διεύθυνση",
@@ -76,7 +77,8 @@
       "closed": "Αυτή τη στιγμή είμαστε κλειστά. Δοκιμάστε κατά τη διάρκεια του ωραρίου.",
       "minOrder": "Δεν έχει επιτευχθεί η ελάχιστη αξία παραγγελίας.",
       "outOfArea": "Δυστυχώς δεν παραδίδουμε σε αυτόν τον Τ.Κ.",
-      "contactRequired": "Παρακαλώ δώστε email ή τηλέφωνο."
+      "contactRequired": "Παρακαλώ δώστε email ή τηλέφωνο.",
+      "phoneRequired": "Απαιτείται τηλέφωνο επικοινωνίας για την παράδοση."
     }
   },
   "order": {
@@ -110,6 +112,15 @@
   },
   "profile": {
     "title": "Το προφίλ μου",
+    "accountTitle": "Στοιχεία λογαριασμού",
+    "accountEmail": "Email",
+    "accountPhone": "Τηλέφωνο",
+    "accountPhonePlaceholder": "π.χ. +30 69…",
+    "accountSave": "Αποθήκευση",
+    "accountSaved": "Τα στοιχεία ενημερώθηκαν.",
+    "accountErrorInvalidEmail": "Μη έγκυρο email.",
+    "accountErrorEmailTaken": "Αυτό το email χρησιμοποιείται ήδη.",
+    "accountErrorGeneric": "Αποτυχία αποθήκευσης. Δοκιμάστε ξανά.",
     "addresses": "Αποθηκευμένες διευθύνσεις",
     "addAddress": "Προσθήκη διεύθυνσης",
     "deleteAddress": "Διαγραφή",

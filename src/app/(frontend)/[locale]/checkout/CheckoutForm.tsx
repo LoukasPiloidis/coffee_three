@@ -21,6 +21,7 @@ type Props = {
   locale: Locale;
   loggedInEmail: string | null;
   loggedInName: string | null;
+  loggedInPhone: string | null;
   savedAddresses: SavedAddress[];
 };
 
@@ -28,6 +29,7 @@ export default function CheckoutForm({
   locale,
   loggedInEmail,
   loggedInName,
+  loggedInPhone,
   savedAddresses,
 }: Props) {
   const t = useTranslations("checkout");
@@ -40,7 +42,7 @@ export default function CheckoutForm({
 
   const [name, setName] = useState(loggedInName ?? "");
   const [email, setEmail] = useState(loggedInEmail ?? "");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(loggedInPhone ?? "");
   const [selectedAddressId, setSelectedAddressId] = useState<string>(
     savedAddresses[0]?.id ?? ""
   );
@@ -91,8 +93,8 @@ export default function CheckoutForm({
     e.preventDefault();
     setError(null);
 
-    if (!loggedInEmail && !email.trim() && !phone.trim()) {
-      setError(tErr("contactRequired"));
+    if (!phone.trim()) {
+      setError(tErr("phoneRequired"));
       return;
     }
 
@@ -125,6 +127,7 @@ export default function CheckoutForm({
         router.push(`/order/${result.token}`);
       } else {
         if (result.error === "contactRequired") setError(tErr("contactRequired"));
+        else if (result.error === "phoneRequired") setError(tErr("phoneRequired"));
         else if (result.error === "closed") setError(tErr("closed"));
         else if (result.error === "minOrder") setError(tErr("minOrder"));
         else if (result.error === "outOfArea") setError(tErr("outOfArea"));
@@ -149,12 +152,17 @@ export default function CheckoutForm({
               />
             </div>
             <div className="field">
-              <label>{t("phone")}</label>
+              <label>
+                {t("phone")}
+                <span className="option-group__required">*</span>
+              </label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                required
               />
+              <div className="field__hint">{t("phoneHint")}</div>
             </div>
           </div>
 
@@ -166,7 +174,6 @@ export default function CheckoutForm({
               disabled={!!loggedInEmail}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {!loggedInEmail && <div className="field__hint">{t("contactHint")}</div>}
           </div>
 
           {savedAddresses.length > 0 && (

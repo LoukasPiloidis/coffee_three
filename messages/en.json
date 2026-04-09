@@ -53,6 +53,7 @@
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
+    "phoneHint": "Required so our delivery rider can reach you if needed",
     "contactHint": "Provide either email or phone",
     "address": "Address",
     "savedAddress": "Saved address",
@@ -75,7 +76,8 @@
       "closed": "We are currently closed. Please try again during opening hours.",
       "minOrder": "Minimum order amount not met.",
       "outOfArea": "Sorry, we don't deliver to this postcode.",
-      "contactRequired": "Please provide either an email or a phone number."
+      "contactRequired": "Please provide either an email or a phone number.",
+      "phoneRequired": "A contact phone number is required for delivery."
     }
   },
   "order": {
@@ -109,6 +111,15 @@
   },
   "profile": {
     "title": "My profile",
+    "accountTitle": "Account details",
+    "accountEmail": "Email",
+    "accountPhone": "Phone",
+    "accountPhonePlaceholder": "e.g. +30 69…",
+    "accountSave": "Save",
+    "accountSaved": "Details updated.",
+    "accountErrorInvalidEmail": "Invalid email address.",
+    "accountErrorEmailTaken": "That email is already in use.",
+    "accountErrorGeneric": "Could not save. Please try again.",
     "addresses": "Saved addresses",
     "addAddress": "Add address",
     "deleteAddress": "Delete",

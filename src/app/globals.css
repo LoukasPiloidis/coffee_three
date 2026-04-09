@@ -541,6 +541,11 @@ p { margin: 0; }
   border-color: var(--color-border);
   color: var(--color-green-900);
 }
+.notice--success {
+  background: #e8f3ec;
+  border-color: #b8d9c3;
+  color: var(--color-green-900);
+}
 
 /* --- Empty state --- */
 .empty {

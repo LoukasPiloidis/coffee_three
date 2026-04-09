@@ -29,12 +29,25 @@ export type PlaceOrderInput = {
 
 export type PlaceOrderResult =
   | { ok: true; token: string }
-  | { ok: false; error: "closed" | "minOrder" | "outOfArea" | "contactRequired" | "empty" | "unavailable" };
+  | {
+      ok: false;
+      error:
+        | "closed"
+        | "minOrder"
+        | "outOfArea"
+        | "contactRequired"
+        | "phoneRequired"
+        | "empty"
+        | "unavailable";
+    };
 
 export async function placeOrder(
   input: PlaceOrderInput
 ): Promise<PlaceOrderResult> {
   if (input.lines.length === 0) return { ok: false, error: "empty" };
+  if (!input.contact.phone || !input.contact.phone.trim()) {
+    return { ok: false, error: "phoneRequired" };
+  }
   if (!input.contact.userId && !input.contact.email && !input.contact.phone) {
     return { ok: false, error: "contactRequired" };
   }
