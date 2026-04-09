@@ -78,6 +78,13 @@ services:
       AUTH_SECRET: ${AUTH_SECRET}
       AUTH_URL: ${AUTH_URL}
       STAFF_EMAIL: ${STAFF_EMAIL}
+      # Live CMS updates (see deployment.md §15). All optional — when unset,
+      # the app falls back to reading menu content from the baked-in
+      # content/ directory and the webhook endpoint returns 503.
+      KEYSTATIC_GITHUB_REPO: ${KEYSTATIC_GITHUB_REPO:-}
+      KEYSTATIC_GITHUB_TOKEN: ${KEYSTATIC_GITHUB_TOKEN:-}
+      KEYSTATIC_GITHUB_REF: ${KEYSTATIC_GITHUB_REF:-}
+      KEYSTATIC_WEBHOOK_SECRET: ${KEYSTATIC_WEBHOOK_SECRET:-}
     expose:
       - "3000"
     # Content is baked into the image; for live Keystatic edits in dev you can mount:
