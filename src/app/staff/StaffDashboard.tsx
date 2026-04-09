@@ -63,10 +63,27 @@ function formatEuro(cents: number) {
   }).format(cents / 100);
 }
 
+const ALL_STATUSES: OrderDTO["status"][] = [
+  "received",
+  "preparing",
+  "on_its_way",
+  "completed",
+  "cancelled",
+];
+// Default view: active orders only (staff's working queue).
+const DEFAULT_FILTER: OrderDTO["status"][] = ["received", "preparing"];
+
 export default function StaffDashboard() {
   const [orders, setOrders] = useState<OrderDTO[]>([]);
-  const [showHistory, setShowHistory] = useState(false);
+  const [statusFilter, setStatusFilter] =
+    useState<OrderDTO["status"][]>(DEFAULT_FILTER);
   const [, startTransition] = useTransition();
+
+  const toggleStatus = (s: OrderDTO["status"]) => {
+    setStatusFilter((prev) =>
+      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
+    );
+  };
 
   const fetchOrders = async () => {
     const res = await fetch("/api/staff/orders", { cache: "no-store" });
@@ -83,9 +100,7 @@ export default function StaffDashboard() {
 
   const isTerminal = (s: OrderDTO["status"]) =>
     s === "completed" || s === "cancelled" || s === "on_its_way";
-  const active = orders.filter((o) => !isTerminal(o.status));
-  const past = orders.filter((o) => isTerminal(o.status));
-  const visible = showHistory ? [...active, ...past] : active;
+  const visible = orders.filter((o) => statusFilter.includes(o.status));
 
   const transition = (id: string, status: OrderDTO["status"]) => {
     startTransition(async () => {
@@ -94,19 +109,39 @@ export default function StaffDashboard() {
     });
   };
 
+  const countsByStatus = orders.reduce<Record<string, number>>((acc, o) => {
+    acc[o.status] = (acc[o.status] ?? 0) + 1;
+    return acc;
+  }, {});
+
   return (
     <div className="stack-md">
-      <label style={{ fontSize: "0.85rem" }}>
-        <input
-          type="checkbox"
-          checked={showHistory}
-          onChange={(e) => setShowHistory(e.target.checked)}
-        />{" "}
-        Εμφάνιση ολοκληρωμένων/ακυρωμένων
-      </label>
+      <div className="staff-filter">
+        <div className="staff-filter__label">Φίλτρο κατάστασης</div>
+        <div className="staff-filter__chips">
+          {ALL_STATUSES.map((s) => {
+            const active = statusFilter.includes(s);
+            const count = countsByStatus[s] ?? 0;
+            return (
+              <button
+                key={s}
+                type="button"
+                className={`staff-filter__chip${
+                  active ? " staff-filter__chip--active" : ""
+                }`}
+                onClick={() => toggleStatus(s)}
+                aria-pressed={active}
+              >
+                {STATUS_LABEL[s]}
+                <span className="staff-filter__count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {visible.length === 0 && (
-        <p className="empty">Δεν υπάρχουν ενεργές παραγγελίες.</p>
+        <p className="empty">Δεν υπάρχουν παραγγελίες με αυτά τα φίλτρα.</p>
       )}
 
       {visible.map((o) => {
