@@ -2,6 +2,7 @@
   "minOrderCents": 0,
   "allowedPostcodes": [],
   "deliveryHours": {
-    "mon": "09:00-22:00"
+    "mon": "09:00-22:00",
+    "thu": "09:00-22:00"
   }
 }
