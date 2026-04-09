@@ -24,6 +24,7 @@ Rough time: **2–3 hours** the first time, mostly waiting on DNS + Docker build
 12. [Test a backup restore (don't skip this)](#12-test-a-backup-restore-dont-skip-this)
 13. [Day-to-day operations](#13-day-to-day-operations)
 14. [Troubleshooting](#14-troubleshooting)
+15. [Live CMS updates (Keystatic → GitHub webhook)](#15-live-cms-updates-keystatic--github-webhook)
 
 ---
 
@@ -730,6 +731,213 @@ docker compose up -d --build
 ```
 
 Don't run this in anger once you have real orders.
+
+---
+
+## 15. Live CMS updates (Keystatic → GitHub webhook)
+
+By default, menu edits made in `/keystatic` are committed to GitHub by
+Keystatic Cloud but **the running container doesn't see them until you
+redeploy** — the app reads menu JSON from the baked-in `content/` directory
+via the local filesystem reader.
+
+This section enables near-real-time updates: hitting **Save** in the CMS
+makes the change visible on the live site within ~1 second, no redeploy.
+
+### 15.1 How it works
+
+```
+  ┌──────────┐    commits    ┌────────┐  webhook  ┌───────────────┐
+  │ Keystatic│──────────────▶│ GitHub │──────────▶│ app container │
+  │  Cloud   │   content/*   │  repo  │  (push)   │ /api/keystatic│
+  └──────────┘               └────────┘           │    -webhook    │
+                                 ▲                └───────┬───────┘
+                                 │ reads on cache miss    │ revalidateTag
+                                 │ (GitHub API)           │ "keystatic-menu"
+                                 │                        ▼
+                             ┌───────────────────────────────────┐
+                             │  src/lib/menu.ts unstable_cache    │
+                             └───────────────────────────────────┘
+```
+
+- `src/lib/menu.ts` uses Keystatic's `createGitHubReader` when
+  `KEYSTATIC_GITHUB_REPO` is set in the env. All reads are wrapped in
+  `unstable_cache` tagged `keystatic-menu`.
+- `POST /api/keystatic-webhook` verifies the GitHub `X-Hub-Signature-256`
+  HMAC against `KEYSTATIC_WEBHOOK_SECRET` and calls
+  `revalidateTag("keystatic-menu")` on matching pushes.
+- Next cache miss re-fetches the tree + JSON directly from GitHub.
+
+### 15.2 Caveat: images still need a redeploy
+
+Keystatic writes uploaded images to `public/menu-images/`. Next.js serves
+`public/` from the baked container filesystem, **not** from GitHub at
+runtime. So:
+
+- Editing titles, prices, descriptions, availability, option groups, display
+  order, categories, shop settings → **live within 1s**.
+- Uploading a **new** image (or replacing an existing one) → the JSON update
+  is live, but the image URL 404s until the next deploy.
+
+Workflow recommendation: stage image uploads in a regular git commit from
+your laptop, deploy, *then* have staff do text edits live through the CMS.
+
+### 15.3 Generate a GitHub Personal Access Token
+
+The GitHub reader needs a token with read access to the repo's contents.
+Use a **fine-grained** PAT — scoped to only this repo.
+
+1. Go to https://github.com/settings/personal-access-tokens/new
+2. **Token name**: `coffee-three-vps-reader`
+3. **Resource owner**: your user (or the org that owns the repo)
+4. **Expiration**: 1 year (set a calendar reminder to rotate)
+5. **Repository access** → **Only select repositories** → pick `coffee_three`
+6. **Permissions** → **Repository permissions** → **Contents: Read-only**
+   (leave everything else at "No access")
+7. **Generate token** and copy the `github_pat_...` value — you won't see it
+   again.
+
+> If the repo is **public**, the token is optional but still strongly
+> recommended: unauthenticated GitHub API requests share a low global rate
+> limit (60/hour per IP) and you'll hit it under normal traffic.
+
+### 15.4 Generate a webhook secret
+
+On your laptop or the VPS:
+
+```bash
+openssl rand -hex 32
+```
+
+Copy the output. This is `KEYSTATIC_WEBHOOK_SECRET`. You'll paste the same
+value into both `.env` and the GitHub webhook config.
+
+### 15.5 Add the env vars on the VPS
+
+SSH into the VPS as `deploy` and edit `.env`:
+
+```bash
+cd ~/coffee_three
+nano .env
+```
+
+Append (or update) these four lines:
+
+```bash
+KEYSTATIC_GITHUB_REPO=your-github-user/coffee_three
+KEYSTATIC_GITHUB_TOKEN=github_pat_...          # from §15.3
+KEYSTATIC_GITHUB_REF=main                      # branch Keystatic commits to
+KEYSTATIC_WEBHOOK_SECRET=...                   # from §15.4
+```
+
+Save (`Ctrl+O`, enter, `Ctrl+X`). Restart the app so it picks up the new
+vars:
+
+```bash
+docker compose up -d app
+```
+
+Watch the logs for startup errors:
+
+```bash
+docker compose logs -f app
+```
+
+### 15.6 Configure the GitHub webhook
+
+1. In your browser, open the repo on GitHub.
+2. **Settings → Webhooks → Add webhook**.
+3. Fill in:
+   - **Payload URL**: `https://your-domain.com/api/keystatic-webhook`
+   - **Content type**: `application/json`
+   - **Secret**: the exact value of `KEYSTATIC_WEBHOOK_SECRET` from §15.4
+   - **SSL verification**: Enable (leave default).
+   - **Which events?** → **Just the push event**.
+   - **Active**: checked.
+4. Click **Add webhook**.
+
+GitHub immediately sends a `ping` event. Scroll down to **Recent Deliveries**
+— you should see one entry with a green check. If it's red, click it and
+inspect the response body; see §15.8 for common failures.
+
+### 15.7 Test it end-to-end
+
+1. Open `https://your-domain.com/keystatic` in one tab.
+2. Open `https://your-domain.com/` in another tab — note a menu item's
+   current price.
+3. In the Keystatic tab, edit that price and click **Save**.
+4. On the site tab, hard-refresh (`Cmd/Ctrl + Shift + R`).
+5. The new price should appear within 1–2 seconds of save.
+
+To confirm the webhook actually fired:
+
+```bash
+docker compose logs app --tail 50 | grep -i keystatic-webhook
+```
+
+Or check **Settings → Webhooks → your webhook → Recent Deliveries** on
+GitHub — the latest entry should be a `push` event with a green check and
+a `{"ok":true,"revalidated":true}` response body.
+
+### 15.8 Troubleshooting
+
+**Webhook returns 401 `invalid_signature`**
+The secret in GitHub's webhook config doesn't match `KEYSTATIC_WEBHOOK_SECRET`
+in `.env`. Re-copy one into the other and retry. Don't add quotes in either
+place.
+
+**Webhook returns 503 `webhook_not_configured`**
+`KEYSTATIC_WEBHOOK_SECRET` isn't set in the container's env. Verify with:
+
+```bash
+docker compose exec app printenv | grep KEYSTATIC
+```
+
+If missing, re-edit `.env` and `docker compose up -d app`.
+
+**Save works in the CMS but the site still shows the old value**
+- Verify the webhook actually fired: GitHub repo → Settings → Webhooks →
+  Recent Deliveries. If there's no recent entry, the webhook isn't wired
+  to the right repo or push isn't happening (Keystatic Cloud may still be
+  processing — wait 10 seconds and retry).
+- Verify the app is in GitHub-reader mode:
+  `docker compose exec app printenv KEYSTATIC_GITHUB_REPO` should print
+  your repo. If it's empty, the container is still using the local fs
+  reader and will never see remote updates without a rebuild.
+- Make sure you're reading the **default branch** that Keystatic commits
+  to. If Keystatic is set to commit via PRs to a feature branch, set
+  `KEYSTATIC_GITHUB_REF` to that branch and restart the app.
+
+**`Failed to fetch tree: 401` or `403` in app logs**
+The PAT is missing, expired, or doesn't have `Contents: Read` on the repo.
+Regenerate per §15.3 and update `KEYSTATIC_GITHUB_TOKEN`.
+
+**New image uploaded via CMS 404s on the site**
+Expected — see §15.2. The JSON referencing the new image is live, but the
+image file itself needs a redeploy. On the VPS:
+
+```bash
+cd ~/coffee_three && git pull && docker compose up -d --build
+```
+
+**Rolling back a bad edit**
+Because every CMS save is a git commit, rollback is just `git revert` on
+the offending commit from your laptop. Push the revert; the webhook fires
+again and the site is back to the previous state within ~1s.
+
+### 15.9 Disabling the feature
+
+If you want to revert to build-time menu content (e.g. while debugging),
+remove or comment out `KEYSTATIC_GITHUB_REPO` in `.env` and restart:
+
+```bash
+docker compose up -d app
+```
+
+`src/lib/menu.ts` falls back to the local filesystem reader and edits
+require a redeploy as before. You can leave the GitHub webhook installed
+— the endpoint will still return 200s, they just won't do anything useful
+until the env var is set again.
 
 ---
 

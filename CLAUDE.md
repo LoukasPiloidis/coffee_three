@@ -22,7 +22,13 @@ dashboard for personnel. See `requirements.md` for the original brief.
 ## Critical architecture decisions
 
 1. **Menu is NOT in Postgres.** It lives in `content/` as JSON, edited via
-   Keystatic at `/keystatic`. Git-mode + 1 min redeploy is intentional.
+   Keystatic at `/keystatic`. In dev the reader hits the local filesystem;
+   in prod, if `KEYSTATIC_GITHUB_REPO` is set, `src/lib/menu.ts` switches to
+   Keystatic's GitHub reader and all reads are wrapped in `unstable_cache`
+   tagged `keystatic-menu`. `POST /api/keystatic-webhook` (HMAC-verified via
+   `KEYSTATIC_WEBHOOK_SECRET`) calls `revalidateTag` so CMS "Save" appears
+   on the live site within a second or two — no redeploy. See
+   `deployment.md` §15 for the setup flow.
 2. **Order items snapshot `titleSnapshot` + `unitPriceCents`** at checkout
    (`src/lib/orders.ts` → `placeOrder`). Never derive a past order from current
    menu state — editing a menu item must not corrupt history.
@@ -62,6 +68,7 @@ src/
     api/
       auth/[...all]/           better-auth handler
       keystatic/[...params]/   Keystatic route handler
+      keystatic-webhook/       GitHub webhook → revalidateTag('keystatic-menu')
       orders/[token]/          public order status (GET)
       staff/orders/            staff orders list (GET, role-gated)
     globals.css                full design system (CSS variables, all classes)
@@ -203,8 +210,14 @@ These were explicitly scoped out — check before building them:
   staff manually via SQL or a future admin view.
 - **Store QR flow beyond menu browsing** — users scan, look, walk to cashier.
   The `orders.type = 'store'` enum value exists but is unused.
-- **Instant menu updates** — Keystatic git mode means menu edits wait for
-  redeploy (~1 min). Acceptable per requirements.
+- ~~**Instant menu updates**~~ — now supported in prod via the GitHub reader
+  + webhook flow (see §1 of "Critical architecture decisions" and
+  `deployment.md` §15). Text/price/availability edits go live within ~1s of
+  hitting Save in the CMS, no redeploy required. **Caveat:** images added
+  through Keystatic live at `public/menu-images/` and are served by Next's
+  static file handler from the baked container filesystem — uploading a
+  new image still requires a redeploy to be visible. Swapping an existing
+  image URL or editing JSON does not.
 - **Delivery fee** — no fee, by requirement.
 - **Delivery area polygon** — simple postcode allow-list in settings.
 
