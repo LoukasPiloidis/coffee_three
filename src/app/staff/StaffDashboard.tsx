@@ -92,10 +92,6 @@ export default function StaffDashboard() {
     });
   };
 
-  if (visible.length === 0) {
-    return <p className="empty">Δεν υπάρχουν ενεργές παραγγελίες.</p>;
-  }
-
   return (
     <div className="stack-md">
       <label style={{ fontSize: "0.85rem" }}>
@@ -106,6 +102,10 @@ export default function StaffDashboard() {
         />{" "}
         Εμφάνιση ολοκληρωμένων/ακυρωμένων
       </label>
+
+      {visible.length === 0 && (
+        <p className="empty">Δεν υπάρχουν ενεργές παραγγελίες.</p>
+      )}
 
       {visible.map((o) => {
         const next = NEXT_STATUS[o.status];
