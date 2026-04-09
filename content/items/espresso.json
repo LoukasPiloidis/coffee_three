@@ -2,12 +2,12 @@
   "available": true,
   "slug": "espresso",
   "title": {
-    "en": "Espressi",
+    "en": "Espresso",
     "el": "Εσπρέσσο"
   },
   "description": {},
   "category": "coffees",
-  "price": 1.4,
+  "price": 1.5,
   "displayOrder": -1,
   "optionGroups": []
 }
