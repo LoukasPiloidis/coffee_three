@@ -47,10 +47,7 @@ services:
     logging: *default-logging
 
   migrate:
-    build:
-      context: .
-      args:
-        NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT: ${NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT:-}
+    image: ${APP_IMAGE:-ghcr.io/loukaspiloidis/coffee_three:latest}
     depends_on:
       db:
         condition: service_healthy
@@ -62,10 +59,7 @@ services:
     logging: *default-logging
 
   app:
-    build:
-      context: .
-      args:
-        NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT: ${NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT:-}
+    image: ${APP_IMAGE:-ghcr.io/loukaspiloidis/coffee_three:latest}
     restart: unless-stopped
     depends_on:
       db:

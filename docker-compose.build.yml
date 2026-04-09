@@ -1,0 +1,31 @@
+# Emergency on-VPS build override.
+#
+# Normal deploys pull the image built by GitHub Actions from GHCR. If CI is
+# down, the registry is unreachable, or you need to test a local change on the
+# box, use this file to build the image from the working directory instead.
+#
+# Usage (run from the repo root on the VPS):
+#
+#   docker compose -f docker-compose.yml -f docker-compose.build.yml build
+#   docker compose -f docker-compose.yml -f docker-compose.build.yml up -d
+#
+# The built image is tagged with the same name the main compose file expects,
+# so subsequent `docker compose up -d` (without -f) will keep using it until
+# the next `docker compose pull`.
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT: ${NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT:-}
+    image: ${APP_IMAGE:-ghcr.io/loukaspiloidis/coffee_three:latest}
+    pull_policy: never
+
+  migrate:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT: ${NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT:-}
+    image: ${APP_IMAGE:-ghcr.io/loukaspiloidis/coffee_three:latest}
+    pull_policy: never
