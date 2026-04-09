@@ -115,6 +115,7 @@ export const orders = pgTable(
     paymentMethod: paymentMethod("payment_method").notNull(),
     status: orderStatus("status").notNull().default("received"),
     totalCents: integer("total_cents").notNull(),
+    tipCents: integer("tip_cents").notNull().default(0),
     notes: text("notes"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

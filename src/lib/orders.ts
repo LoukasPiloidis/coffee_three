@@ -23,6 +23,7 @@ export type PlaceOrderInput = {
     notes: string | null;
   };
   paymentMethod: "cash" | "card";
+  tipCents?: number;
   notes: string | null;
 };
 
@@ -95,6 +96,12 @@ export async function placeOrder(
     return { ok: false, error: "minOrder" };
   }
 
+  const tipCents =
+    input.tipCents && Number.isFinite(input.tipCents) && input.tipCents > 0
+      ? Math.round(input.tipCents)
+      : 0;
+  const grandTotalCents = totalCents + tipCents;
+
   const token = randomBytes(16).toString("base64url");
 
   const [order] = await db
@@ -112,7 +119,8 @@ export async function placeOrder(
       type: "delivery",
       paymentMethod: input.paymentMethod,
       status: "received",
-      totalCents,
+      totalCents: grandTotalCents,
+      tipCents,
       notes: input.notes,
     })
     .returning({ id: orders.id });

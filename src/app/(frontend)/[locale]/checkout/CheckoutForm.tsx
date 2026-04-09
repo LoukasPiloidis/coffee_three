@@ -49,7 +49,16 @@ export default function CheckoutForm({
   const [postcode, setPostcode] = useState(savedAddresses[0]?.postcode ?? "");
   const [notes, setNotes] = useState("");
   const [payment, setPayment] = useState<"cash" | "card">("cash");
+  const [tipInput, setTipInput] = useState<string>("");
   const [saveAddress, setSaveAddress] = useState(false);
+
+  const parsedTipCents = (() => {
+    const normalized = tipInput.replace(",", ".").trim();
+    if (!normalized) return 0;
+    const n = Number(normalized);
+    if (!Number.isFinite(n) || n <= 0) return 0;
+    return Math.round(n * 100);
+  })();
 
   function onPickSavedAddress(id: string) {
     setSelectedAddressId(id);
@@ -102,6 +111,7 @@ export default function CheckoutForm({
         notes: null,
       },
       paymentMethod: payment,
+      tipCents: parsedTipCents,
       notes: notes.trim() || null,
     };
 
@@ -260,10 +270,74 @@ export default function CheckoutForm({
             </div>
           </div>
 
+          <div className="tip-box">
+            <div className="tip-box__header">
+              <div>
+                <div className="tip-box__title">{t("tipTitle")}</div>
+                <div className="tip-box__subtitle">{t("tipSubtitle")}</div>
+              </div>
+              <span className="tip-box__badge">{t("tipOptional")}</span>
+            </div>
+            <div className="tip-box__presets">
+              {["1", "2", "5"].map((v) => {
+                const selected = tipInput === v;
+                return (
+                  <button
+                    key={v}
+                    type="button"
+                    className={`btn btn--small ${
+                      selected ? "btn--primary" : "btn--ghost"
+                    }`}
+                    onClick={() => setTipInput(selected ? "" : v)}
+                  >
+                    €{v}
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                className={`btn btn--small ${
+                  tipInput === "" ? "btn--primary" : "btn--ghost"
+                }`}
+                onClick={() => setTipInput("")}
+              >
+                {t("tipNone")}
+              </button>
+            </div>
+            <div className="field" style={{ marginTop: "0.5rem" }}>
+              <label>{t("tipCustom")}</label>
+              <input
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="0.10"
+                placeholder="0.00"
+                value={tipInput}
+                onChange={(e) => setTipInput(e.target.value)}
+              />
+            </div>
+          </div>
+
           <div className="totals">
             <span>{t("title")}</span>
-            <strong>{formatPrice(totalCents / 100, locale)}</strong>
+            <strong>
+              {formatPrice((totalCents + parsedTipCents) / 100, locale)}
+            </strong>
           </div>
+          {parsedTipCents > 0 && (
+            <div
+              style={{
+                fontSize: "0.8rem",
+                color: "var(--text-muted)",
+                marginTop: "-0.5rem",
+                textAlign: "right",
+              }}
+            >
+              {t("tipIncluded", {
+                amount: formatPrice(parsedTipCents / 100, locale),
+              })}
+            </div>
+          )}
 
           {error && <div className="notice notice--error">{error}</div>}
 

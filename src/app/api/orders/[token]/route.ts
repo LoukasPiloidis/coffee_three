@@ -15,6 +15,7 @@ export async function GET(
     status: order.status,
     createdAt: order.createdAt,
     totalCents: order.totalCents,
+    tipCents: order.tipCents,
     paymentMethod: order.paymentMethod,
     items: items.map((i) => ({
       title: i.titleSnapshot,

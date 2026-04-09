@@ -7,6 +7,7 @@ import { formatPrice, type Locale } from "@/lib/menu-types";
 type OrderDTO = {
   status: "received" | "preparing" | "on_its_way" | "completed" | "cancelled";
   totalCents: number;
+  tipCents: number;
   paymentMethod: "cash" | "card";
   items: {
     title: { en: string; el: string };
@@ -173,6 +174,20 @@ export default function OrderStatusView({
             <span>Total</span>
             <strong>{formatPrice(data.totalCents / 100, locale)}</strong>
           </div>
+          {data.tipCents > 0 && (
+            <div
+              style={{
+                fontSize: "0.8rem",
+                color: "var(--text-muted)",
+                marginTop: "-0.5rem",
+                textAlign: "right",
+              }}
+            >
+              {t("tipIncluded", {
+                amount: formatPrice(data.tipCents / 100, locale),
+              })}
+            </div>
+          )}
         </div>
       </div>
     </main>

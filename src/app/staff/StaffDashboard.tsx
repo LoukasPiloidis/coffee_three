@@ -9,6 +9,7 @@ type OrderDTO = {
   status: "received" | "preparing" | "on_its_way" | "completed" | "cancelled";
   createdAt: string;
   totalCents: number;
+  tipCents: number;
   paymentMethod: "cash" | "card";
   guestName: string | null;
   guestPhone: string | null;
@@ -197,6 +198,18 @@ export default function StaffDashboard() {
             >
               <strong style={{ fontFamily: "var(--font-mono)" }}>
                 {formatEuro(o.totalCents)} · {PAYMENT_LABEL[o.paymentMethod]}
+                {o.tipCents > 0 && (
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: "0.7rem",
+                      fontWeight: 500,
+                      color: "var(--color-green-700)",
+                    }}
+                  >
+                    + {formatEuro(o.tipCents)} φιλοδώρημα
+                  </span>
+                )}
               </strong>
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 {!isTerminal(o.status) && (

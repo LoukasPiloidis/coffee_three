@@ -30,6 +30,7 @@ export async function GET() {
       status: o.status,
       createdAt: o.createdAt,
       totalCents: o.totalCents,
+      tipCents: o.tipCents,
       paymentMethod: o.paymentMethod,
       guestName: o.guestName,
       guestPhone: o.guestPhone,

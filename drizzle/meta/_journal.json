@@ -15,6 +15,13 @@
       "when": 1775731331191,
       "tag": "0001_little_mister_sinister",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775738267803,
+      "tag": "0002_ambiguous_ares",
+      "breakpoints": true
     }
   ]
 }
