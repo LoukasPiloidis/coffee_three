@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 import { formatPrice, type Locale } from "@/lib/menu-types";
 
 type OrderDTO = {
@@ -13,7 +13,10 @@ type OrderDTO = {
     title: { en: string; el: string };
     quantity: number;
     unitPriceCents: number;
-    options: { groupName: { en: string; el: string }; optionName: { en: string; el: string } }[];
+    options: {
+      groupName: { en: string; el: string };
+      optionName: { en: string; el: string };
+    }[];
     comment: string | null;
   }[];
 };
@@ -108,45 +111,46 @@ export default function OrderStatusView({
           </div>
         )}
 
-        {!isCancelled && (() => {
-          const visible: { step: OrderDTO["status"]; active: boolean }[] = [
-            { step: STEPS[activeIdx], active: true },
-          ];
-          const next = STEPS[activeIdx + 1];
-          if (next) visible.push({ step: next, active: false });
-          return (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: `repeat(${visible.length}, 1fr)`,
-                gap: "0.5rem",
-              }}
-            >
-              {visible.map(({ step, active }) => (
-                <div
-                  key={step}
-                  style={{
-                    padding: "0.5rem",
-                    borderRadius: "var(--radius-md)",
-                    background: active
-                      ? "var(--color-green-800)"
-                      : "var(--color-cream-100)",
-                    color: active
-                      ? "var(--color-cream-50)"
-                      : "var(--color-muted)",
-                    textAlign: "center",
-                    fontSize: "0.75rem",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    fontWeight: 600,
-                  }}
-                >
-                  {t(DISPLAY_KEY[step])}
-                </div>
-              ))}
-            </div>
-          );
-        })()}
+        {!isCancelled &&
+          (() => {
+            const visible: { step: OrderDTO["status"]; active: boolean }[] = [
+              { step: STEPS[activeIdx], active: true },
+            ];
+            const next = STEPS[activeIdx + 1];
+            if (next) visible.push({ step: next, active: false });
+            return (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${visible.length}, 1fr)`,
+                  gap: "0.5rem",
+                }}
+              >
+                {visible.map(({ step, active }) => (
+                  <div
+                    key={step}
+                    style={{
+                      padding: "0.5rem",
+                      borderRadius: "var(--radius-md)",
+                      background: active
+                        ? "var(--color-green-800)"
+                        : "var(--color-cream-100)",
+                      color: active
+                        ? "var(--color-cream-50)"
+                        : "var(--color-muted)",
+                      textAlign: "center",
+                      fontSize: "0.75rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {t(DISPLAY_KEY[step])}
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
 
         <div className="card">
           {data.items.map((it, i) => (

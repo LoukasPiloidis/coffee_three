@@ -1,10 +1,10 @@
 "use server";
 
-import { auth } from "@/auth";
+import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
-import { and, eq } from "drizzle-orm";
+import { auth } from "@/auth";
 import { db } from "@/db";
 import { addresses, user } from "@/db/schema";
 import { getSession } from "@/lib/session";
@@ -53,11 +53,12 @@ export type UpdateAccountInput = {
   phone: string;
 };
 
-export async function updateAccountAction(
-  input: UpdateAccountInput
-): Promise<
+export async function updateAccountAction(input: UpdateAccountInput): Promise<
   | { ok: true }
-  | { ok: false; error: "unauthenticated" | "invalidEmail" | "emailTaken" | "generic" }
+  | {
+      ok: false;
+      error: "unauthenticated" | "invalidEmail" | "emailTaken" | "generic";
+    }
 > {
   const session = await getSession();
   if (!session?.user?.id) return { ok: false, error: "unauthenticated" };

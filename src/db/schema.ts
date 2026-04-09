@@ -1,16 +1,16 @@
+import { sql } from "drizzle-orm";
 import {
-  pgTable,
-  text,
+  boolean,
+  check,
   integer,
+  jsonb,
+  pgEnum,
+  pgTable,
+  primaryKey,
+  text,
   timestamp,
   uuid,
-  jsonb,
-  boolean,
-  pgEnum,
-  check,
-  primaryKey,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
 
 export const orderStatus = pgEnum("order_status", [
   "received",
@@ -37,16 +37,24 @@ export const user = pgTable("user", {
   image: text("image"),
   role: text("role").notNull().default("customer"), // 'customer' | 'staff'
   phone: text("phone"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 export const session = pgTable("session", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   token: text("token").notNull().unique(),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
   userId: text("user_id")
@@ -64,12 +72,20 @@ export const account = pgTable("account", {
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
-  accessTokenExpiresAt: timestamp("access_token_expires_at", { withTimezone: true }),
-  refreshTokenExpiresAt: timestamp("refresh_token_expires_at", { withTimezone: true }),
+  accessTokenExpiresAt: timestamp("access_token_expires_at", {
+    withTimezone: true,
+  }),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
+    withTimezone: true,
+  }),
   scope: text("scope"),
   password: text("password"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 export const verification = pgTable("verification", {
@@ -77,8 +93,12 @@ export const verification = pgTable("verification", {
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 // ─────────────────────────────────────────────────────────────────────
@@ -95,7 +115,9 @@ export const addresses = pgTable("addresses", {
   city: text("city").notNull(),
   postcode: text("postcode").notNull(),
   notes: text("notes"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 export const orders = pgTable(
@@ -117,8 +139,12 @@ export const orders = pgTable(
     totalCents: integer("total_cents").notNull(),
     tipCents: integer("tip_cents").notNull().default(0),
     notes: text("notes"),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
   },
   (t) => [
     // Guest orders must carry either email or phone
@@ -163,9 +189,7 @@ export const optionOverrides = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [
-    primaryKey({ columns: [t.itemSlug, t.groupKey, t.optionKey] }),
-  ]
+  (t) => [primaryKey({ columns: [t.itemSlug, t.groupKey, t.optionKey] })]
 );
 
 export const orderItems = pgTable("order_items", {

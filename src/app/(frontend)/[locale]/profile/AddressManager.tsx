@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { useState, useTransition } from "react";
 import { addAddressAction, deleteAddressAction } from "./actions";
 
 type Address = {
@@ -100,9 +100,7 @@ export default function AddressManager({
           >
             <div>
               <div style={{ fontWeight: 600 }}>{a.label ?? a.street}</div>
-              <div
-                style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}
-              >
+              <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
                 {a.street}, {a.city} {a.postcode}
               </div>
               {a.notes && (

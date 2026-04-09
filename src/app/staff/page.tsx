@@ -1,14 +1,13 @@
+import Link from "next/link";
+import { getSession } from "@/lib/session";
+import { isDevStaffBypassActive } from "@/lib/staff-auth";
+import { staffSignOutAction } from "./actions";
 import StaffDashboard from "./StaffDashboard";
 import StaffSignInForm from "./StaffSignInForm";
-import { staffSignOutAction } from "./actions";
-import { isDevStaffBypassActive } from "@/lib/staff-auth";
-import { getSession } from "@/lib/session";
-import Link from "next/link";
 
 export default async function StaffPage() {
   const devBypass = isDevStaffBypassActive();
   const session = devBypass ? null : await getSession();
-
 
   if (!devBypass && !session?.user) {
     return (
@@ -56,7 +55,9 @@ export default async function StaffPage() {
             </Link>
             {!devBypass && (
               <form action={staffSignOutAction}>
-                <button className="btn btn--ghost btn--small">Αποσύνδεση</button>
+                <button className="btn btn--ghost btn--small">
+                  Αποσύνδεση
+                </button>
               </form>
             )}
           </div>

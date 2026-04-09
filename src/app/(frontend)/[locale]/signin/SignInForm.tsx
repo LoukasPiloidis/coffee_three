@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { signIn } from "@/lib/auth-client";
+import { useState } from "react";
 import { Link } from "@/i18n/navigation";
+import { signIn } from "@/lib/auth-client";
 
 export default function SignInForm() {
   const t = useTranslations("auth");
@@ -54,8 +54,7 @@ export default function SignInForm() {
         {pending ? t("submitting") : t("submit")}
       </button>
       <p style={{ textAlign: "center", fontSize: "0.9rem" }}>
-        {t("noAccount")}{" "}
-        <Link href="/signup">{tCommon("signUp")}</Link>
+        {t("noAccount")} <Link href="/signup">{tCommon("signUp")}</Link>
       </p>
     </form>
   );

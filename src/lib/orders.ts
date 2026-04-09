@@ -3,10 +3,10 @@
 import { randomBytes } from "crypto";
 import { and, desc, eq, inArray, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { orders, orderItems } from "@/db/schema";
-import { getItem, getSettings } from "./menu";
-import { isWithinDeliveryHours } from "./hours";
+import { orderItems, orders } from "@/db/schema";
 import type { CartLine } from "./cart";
+import { isWithinDeliveryHours } from "./hours";
+import { getItem, getSettings } from "./menu";
 
 export type PlaceOrderInput = {
   lines: CartLine[];
@@ -122,7 +122,7 @@ export async function placeOrder(
     .values({
       publicToken: token,
       userId: input.contact.userId ?? null,
-      guestName:  input.contact.name,
+      guestName: input.contact.name,
       guestEmail: input.contact.email,
       guestPhone: input.contact.phone,
       deliveryStreet: input.delivery.street,

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import type { MenuCategory } from "@/lib/menu-types";
 import {
   setItemAvailabilityAction,
@@ -128,9 +128,13 @@ export default function ProductsList({
                         type="checkbox"
                         checked={item.available}
                         disabled={isPending}
-                        onChange={(e) => toggleItem(item.slug, e.target.checked)}
+                        onChange={(e) =>
+                          toggleItem(item.slug, e.target.checked)
+                        }
                       />
-                      <span>{item.available ? "Διαθέσιμο" : "Μη διαθέσιμο"}</span>
+                      <span>
+                        {item.available ? "Διαθέσιμο" : "Μη διαθέσιμο"}
+                      </span>
                       {itemSaving && (
                         <span
                           style={{

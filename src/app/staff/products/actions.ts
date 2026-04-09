@@ -59,4 +59,3 @@ export async function setOptionAvailabilityAction(
   // on their next refresh.
   revalidateTag(KEYSTATIC_CACHE_TAG, { expire: 0 });
 }
-

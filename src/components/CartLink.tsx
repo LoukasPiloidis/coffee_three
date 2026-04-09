@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { useCart, cartItemCount } from "@/lib/cart";
+import { cartItemCount, useCart } from "@/lib/cart";
 
 export default function CartLink() {
   const t = useTranslations("common");
@@ -10,11 +10,7 @@ export default function CartLink() {
   const count = cartItemCount(cart);
 
   return (
-    <Link
-      href="/cart"
-      className="site-header__icon-btn"
-      aria-label={t("cart")}
-    >
+    <Link href="/cart" className="site-header__icon-btn" aria-label={t("cart")}>
       <svg
         width="22"
         height="22"

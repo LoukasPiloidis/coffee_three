@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { getItem, formatPrice, type Locale } from "@/lib/menu";
+import { formatPrice, getItem, type Locale } from "@/lib/menu";
 import ItemForm from "./ItemForm";
 
 export default async function ItemPage({
@@ -20,12 +20,22 @@ export default async function ItemPage({
   return (
     <main className="page">
       <div className="container">
-        <Link href="/" className="btn btn--ghost btn--small" style={{ marginBottom: "1rem" }}>
+        <Link
+          href="/"
+          className="btn btn--ghost btn--small"
+          style={{ marginBottom: "1rem" }}
+        >
           ← {t("back")}
         </Link>
-        
+
         {item.image && (
-          <div style={{ borderRadius: "var(--radius-lg)", overflow: "hidden", marginBottom: "1rem" }}>
+          <div
+            style={{
+              borderRadius: "var(--radius-lg)",
+              overflow: "hidden",
+              marginBottom: "1rem",
+            }}
+          >
             <Image
               src={item.image}
               alt={item.title[loc]}

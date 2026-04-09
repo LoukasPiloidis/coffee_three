@@ -18,9 +18,7 @@ await sql`CREATE TABLE IF NOT EXISTS _migrations (
 )`;
 
 const dir = path.resolve("drizzle");
-const files = (await readdir(dir))
-  .filter((f) => f.endsWith(".sql"))
-  .sort();
+const files = (await readdir(dir)).filter((f) => f.endsWith(".sql")).sort();
 
 for (const file of files) {
   const [{ exists } = { exists: false }] = await sql`

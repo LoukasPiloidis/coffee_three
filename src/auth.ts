@@ -36,10 +36,7 @@ export const auth = betterAuth({
         after: async (createdUser) => {
           // Promote configured staff email to staff role on creation.
           const staffEmail = process.env.STAFF_EMAIL?.toLowerCase();
-          if (
-            staffEmail &&
-            createdUser.email?.toLowerCase() === staffEmail
-          ) {
+          if (staffEmail && createdUser.email?.toLowerCase() === staffEmail) {
             await db
               .update(user)
               .set({ role: "staff" })

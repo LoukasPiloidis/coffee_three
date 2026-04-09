@@ -9,7 +9,6 @@ if (!connectionString) {
 
 // Keep a single pool across hot reloads in dev
 declare global {
-   
   var __pgClient: ReturnType<typeof postgres> | undefined;
 }
 

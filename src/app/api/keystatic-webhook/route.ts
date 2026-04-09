@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { revalidateTag } from "next/cache";
+import { NextResponse } from "next/server";
 import { KEYSTATIC_CACHE_TAG } from "@/lib/menu";
 
 // POST /api/keystatic-webhook
@@ -27,9 +27,7 @@ function verifySignature(
   secret: string
 ): boolean {
   if (!signatureHeader?.startsWith("sha256=")) return false;
-  const expected = createHmac("sha256", secret)
-    .update(rawBody)
-    .digest("hex");
+  const expected = createHmac("sha256", secret).update(rawBody).digest("hex");
   const received = signatureHeader.slice("sha256=".length);
   const expectedBuf = Buffer.from(expected, "hex");
   const receivedBuf = Buffer.from(received, "hex");

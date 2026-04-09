@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { cartStore, type CartLineOption } from "@/lib/cart";
-import type { MenuItem, Locale } from "@/lib/menu-types";
+import { type CartLineOption, cartStore } from "@/lib/cart";
+import type { Locale, MenuItem } from "@/lib/menu-types";
 
 type Selections = Record<string, string[]>; // groupIndex → selected option indices as strings
 
-export default function ItemForm({ item, locale }: { item: MenuItem; locale: Locale }) {
+export default function ItemForm({
+  item,
+  locale,
+}: {
+  item: MenuItem;
+  locale: Locale;
+}) {
   const t = useTranslations("item");
   const tCommon = useTranslations("common");
   const router = useRouter();
@@ -17,7 +23,11 @@ export default function ItemForm({ item, locale }: { item: MenuItem; locale: Loc
   const [selections, setSelections] = useState<Selections>({});
   const [error, setError] = useState<string | null>(null);
 
-  const toggle = (groupIdx: number, optIdx: string, mode: "single" | "multi") => {
+  const toggle = (
+    groupIdx: number,
+    optIdx: string,
+    mode: "single" | "multi"
+  ) => {
     setSelections((prev) => {
       const cur = prev[groupIdx] ?? [];
       if (mode === "single") return { ...prev, [groupIdx]: [optIdx] };
@@ -104,7 +114,10 @@ export default function ItemForm({ item, locale }: { item: MenuItem; locale: Loc
               })}
             </div>
             {g.required && !hasAnyAvailable && (
-              <div className="notice notice--error" style={{ marginTop: "0.5rem" }}>
+              <div
+                className="notice notice--error"
+                style={{ marginTop: "0.5rem" }}
+              >
                 {t("allOptionsUnavailable")}
               </div>
             )}
@@ -124,7 +137,10 @@ export default function ItemForm({ item, locale }: { item: MenuItem; locale: Loc
       <div className="field">
         <label>{t("quantity")}</label>
         <div className="qty" style={{ alignSelf: "flex-start" }}>
-          <button type="button" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+          >
             −
           </button>
           <span className="qty__value">{quantity}</span>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { useState, useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { cartStore, cartTotalCents, useCart } from "@/lib/cart";
 import { formatPrice, type Locale } from "@/lib/menu-types";
@@ -126,8 +126,10 @@ export default function CheckoutForm({
         cartStore.clear();
         router.push(`/order/${result.token}`);
       } else {
-        if (result.error === "contactRequired") setError(tErr("contactRequired"));
-        else if (result.error === "phoneRequired") setError(tErr("phoneRequired"));
+        if (result.error === "contactRequired")
+          setError(tErr("contactRequired"));
+        else if (result.error === "phoneRequired")
+          setError(tErr("phoneRequired"));
         else if (result.error === "closed") setError(tErr("closed"));
         else if (result.error === "minOrder") setError(tErr("minOrder"));
         else if (result.error === "outOfArea") setError(tErr("outOfArea"));
@@ -232,7 +234,10 @@ export default function CheckoutForm({
 
           <div className="field">
             <label>{t("notes")}</label>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
           </div>
 
           {loggedInEmail && selectedAddressId === "" && (

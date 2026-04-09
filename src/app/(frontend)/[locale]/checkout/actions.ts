@@ -1,9 +1,13 @@
 "use server";
 
-import { getSession } from "@/lib/session";
 import { db } from "@/db";
 import { addresses } from "@/db/schema";
-import { placeOrder, type PlaceOrderInput, type PlaceOrderResult } from "@/lib/orders";
+import {
+  type PlaceOrderInput,
+  type PlaceOrderResult,
+  placeOrder,
+} from "@/lib/orders";
+import { getSession } from "@/lib/session";
 
 export async function submitOrderAction(
   input: PlaceOrderInput,
@@ -11,7 +15,6 @@ export async function submitOrderAction(
 ): Promise<PlaceOrderResult> {
   const session = await getSession();
   input.contact.userId = session?.user.id ?? null;
-  
 
   const result = await placeOrder(input);
 

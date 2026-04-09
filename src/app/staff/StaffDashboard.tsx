@@ -20,7 +20,10 @@ type OrderDTO = {
   items: {
     title: { en: string; el: string };
     quantity: number;
-    options: { groupName: { en: string; el: string }; optionName: { en: string; el: string } }[];
+    options: {
+      groupName: { en: string; el: string };
+      optionName: { en: string; el: string };
+    }[];
     comment: string | null;
   }[];
 };
@@ -167,18 +170,33 @@ export default function StaffDashboard() {
               }}
             >
               <div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                <div
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.8rem",
+                    color: "var(--text-muted)",
+                  }}
+                >
                   #{o.publicToken.slice(0, 6)} ·{" "}
                   {new Date(o.createdAt).toLocaleTimeString("el-GR")}
                 </div>
                 <div style={{ fontWeight: 600, marginTop: "0.2rem" }}>
                   {o.guestName ?? "—"} · {o.guestPhone ?? "χωρίς τηλέφωνο"}
                 </div>
-                <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                <div
+                  style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}
+                >
                   {o.deliveryStreet}, {o.deliveryCity} {o.deliveryPostcode}
                 </div>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.3rem" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-end",
+                  gap: "0.3rem",
+                }}
+              >
                 <span className={`status-pill status-pill--${o.status}`}>
                   {STATUS_LABEL[o.status]}
                 </span>
@@ -227,7 +245,16 @@ export default function StaffDashboard() {
                   whiteSpace: "pre-wrap",
                 }}
               >
-                <strong style={{ display: "block", fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "0.2rem" }}>
+                <strong
+                  style={{
+                    display: "block",
+                    fontSize: "0.7rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    color: "var(--text-muted)",
+                    marginBottom: "0.2rem",
+                  }}
+                >
                   Σημειώσεις
                 </strong>
                 {o.notes}

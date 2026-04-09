@@ -1,10 +1,14 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { useParams } from "next/navigation";
 
-export default function LocaleSwitcher({ currentLocale }: { currentLocale: string }) {
+export default function LocaleSwitcher({
+  currentLocale,
+}: {
+  currentLocale: string;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();

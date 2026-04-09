@@ -1,15 +1,15 @@
-import { getSession } from "@/lib/session";
-import { signOutAction } from "./actions";
+import { desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { db } from "@/db";
 import { addresses, orderItems, orders, user } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
 import { Link } from "@/i18n/navigation";
 import { formatPrice, type Locale } from "@/lib/menu";
-import ReorderButton from "./ReorderButton";
-import AddressManager from "./AddressManager";
+import { getSession } from "@/lib/session";
 import AccountDetails from "./AccountDetails";
+import AddressManager from "./AddressManager";
+import { signOutAction } from "./actions";
+import ReorderButton from "./ReorderButton";
 
 export default async function ProfilePage({
   params,
@@ -49,9 +49,7 @@ export default async function ProfilePage({
   // Fetch items for all recent orders in one query
   const orderIds = recent.map((o) => o.id);
   const recentItems =
-    orderIds.length > 0
-      ? await db.select().from(orderItems)
-      : [];
+    orderIds.length > 0 ? await db.select().from(orderItems) : [];
   const itemsByOrder = new Map<string, typeof recentItems>();
   for (const it of recentItems) {
     if (!orderIds.includes(it.orderId)) continue;
@@ -135,7 +133,10 @@ export default async function ProfilePage({
                       </div>
                     </div>
                     <div
-                      style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}
+                      style={{
+                        fontSize: "0.85rem",
+                        color: "var(--text-muted)",
+                      }}
                     >
                       {items
                         .map(

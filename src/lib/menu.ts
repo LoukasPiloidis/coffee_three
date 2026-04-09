@@ -5,11 +5,7 @@ import { unstable_cache } from "next/cache";
 import { db } from "@/db";
 import { itemOverrides, optionOverrides } from "@/db/schema";
 import keystaticConfig from "../../keystatic.config";
-import type {
-  MenuCategory,
-  MenuItem,
-  ShopSettings,
-} from "./menu-types";
+import type { MenuCategory, MenuItem, ShopSettings } from "./menu-types";
 
 export type {
   Locale,
@@ -97,7 +93,11 @@ type RawItem = {
   }[];
 };
 
-function mapItem(slug: string, entry: RawItem, overrides: OverrideMaps): MenuItem {
+function mapItem(
+  slug: string,
+  entry: RawItem,
+  overrides: OverrideMaps
+): MenuItem {
   const itemOverride = overrides.items.get(slug);
   return {
     slug,

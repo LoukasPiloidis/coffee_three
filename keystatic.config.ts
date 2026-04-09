@@ -8,8 +8,14 @@ const cloudProject = process.env.NEXT_PUBLIC_KEYSTATIC_CLOUD_PROJECT;
 // Helper: a bilingual short string field
 const bilingualText = (labelEn: string) =>
   fields.object({
-    en: fields.text({ label: `${labelEn} (EN)`, validation: { length: { min: 1 } } }),
-    el: fields.text({ label: `${labelEn} (EL)`, validation: { length: { min: 1 } } }),
+    en: fields.text({
+      label: `${labelEn} (EN)`,
+      validation: { length: { min: 1 } },
+    }),
+    el: fields.text({
+      label: `${labelEn} (EL)`,
+      validation: { length: { min: 1 } },
+    }),
   });
 
 const bilingualTextOptional = (labelEn: string) =>
@@ -69,7 +75,7 @@ export default config({
           directory: "public/menu-images",
           publicPath: "/menu-images/",
         }),
-   
+
         displayOrder: fields.integer({
           label: "Display order within category",
           defaultValue: 0,
@@ -114,7 +120,8 @@ export default config({
               }),
               {
                 label: "Options",
-                itemLabel: (props) => props.fields.name.fields.en.value || "Option",
+                itemLabel: (props) =>
+                  props.fields.name.fields.en.value || "Option",
               }
             ),
           }),
@@ -142,7 +149,9 @@ export default config({
           itemLabel: (props) => props.value,
         }),
         deliveryHours: fields.object({
-          mon: fields.text({ label: "Monday (e.g. 09:00-22:00, empty = closed)" }),
+          mon: fields.text({
+            label: "Monday (e.g. 09:00-22:00, empty = closed)",
+          }),
           tue: fields.text({ label: "Tuesday" }),
           wed: fields.text({ label: "Wednesday" }),
           thu: fields.text({ label: "Thursday" }),
