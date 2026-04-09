@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 
 export type CartLineOption = {
   groupKey: string;
@@ -40,8 +40,23 @@ function readCart(): Cart {
 
 type Listener = () => void;
 const listeners = new Set<Listener>();
-let snapshot: Cart = typeof window === "undefined" ? { lines: [] } : readCart();
+// Start empty on both server and client so the first client render matches
+// SSR. Actual localStorage data is pulled in via `hydrate()` the first time
+// a component subscribes (i.e. after mount), which then notifies listeners
+// to re-render with the real cart.
+let snapshot: Cart = { lines: [] };
 const serverSnapshot: Cart = { lines: [] };
+let hydrated = false;
+
+function hydrate() {
+  if (hydrated || typeof window === "undefined") return;
+  hydrated = true;
+  const fromStorage = readCart();
+  if (fromStorage.lines.length > 0) {
+    snapshot = fromStorage;
+    listeners.forEach((l) => l());
+  }
+}
 
 function persist(next: Cart) {
   snapshot = next;
@@ -68,6 +83,7 @@ if (typeof window !== "undefined") {
 export const cartStore = {
   subscribe(listener: Listener) {
     listeners.add(listener);
+    hydrate();
     return () => listeners.delete(listener);
   },
   getSnapshot(): Cart {
@@ -102,15 +118,11 @@ export const cartStore = {
 };
 
 export function useCart(): Cart {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const cart = useSyncExternalStore(
+  return useSyncExternalStore(
     cartStore.subscribe,
     cartStore.getSnapshot,
     cartStore.getServerSnapshot
   );
-  // Avoid hydration mismatch — render empty on server & first client render
-  return mounted ? cart : serverSnapshot;
 }
 
 export function cartTotalCents(cart: Cart): number {

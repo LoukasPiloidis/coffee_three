@@ -63,6 +63,13 @@ function formatEuro(cents: number) {
   }).format(cents / 100);
 }
 
+async function fetchStaffOrders(): Promise<OrderDTO[] | null> {
+  const res = await fetch("/api/staff/orders", { cache: "no-store" });
+  if (!res.ok) return null;
+  const json = (await res.json()) as { orders: OrderDTO[] };
+  return json.orders;
+}
+
 const ALL_STATUSES: OrderDTO["status"][] = [
   "received",
   "preparing",
@@ -85,17 +92,18 @@ export default function StaffDashboard() {
     );
   };
 
-  const fetchOrders = async () => {
-    const res = await fetch("/api/staff/orders", { cache: "no-store" });
-    if (!res.ok) return;
-    const json = (await res.json()) as { orders: OrderDTO[] };
-    setOrders(json.orders);
-  };
-
   useEffect(() => {
-    fetchOrders();
-    const id = setInterval(fetchOrders, 6000);
-    return () => clearInterval(id);
+    let cancelled = false;
+    const load = async () => {
+      const data = await fetchStaffOrders();
+      if (!cancelled && data) setOrders(data);
+    };
+    load();
+    const id = setInterval(load, 6000);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
   }, []);
 
   const isTerminal = (s: OrderDTO["status"]) =>
@@ -105,7 +113,8 @@ export default function StaffDashboard() {
   const transition = (id: string, status: OrderDTO["status"]) => {
     startTransition(async () => {
       await updateStatusAction(id, status);
-      fetchOrders();
+      const data = await fetchStaffOrders();
+      if (data) setOrders(data);
     });
   };
 
