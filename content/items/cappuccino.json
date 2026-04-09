@@ -22,21 +22,28 @@
           "name": {
             "en": "No sugar",
             "el": "Σκέτος"
-          }
+          },
+          "key": "no-sugar",
+          "available": true
         },
         {
           "name": {
             "en": "Some sugar",
             "el": "Μέτριος"
-          }
+          },
+          "key": "some-sugar",
+          "available": true
         },
         {
           "name": {
             "en": "A lot of sugar",
             "el": "Γλυκός"
-          }
+          },
+          "key": "a-lot-of-sugar",
+          "available": true
         }
-      ]
+      ],
+      "key": "sugar"
     }
   ]
 }

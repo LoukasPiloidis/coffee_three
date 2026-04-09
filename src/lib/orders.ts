@@ -67,6 +67,18 @@ export async function placeOrder(
   for (const line of input.lines) {
     const item = await getItem(line.slug);
     if (!item || !item.available) return { ok: false, error: "unavailable" };
+
+    // Re-validate every selected option. Staff can toggle options off
+    // between "add to cart" and checkout, so we must not trust the
+    // client-side cart snapshot.
+    for (const selected of line.options) {
+      const group = item.optionGroups.find((g) => g.key === selected.groupKey);
+      const option = group?.options.find((o) => o.key === selected.optionKey);
+      if (!option || !option.available) {
+        return { ok: false, error: "unavailable" };
+      }
+    }
+
     const unitPriceCents = Math.round(item.price * 100);
     totalCents += unitPriceCents * line.quantity;
     resolved.push({

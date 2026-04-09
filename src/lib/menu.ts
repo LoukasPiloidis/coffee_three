@@ -2,6 +2,8 @@ import "server-only";
 import { createReader } from "@keystatic/core/reader";
 import { createGitHubReader } from "@keystatic/core/reader/github";
 import { unstable_cache } from "next/cache";
+import { db } from "@/db";
+import { itemOverrides, optionOverrides } from "@/db/schema";
 import keystaticConfig from "../../keystatic.config";
 import type {
   MenuCategory,
@@ -48,28 +50,91 @@ const reader = githubRepo
 
 const useRemoteCache = Boolean(githubRepo);
 
-async function readMenu(): Promise<MenuCategory[]> {
-  const [categoryEntries, itemEntries] = await Promise.all([
-    reader.collections.categories.all(),
-    reader.collections.items.all(),
-  ]);
+// Load all availability overrides in one go. Rows only exist when staff
+// have actively flipped something — absent row = fall back to Keystatic.
+type OverrideMaps = {
+  items: Map<string, boolean>;
+  options: Map<string, boolean>; // key: `${slug}\x1f${groupKey}\x1f${optionKey}`
+};
 
-  const items: MenuItem[] = itemEntries.map((e) => ({
-    slug: e.slug,
-    title: e.entry.title,
-    description: e.entry.description,
-    category: e.entry.category ?? "",
-    price: e.entry.price,
-    image: e.entry.image,
-    available: e.entry.available,
-    displayOrder: e.entry.displayOrder ?? 0,
-    optionGroups: (e.entry.optionGroups ?? []).map((g) => ({
+const OPTION_KEY_SEP = "\x1f";
+const optionMapKey = (slug: string, groupKey: string, optionKey: string) =>
+  `${slug}${OPTION_KEY_SEP}${groupKey}${OPTION_KEY_SEP}${optionKey}`;
+
+async function loadOverrides(): Promise<OverrideMaps> {
+  const [itemRows, optionRows] = await Promise.all([
+    db.select().from(itemOverrides),
+    db.select().from(optionOverrides),
+  ]);
+  const items = new Map<string, boolean>();
+  for (const r of itemRows) items.set(r.slug, r.available);
+  const options = new Map<string, boolean>();
+  for (const r of optionRows) {
+    options.set(optionMapKey(r.itemSlug, r.groupKey, r.optionKey), r.available);
+  }
+  return { items, options };
+}
+
+type RawItem = {
+  slug: string;
+  title: { en: string; el: string };
+  description: { en: string; el: string };
+  category: string | null;
+  price: number;
+  image: string | null;
+  available: boolean;
+  displayOrder: number | null;
+  optionGroups: readonly {
+    key: string;
+    name: { en: string; el: string };
+    selectionType: "single" | "multi";
+    required: boolean;
+    options: readonly {
+      key: string;
+      name: { en: string; el: string };
+      available: boolean;
+    }[];
+  }[];
+};
+
+function mapItem(slug: string, entry: RawItem, overrides: OverrideMaps): MenuItem {
+  const itemOverride = overrides.items.get(slug);
+  return {
+    slug,
+    title: entry.title,
+    description: entry.description,
+    category: entry.category ?? "",
+    price: entry.price,
+    image: entry.image,
+    available: itemOverride ?? entry.available,
+    displayOrder: entry.displayOrder ?? 0,
+    optionGroups: (entry.optionGroups ?? []).map((g) => ({
+      key: g.key,
       name: g.name,
       selectionType: g.selectionType,
       required: g.required,
-      options: (g.options ?? []).map((o) => ({ name: o.name })),
+      options: (g.options ?? []).map((o) => {
+        const ovr = overrides.options.get(optionMapKey(slug, g.key, o.key));
+        return {
+          key: o.key,
+          name: o.name,
+          available: ovr ?? o.available,
+        };
+      }),
     })),
-  }));
+  };
+}
+
+async function readMenu(): Promise<MenuCategory[]> {
+  const [categoryEntries, itemEntries, overrides] = await Promise.all([
+    reader.collections.categories.all(),
+    reader.collections.items.all(),
+    loadOverrides(),
+  ]);
+
+  const items: MenuItem[] = itemEntries.map((e) =>
+    mapItem(e.slug, e.entry as RawItem, overrides)
+  );
 
   const categories: MenuCategory[] = categoryEntries
     .map((c) => ({
@@ -86,24 +151,12 @@ async function readMenu(): Promise<MenuCategory[]> {
 }
 
 async function readItem(slug: string): Promise<MenuItem | null> {
-  const entry = await reader.collections.items.read(slug);
+  const [entry, overrides] = await Promise.all([
+    reader.collections.items.read(slug),
+    loadOverrides(),
+  ]);
   if (!entry) return null;
-  return {
-    slug,
-    title: entry.title,
-    description: entry.description,
-    category: entry.category ?? "",
-    price: entry.price,
-    image: entry.image,
-    available: entry.available,
-    displayOrder: entry.displayOrder ?? 0,
-    optionGroups: (entry.optionGroups ?? []).map((g) => ({
-      name: g.name,
-      selectionType: g.selectionType,
-      required: g.required,
-      options: (g.options ?? []).map((o) => ({ name: o.name })),
-    })),
-  };
+  return mapItem(slug, entry as RawItem, overrides);
 }
 
 async function readSettings(): Promise<ShopSettings> {

@@ -8,6 +8,7 @@ import {
   boolean,
   pgEnum,
   check,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -124,6 +125,45 @@ export const orders = pgTable(
       "guest_contact_required",
       sql`${t.userId} IS NOT NULL OR ${t.guestEmail} IS NOT NULL OR ${t.guestPhone} IS NOT NULL`
     ),
+  ]
+);
+
+// ─────────────────────────────────────────────────────────────────────
+// Availability overrides
+//
+// The menu itself lives in Keystatic (git-tracked JSON). Editorial state
+// (titles, prices, descriptions) belongs there. But availability is
+// *operational* state — staff flip it dozens of times a day — and we don't
+// want every toggle to become a git commit. So availability is stored in
+// these two tables and applied over the Keystatic data when the menu is
+// read in `src/lib/menu.ts`.
+//
+// Rows only exist when staff have actively overridden the default. Absent
+// row ⇒ fall back to the Keystatic value (`item.available` or
+// `option.available`, both defaulting to true).
+// ─────────────────────────────────────────────────────────────────────
+
+export const itemOverrides = pgTable("item_overrides", {
+  slug: text("slug").primaryKey(),
+  available: boolean("available").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export const optionOverrides = pgTable(
+  "option_overrides",
+  {
+    itemSlug: text("item_slug").notNull(),
+    groupKey: text("group_key").notNull(),
+    optionKey: text("option_key").notNull(),
+    available: boolean("available").notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.itemSlug, t.groupKey, t.optionKey] }),
   ]
 );
 

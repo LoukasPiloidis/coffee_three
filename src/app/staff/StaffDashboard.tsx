@@ -34,15 +34,28 @@ const NEXT_STATUS: Record<OrderDTO["status"], OrderDTO["status"] | null> = {
   cancelled: null,
 };
 const NEXT_LABEL: Record<OrderDTO["status"], string> = {
-  received: "Start preparing",
-  preparing: "Mark completed",
+  received: "Έναρξη ετοιμασίας",
+  preparing: "Ολοκλήρωση",
   on_its_way: "",
   completed: "",
   cancelled: "",
 };
 
+const STATUS_LABEL: Record<OrderDTO["status"], string> = {
+  received: "Ελήφθη",
+  preparing: "Ετοιμάζεται",
+  on_its_way: "Καθ' οδόν",
+  completed: "Ολοκληρώθηκε",
+  cancelled: "Ακυρώθηκε",
+};
+
+const PAYMENT_LABEL: Record<OrderDTO["paymentMethod"], string> = {
+  cash: "Μετρητά",
+  card: "Κάρτα",
+};
+
 function formatEuro(cents: number) {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("el-GR", {
     style: "currency",
     currency: "EUR",
   }).format(cents / 100);
@@ -80,7 +93,7 @@ export default function StaffDashboard() {
   };
 
   if (visible.length === 0) {
-    return <p className="empty">No active orders.</p>;
+    return <p className="empty">Δεν υπάρχουν ενεργές παραγγελίες.</p>;
   }
 
   return (
@@ -91,7 +104,7 @@ export default function StaffDashboard() {
           checked={showHistory}
           onChange={(e) => setShowHistory(e.target.checked)}
         />{" "}
-        Show completed/cancelled
+        Εμφάνιση ολοκληρωμένων/ακυρωμένων
       </label>
 
       {visible.map((o) => {
@@ -110,10 +123,10 @@ export default function StaffDashboard() {
               <div>
                 <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", color: "var(--text-muted)" }}>
                   #{o.publicToken.slice(0, 6)} ·{" "}
-                  {new Date(o.createdAt).toLocaleTimeString()}
+                  {new Date(o.createdAt).toLocaleTimeString("el-GR")}
                 </div>
                 <div style={{ fontWeight: 600, marginTop: "0.2rem" }}>
-                  {o.guestName ?? "—"} · {o.guestPhone ?? "no phone"}
+                  {o.guestName ?? "—"} · {o.guestPhone ?? "χωρίς τηλέφωνο"}
                 </div>
                 <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
                   {o.deliveryStreet}, {o.deliveryCity} {o.deliveryPostcode}
@@ -121,7 +134,7 @@ export default function StaffDashboard() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.3rem" }}>
                 <span className={`status-pill status-pill--${o.status}`}>
-                  {o.status}
+                  {STATUS_LABEL[o.status]}
                 </span>
                 <span
                   className={`status-pill status-pill--${o.paymentMethod}`}
@@ -133,7 +146,7 @@ export default function StaffDashboard() {
                     color: "var(--color-cream-50)",
                   }}
                 >
-                  {o.paymentMethod}
+                  {PAYMENT_LABEL[o.paymentMethod]}
                 </span>
               </div>
             </div>
@@ -143,11 +156,11 @@ export default function StaffDashboard() {
                 <div key={i} className="cart-line">
                   <div className="cart-line__main">
                     <div className="cart-line__title">
-                      {it.quantity}× {it.title.en}
+                      {it.quantity}× {it.title.el}
                     </div>
                     {it.options.length > 0 && (
                       <div className="cart-line__meta">
-                        {it.options.map((op) => op.optionName.en).join(" · ")}
+                        {it.options.map((op) => op.optionName.el).join(" · ")}
                       </div>
                     )}
                     {it.comment && (
@@ -169,7 +182,7 @@ export default function StaffDashboard() {
                 }}
               >
                 <strong style={{ display: "block", fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "0.2rem" }}>
-                  Notes
+                  Σημειώσεις
                 </strong>
                 {o.notes}
               </div>
@@ -183,7 +196,7 @@ export default function StaffDashboard() {
               }}
             >
               <strong style={{ fontFamily: "var(--font-mono)" }}>
-                {formatEuro(o.totalCents)} · {o.paymentMethod}
+                {formatEuro(o.totalCents)} · {PAYMENT_LABEL[o.paymentMethod]}
               </strong>
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 {!isTerminal(o.status) && (
@@ -191,7 +204,7 @@ export default function StaffDashboard() {
                     className="btn btn--danger btn--small"
                     onClick={() => transition(o.id, "cancelled")}
                   >
-                    Cancel
+                    Ακύρωση
                   </button>
                 )}
                 {next && (

@@ -3,16 +3,18 @@ import StaffSignInForm from "./StaffSignInForm";
 import { staffSignOutAction } from "./actions";
 import { isDevStaffBypassActive } from "@/lib/staff-auth";
 import { getSession } from "@/lib/session";
+import Link from "next/link";
 
 export default async function StaffPage() {
   const devBypass = isDevStaffBypassActive();
   const session = devBypass ? null : await getSession();
 
+
   if (!devBypass && !session?.user) {
     return (
       <main className="page">
         <div className="container stack-md" style={{ maxWidth: "400px" }}>
-          <h1 className="page__title">Staff sign in</h1>
+          <h1 className="page__title">Σύνδεση προσωπικού</h1>
           <StaffSignInForm />
         </div>
       </main>
@@ -25,11 +27,11 @@ export default async function StaffPage() {
       <main className="page">
         <div className="container">
           <div className="notice notice--error">
-            You are signed in as {session!.user!.email}, but this account does
-            not have staff access.
+            Είστε συνδεδεμένος ως {session!.user!.email}, αλλά αυτός ο
+            λογαριασμός δεν έχει πρόσβαση προσωπικού.
           </div>
           <form action={staffSignOutAction} style={{ marginTop: "1rem" }}>
-            <button className="btn btn--ghost">Sign out</button>
+            <button className="btn btn--ghost">Αποσύνδεση</button>
           </form>
         </div>
       </main>
@@ -47,12 +49,17 @@ export default async function StaffPage() {
             marginBottom: "1rem",
           }}
         >
-          <h1>Orders{devBypass && " (dev bypass)"}</h1>
-          {!devBypass && (
-            <form action={staffSignOutAction}>
-              <button className="btn btn--ghost btn--small">Sign out</button>
-            </form>
-          )}
+          <h1>Παραγγελίες{devBypass && " (dev bypass)"}</h1>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <Link href="/staff/products" className="btn btn--ghost btn--small">
+              Προϊόντα
+            </Link>
+            {!devBypass && (
+              <form action={staffSignOutAction}>
+                <button className="btn btn--ghost btn--small">Αποσύνδεση</button>
+              </form>
+            )}
+          </div>
         </div>
         <StaffDashboard />
       </div>

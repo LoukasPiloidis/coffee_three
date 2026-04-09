@@ -3,6 +3,8 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 export type CartLineOption = {
+  groupKey: string;
+  optionKey: string;
   groupName: { en: string; el: string };
   optionName: { en: string; el: string };
 };
@@ -21,7 +23,9 @@ export type Cart = {
   lines: CartLine[];
 };
 
-const STORAGE_KEY = "coffee-three-cart-v1";
+// v2: CartLineOption now carries groupKey/optionKey so placeOrder can
+// re-validate availability at checkout. v1 carts are silently discarded.
+const STORAGE_KEY = "coffee-three-cart-v2";
 
 function readCart(): Cart {
   if (typeof window === "undefined") return { lines: [] };

@@ -151,20 +151,25 @@ export default async function ProfilePage({
                         View
                       </Link>
                       <ReorderButton
-                        items={items.map((i) => ({
-                          slug: i.menuSlug,
-                          title: i.titleSnapshot as {
-                            en: string;
-                            el: string;
-                          },
-                          unitPrice: i.unitPriceCents / 100,
-                          quantity: i.quantity,
-                          options: (i.optionsJson as unknown) as {
-                            groupName: { en: string; el: string };
-                            optionName: { en: string; el: string };
-                          }[],
-                          comment: i.comment ?? "",
-                        }))}
+                        items={items.map((i) => {
+                          // Historical option snapshots may or may not
+                          // carry groupKey/optionKey depending on when the
+                          // order was placed. Drop options entirely on
+                          // reorder — the customer re-selects them on the
+                          // item page, which also guarantees we never
+                          // restore an option that has since been disabled.
+                          return {
+                            slug: i.menuSlug,
+                            title: i.titleSnapshot as {
+                              en: string;
+                              el: string;
+                            },
+                            unitPrice: i.unitPriceCents / 100,
+                            quantity: i.quantity,
+                            options: [],
+                            comment: i.comment ?? "",
+                          };
+                        })}
                         label={t("reorder")}
                       />
                     </div>

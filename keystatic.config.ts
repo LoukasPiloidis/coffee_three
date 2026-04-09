@@ -76,6 +76,15 @@ export default config({
         }),
         optionGroups: fields.array(
           fields.object({
+            // Stable identifier used by the staff availability UI and the
+            // checkout-time re-validation. Never change after creation — it's
+            // a foreign key from the `option_overrides` table.
+            key: fields.text({
+              label: "Key",
+              description:
+                "Stable identifier (e.g. 'milk'). Lowercase, no spaces. Never change after creation.",
+              validation: { length: { min: 1 } },
+            }),
             name: bilingualText("Group name"),
             selectionType: fields.select({
               label: "Selection type",
@@ -91,7 +100,17 @@ export default config({
             }),
             options: fields.array(
               fields.object({
+                key: fields.text({
+                  label: "Key",
+                  description:
+                    "Stable identifier (e.g. 'oat-milk'). Lowercase, no spaces. Never change after creation.",
+                  validation: { length: { min: 1 } },
+                }),
                 name: bilingualText("Option"),
+                available: fields.checkbox({
+                  label: "Available",
+                  defaultValue: true,
+                }),
               }),
               {
                 label: "Options",

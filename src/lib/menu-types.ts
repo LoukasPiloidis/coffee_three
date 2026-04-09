@@ -1,10 +1,13 @@
 export type Locale = "en" | "el";
 
 export type MenuOption = {
+  key: string;
   name: { en: string; el: string };
+  available: boolean;
 };
 
 export type MenuOptionGroup = {
+  key: string;
   name: { en: string; el: string };
   selectionType: "single" | "multi";
   required: boolean;

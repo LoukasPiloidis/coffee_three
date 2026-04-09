@@ -1,7 +1,7 @@
 import "../globals.css";
 
 export const metadata = {
-  title: "Coffee Three — Staff",
+  title: "Coffee Three — Προσωπικό",
 };
 
 export default function StaffLayout({
@@ -10,7 +10,7 @@ export default function StaffLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="el">
       <body>{children}</body>
     </html>
   );

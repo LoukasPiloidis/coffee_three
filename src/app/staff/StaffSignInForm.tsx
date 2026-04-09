@@ -20,7 +20,7 @@ export default function StaffSignInForm() {
     });
     setPending(false);
     if (error) {
-      setError(error.message ?? "Sign in failed");
+      setError(error.message ?? "Αποτυχία σύνδεσης");
       return;
     }
     window.location.href = "/staff";
@@ -38,7 +38,7 @@ export default function StaffSignInForm() {
         />
       </div>
       <div className="field">
-        <label>Password</label>
+        <label>Κωδικός</label>
         <input
           type="password"
           value={password}
@@ -49,7 +49,7 @@ export default function StaffSignInForm() {
       </div>
       {error && <div className="notice notice--error">{error}</div>}
       <button className="btn btn--primary btn--block" disabled={pending}>
-        {pending ? "Signing in…" : "Sign in"}
+        {pending ? "Σύνδεση…" : "Σύνδεση"}
       </button>
     </form>
   );

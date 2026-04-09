@@ -82,11 +82,23 @@
   },
   "staff": {
     "title": "Orders",
+    "signOut": "Sign out",
+    "forbidden": "You must be signed in as staff to view this page.",
     "noOrders": "No active orders.",
     "markPreparing": "Start preparing",
     "markOnItsWay": "Send out",
     "markCompleted": "Complete",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "orders": {
+      "title": "Products",
+      "explanation": "Toggle items and options off when you run out. Changes appear on the customer site within a second.",
+      "available": "Available",
+      "unavailable": "Off",
+      "options": "Options",
+      "hideOptions": "Hide options",
+      "noItems": "No items.",
+      "someOptionsDisabled": "Some options disabled"
+    }
   },
   "profile": {
     "title": "My profile",

@@ -44,7 +44,14 @@ export default function ItemForm({ item, locale }: { item: MenuItem; locale: Loc
     item.optionGroups.forEach((g, gi) => {
       (selections[gi] ?? []).forEach((oi) => {
         const opt = g.options[Number(oi)];
-        if (opt) options.push({ groupName: g.name, optionName: opt.name });
+        if (opt && opt.available) {
+          options.push({
+            groupKey: g.key,
+            optionKey: opt.key,
+            groupName: g.name,
+            optionName: opt.name,
+          });
+        }
       });
     });
     cartStore.addLine({
@@ -60,33 +67,50 @@ export default function ItemForm({ item, locale }: { item: MenuItem; locale: Loc
 
   return (
     <div className="stack-md">
-      {item.optionGroups.map((g, gi) => (
-        <div key={gi} className="option-group">
-          <div className="option-group__label">
-            {g.name[locale]}
-            {g.required && <span className="option-group__required">*</span>}
+      {item.optionGroups.map((g, gi) => {
+        const hasAnyAvailable = g.options.some((o) => o.available);
+        return (
+          <div key={gi} className="option-group">
+            <div className="option-group__label">
+              {g.name[locale]}
+              {g.required && <span className="option-group__required">*</span>}
+            </div>
+            <div className="option-list">
+              {g.options.map((o, oi) => {
+                const name = `group-${gi}`;
+                const value = String(oi);
+                const checked = selections[gi]?.includes(value) ?? false;
+                const disabled = !o.available;
+                return (
+                  <label
+                    key={oi}
+                    style={
+                      disabled
+                        ? { opacity: 0.45, textDecoration: "line-through" }
+                        : undefined
+                    }
+                  >
+                    <input
+                      type={g.selectionType === "single" ? "radio" : "checkbox"}
+                      name={name}
+                      value={value}
+                      checked={checked && !disabled}
+                      disabled={disabled}
+                      onChange={() => toggle(gi, value, g.selectionType)}
+                    />
+                    {o.name[locale]}
+                  </label>
+                );
+              })}
+            </div>
+            {g.required && !hasAnyAvailable && (
+              <div className="notice notice--error" style={{ marginTop: "0.5rem" }}>
+                {t("allOptionsUnavailable")}
+              </div>
+            )}
           </div>
-          <div className="option-list">
-            {g.options.map((o, oi) => {
-              const name = `group-${gi}`;
-              const value = String(oi);
-              const checked = selections[gi]?.includes(value) ?? false;
-              return (
-                <label key={oi}>
-                  <input
-                    type={g.selectionType === "single" ? "radio" : "checkbox"}
-                    name={name}
-                    value={value}
-                    checked={checked}
-                    onChange={() => toggle(gi, value, g.selectionType)}
-                  />
-                  {o.name[locale]}
-                </label>
-              );
-            })}
-          </div>
-        </div>
-      ))}
+        );
+      })}
 
       <div className="field">
         <label>{t("comments")}</label>
