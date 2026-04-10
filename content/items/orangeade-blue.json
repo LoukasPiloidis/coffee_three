@@ -5,7 +5,10 @@
     "en": "Orangeade Blue Fanta",
     "el": "Πορτοκαλάδα Μπλε Fanta"
   },
-  "description": {},
+  "description": {
+    "en": "Orangeade non carbonated ",
+    "el": "Πορτοκαλάδα χωρίς ανθρακικό "
+  },
   "category": "soft-drinks",
   "price": 3,
   "displayOrder": 0,
