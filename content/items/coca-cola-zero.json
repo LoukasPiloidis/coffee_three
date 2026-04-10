@@ -5,7 +5,10 @@
     "en": "Coca Cola Zero",
     "el": "Coca Cola Zero"
   },
-  "description": {},
+  "description": {
+    "en": "No sugar",
+    "el": "Χωρίς ζάχαρη "
+  },
   "category": "soft-drinks",
   "price": 3,
   "displayOrder": 0,
