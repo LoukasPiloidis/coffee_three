@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "milkshake",
+  "title": {
+    "en": "Milkshake",
+    "el": "Μιλκσέικ"
+  },
+  "description": {},
+  "category": "drinks",
+  "price": 5,
+  "displayOrder": 0,
+  "optionGroups": []
+}
