@@ -291,7 +291,7 @@ export default function CheckoutForm({
               <span className="tip-box__badge">{t("tipOptional")}</span>
             </div>
             <div className="tip-box__presets">
-              {["1", "2", "5"].map((v) => {
+              {["0.5", "1", "2"].map((v) => {
                 const selected = tipInput === v;
                 return (
                   <button
