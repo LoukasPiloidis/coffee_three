@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "sprite zero",
+  "title": {
+    "en": "Sprite Zero",
+    "el": "Sprite Zero"
+  },
+  "description": {},
+  "category": "soft-drinks",
+  "price": 3,
+  "displayOrder": 0,
+  "optionGroups": []
+}
