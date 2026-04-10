@@ -5,7 +5,10 @@
     "en": "Fresh Juice",
     "el": "Φρέσκος χυμός "
   },
-  "description": {},
+  "description": {
+    "en": "Juice from fresh fruits",
+    "el": "Χυμός από φρέσκα φρούτα "
+  },
   "category": "drinks",
   "price": 5,
   "displayOrder": 0,
