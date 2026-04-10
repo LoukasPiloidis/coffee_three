@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "Coca Cola ",
+  "title": {
+    "en": "Coca Cola",
+    "el": "Coca Cola"
+  },
+  "description": {},
+  "category": "soft-drinks",
+  "price": 3,
+  "displayOrder": 0,
+  "optionGroups": []
+}
