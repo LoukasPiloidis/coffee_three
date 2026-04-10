@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "potato pie",
+  "title": {
+    "en": "Potato-Pie",
+    "el": "Πατατόπιτα"
+  },
+  "description": {},
+  "category": "food",
+  "price": 3,
+  "displayOrder": 0,
+  "optionGroups": []
+}
