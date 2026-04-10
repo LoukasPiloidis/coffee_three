@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "croissant butter",
+  "title": {
+    "en": "Croissant butter",
+    "el": "Κρουασάν Βουτύρου "
+  },
+  "description": {},
+  "category": "food",
+  "price": 2,
+  "displayOrder": 0,
+  "optionGroups": []
+}
