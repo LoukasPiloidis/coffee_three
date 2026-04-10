@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "cheesepie",
+  "title": {
+    "en": "Cheese-Pie",
+    "el": "Τυρόπιτα "
+  },
+  "description": {},
+  "category": "food",
+  "price": 2,
+  "displayOrder": 0,
+  "optionGroups": []
+}
