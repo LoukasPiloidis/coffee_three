@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "instant coffee hot",
+  "title": {
+    "en": "Instant Coffee Hot",
+    "el": "Στιγμιαίος Καφές Ζεστός "
+  },
+  "description": {},
+  "category": "coffees",
+  "price": 2,
+  "displayOrder": 0,
+  "optionGroups": []
+}
