@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "freddo espresso",
+  "title": {
+    "en": "Freddo Espresso",
+    "el": "Φρέντο Εσπρέσσο"
+  },
+  "description": {},
+  "category": "coffees",
+  "price": 2.4,
+  "displayOrder": 0,
+  "optionGroups": []
+}
