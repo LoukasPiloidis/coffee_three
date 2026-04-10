@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "instant coffee",
+  "title": {
+    "en": "Instant Coffee Cold",
+    "el": "Στιγμιαίος Καφές Κρύος "
+  },
+  "description": {},
+  "category": "coffees",
+  "price": 2,
+  "displayOrder": 0,
+  "optionGroups": []
+}
