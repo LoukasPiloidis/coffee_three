@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "hot latte",
+  "title": {
+    "en": "Hot Latte",
+    "el": "Ζεστό Λάττε"
+  },
+  "description": {},
+  "category": "coffees",
+  "price": 3,
+  "displayOrder": 0,
+  "optionGroups": []
+}
