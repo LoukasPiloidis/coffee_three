@@ -40,6 +40,7 @@ export async function GET() {
       deliveryStreet: o.deliveryStreet,
       deliveryCity: o.deliveryCity,
       deliveryPostcode: o.deliveryPostcode,
+      deliveryGuy: o.deliveryGuy,
       notes: o.notes,
       items: (itemsByOrder.get(o.id) ?? []).map((i) => ({
         title: i.titleSnapshot,

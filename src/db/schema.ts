@@ -138,6 +138,7 @@ export const orders = pgTable(
     status: orderStatus("status").notNull().default("received"),
     totalCents: integer("total_cents").notNull(),
     tipCents: integer("tip_cents").notNull().default(0),
+    deliveryGuy: text("delivery_guy"),
     notes: text("notes"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()

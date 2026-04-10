@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { updateStatusAction } from "./actions";
+import { updateStatusAction, assignDeliveryGuyAction } from "./actions";
 
 type OrderDTO = {
   id: string;
@@ -16,6 +16,7 @@ type OrderDTO = {
   deliveryStreet: string;
   deliveryCity: string;
   deliveryPostcode: string;
+  deliveryGuy: string | null;
   notes: string | null;
   items: {
     title: { en: string; el: string };
@@ -83,7 +84,11 @@ const ALL_STATUSES: OrderDTO["status"][] = [
 // Default view: active orders only (staff's working queue).
 const DEFAULT_FILTER: OrderDTO["status"][] = ["received", "preparing"];
 
-export default function StaffDashboard() {
+export default function StaffDashboard({
+  deliveryGuys,
+}: {
+  deliveryGuys: string[];
+}) {
   const [orders, setOrders] = useState<OrderDTO[]>([]);
   const [statusFilter, setStatusFilter] =
     useState<OrderDTO["status"][]>(DEFAULT_FILTER);
@@ -258,6 +263,56 @@ export default function StaffDashboard() {
                   Σημειώσεις
                 </strong>
                 {o.notes}
+              </div>
+            )}
+
+            {deliveryGuys.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  fontSize: "0.85rem",
+                }}
+              >
+                <label
+                  htmlFor={`dg-${o.id}`}
+                  style={{
+                    fontWeight: 600,
+                    color: "var(--text-muted)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Διανομέας
+                </label>
+                <select
+                  id={`dg-${o.id}`}
+                  value={o.deliveryGuy ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value || null;
+                    startTransition(async () => {
+                      await assignDeliveryGuyAction(o.id, val);
+                      const data = await fetchStaffOrders();
+                      if (data) setOrders(data);
+                    });
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: "0.3rem 0.5rem",
+                    border: "1px solid var(--color-cream-300)",
+                    borderRadius: "var(--radius-md)",
+                    background: "var(--color-cream-50)",
+                    fontFamily: "var(--font-body)",
+                    fontSize: "0.85rem",
+                  }}
+                >
+                  <option value="">—</option>
+                  {deliveryGuys.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
 

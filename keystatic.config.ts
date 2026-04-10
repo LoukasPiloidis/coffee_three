@@ -31,6 +31,15 @@ export default config({
     brand: { name: "Café CMS" },
   },
   collections: {
+    deliveryGuys: collection({
+      label: "Delivery guys",
+      slugField: "name",
+      path: "content/delivery-guys/*",
+      format: { data: "json" },
+      schema: {
+        name: fields.slug({ name: { label: "Name" } }),
+      },
+    }),
     optionGroups: collection({
       label: "Option groups",
       slugField: "key",

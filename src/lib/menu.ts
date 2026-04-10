@@ -185,6 +185,11 @@ async function readItem(slug: string): Promise<MenuItem | null> {
   return mapItem(slug, entry as RawItem, overrides, optionGroupsMap);
 }
 
+async function readDeliveryGuys(): Promise<string[]> {
+  const entries = await reader.collections.deliveryGuys.all();
+  return entries.map((e) => e.slug);
+}
+
 async function readSettings(): Promise<ShopSettings> {
   const s = await reader.singletons.settings.read();
   return {
@@ -218,6 +223,12 @@ export const getItem: (slug: string) => Promise<MenuItem | null> =
         tags: [KEYSTATIC_CACHE_TAG],
       })
     : readItem;
+
+export const getDeliveryGuys: () => Promise<string[]> = useRemoteCache
+  ? unstable_cache(readDeliveryGuys, ["keystatic-delivery-guys"], {
+      tags: [KEYSTATIC_CACHE_TAG],
+    })
+  : readDeliveryGuys;
 
 export const getSettings: () => Promise<ShopSettings> = useRemoteCache
   ? unstable_cache(readSettings, ["keystatic-settings"], {

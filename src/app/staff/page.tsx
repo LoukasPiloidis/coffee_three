@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getSession } from "@/lib/session";
+import { getDeliveryGuys } from "@/lib/menu";
 import { isDevStaffBypassActive } from "@/lib/staff-auth";
 import { staffSignOutAction } from "./actions";
 import StaffDashboard from "./StaffDashboard";
@@ -37,6 +38,8 @@ export default async function StaffPage() {
     );
   }
 
+  const deliveryGuys = await getDeliveryGuys();
+
   return (
     <main className="page">
       <div className="container">
@@ -62,7 +65,7 @@ export default async function StaffPage() {
             )}
           </div>
         </div>
-        <StaffDashboard />
+        <StaffDashboard deliveryGuys={deliveryGuys} />
       </div>
     </main>
   );

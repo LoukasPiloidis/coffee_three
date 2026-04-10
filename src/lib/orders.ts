@@ -209,6 +209,16 @@ export async function updateOrderStatus(
     .where(eq(orders.id, orderId));
 }
 
+export async function assignDeliveryGuy(
+  orderId: string,
+  deliveryGuy: string | null
+) {
+  await db
+    .update(orders)
+    .set({ deliveryGuy, updatedAt: new Date() })
+    .where(eq(orders.id, orderId));
+}
+
 export async function getRecentUserOrders(userId: string, limit = 5) {
   const recent = await db
     .select()
