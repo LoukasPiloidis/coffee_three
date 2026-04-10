@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "tea",
+  "title": {
+    "en": "Tea",
+    "el": "Τσάι "
+  },
+  "description": {},
+  "category": "drinks",
+  "price": 2,
+  "displayOrder": 0,
+  "optionGroups": []
+}
