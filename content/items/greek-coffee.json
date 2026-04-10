@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "greek coffee",
+  "title": {
+    "en": "Greek Coffee",
+    "el": "Ελληνικός καφές "
+  },
+  "description": {},
+  "category": "coffees",
+  "price": 2,
+  "displayOrder": 0,
+  "optionGroups": []
+}
