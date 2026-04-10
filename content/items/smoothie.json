@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "smoothie",
+  "title": {
+    "en": "Smoothie",
+    "el": "Σμούθι"
+  },
+  "description": {},
+  "category": "drinks",
+  "price": 5,
+  "displayOrder": 0,
+  "optionGroups": []
+}
