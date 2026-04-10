@@ -31,6 +31,49 @@ export default config({
     brand: { name: "Café CMS" },
   },
   collections: {
+    optionGroups: collection({
+      label: "Option groups",
+      slugField: "key",
+      path: "content/option-groups/*",
+      format: { data: "json" },
+      columns: ["selectionType", "required"],
+      schema: {
+        key: fields.slug({ name: { label: "Key" } }),
+        name: bilingualText("Group name"),
+        selectionType: fields.select({
+          label: "Selection type",
+          options: [
+            { label: "Single choice", value: "single" },
+            { label: "Multiple choice", value: "multi" },
+          ],
+          defaultValue: "single",
+        }),
+        required: fields.checkbox({
+          label: "Required",
+          defaultValue: false,
+        }),
+        options: fields.array(
+          fields.object({
+            key: fields.text({
+              label: "Key",
+              description:
+                "Stable identifier (e.g. 'oat-milk'). Lowercase, no spaces. Never change after creation.",
+              validation: { length: { min: 1 } },
+            }),
+            name: bilingualText("Option"),
+            available: fields.checkbox({
+              label: "Available",
+              defaultValue: true,
+            }),
+          }),
+          {
+            label: "Options",
+            itemLabel: (props) =>
+              props.fields.name.fields.en.value || "Option",
+          }
+        ),
+      },
+    }),
     categories: collection({
       label: "Categories",
       slugField: "slug",
@@ -81,54 +124,13 @@ export default config({
           defaultValue: 0,
         }),
         optionGroups: fields.array(
-          fields.object({
-            // Stable identifier used by the staff availability UI and the
-            // checkout-time re-validation. Never change after creation — it's
-            // a foreign key from the `option_overrides` table.
-            key: fields.text({
-              label: "Key",
-              description:
-                "Stable identifier (e.g. 'milk'). Lowercase, no spaces. Never change after creation.",
-              validation: { length: { min: 1 } },
-            }),
-            name: bilingualText("Group name"),
-            selectionType: fields.select({
-              label: "Selection type",
-              options: [
-                { label: "Single choice", value: "single" },
-                { label: "Multiple choice", value: "multi" },
-              ],
-              defaultValue: "single",
-            }),
-            required: fields.checkbox({
-              label: "Required",
-              defaultValue: false,
-            }),
-            options: fields.array(
-              fields.object({
-                key: fields.text({
-                  label: "Key",
-                  description:
-                    "Stable identifier (e.g. 'oat-milk'). Lowercase, no spaces. Never change after creation.",
-                  validation: { length: { min: 1 } },
-                }),
-                name: bilingualText("Option"),
-                available: fields.checkbox({
-                  label: "Available",
-                  defaultValue: true,
-                }),
-              }),
-              {
-                label: "Options",
-                itemLabel: (props) =>
-                  props.fields.name.fields.en.value || "Option",
-              }
-            ),
+          fields.relationship({
+            label: "Option group",
+            collection: "optionGroups",
           }),
           {
             label: "Option groups",
-            itemLabel: (props) =>
-              props.fields.name.fields.en.value || "Option group",
+            itemLabel: (props) => props.value ?? "Select a group",
           }
         ),
       },

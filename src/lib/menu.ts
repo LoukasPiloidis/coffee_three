@@ -80,25 +80,37 @@ type RawItem = {
   image: string | null;
   available: boolean;
   displayOrder: number | null;
-  optionGroups: readonly {
+  // After the refactor, items store an array of slugs referencing the
+  // optionGroups collection instead of inline objects.
+  optionGroups: readonly (string | null)[];
+};
+
+type RawOptionGroup = {
+  key: string;
+  name: { en: string; el: string };
+  selectionType: "single" | "multi";
+  required: boolean;
+  options: readonly {
     key: string;
     name: { en: string; el: string };
-    selectionType: "single" | "multi";
-    required: boolean;
-    options: readonly {
-      key: string;
-      name: { en: string; el: string };
-      available: boolean;
-    }[];
+    available: boolean;
   }[];
 };
 
 function mapItem(
   slug: string,
   entry: RawItem,
-  overrides: OverrideMaps
+  overrides: OverrideMaps,
+  optionGroupsMap: Map<string, RawOptionGroup>
 ): MenuItem {
   const itemOverride = overrides.items.get(slug);
+
+  // Resolve option group slugs to full objects, skipping nulls and
+  // references to groups that no longer exist.
+  const resolvedGroups = (entry.optionGroups ?? [])
+    .map((ref) => (ref ? optionGroupsMap.get(ref) : undefined))
+    .filter((g): g is RawOptionGroup => g != null);
+
   return {
     slug,
     title: entry.title,
@@ -108,7 +120,7 @@ function mapItem(
     image: entry.image,
     available: itemOverride ?? entry.available,
     displayOrder: entry.displayOrder ?? 0,
-    optionGroups: (entry.optionGroups ?? []).map((g) => ({
+    optionGroups: resolvedGroups.map((g) => ({
       key: g.key,
       name: g.name,
       selectionType: g.selectionType,
@@ -126,14 +138,21 @@ function mapItem(
 }
 
 async function readMenu(): Promise<MenuCategory[]> {
-  const [categoryEntries, itemEntries, overrides] = await Promise.all([
-    reader.collections.categories.all(),
-    reader.collections.items.all(),
-    loadOverrides(),
-  ]);
+  const [categoryEntries, itemEntries, optionGroupEntries, overrides] =
+    await Promise.all([
+      reader.collections.categories.all(),
+      reader.collections.items.all(),
+      reader.collections.optionGroups.all(),
+      loadOverrides(),
+    ]);
+
+  const optionGroupsMap = new Map<string, RawOptionGroup>();
+  for (const g of optionGroupEntries) {
+    optionGroupsMap.set(g.slug, g.entry as RawOptionGroup);
+  }
 
   const items: MenuItem[] = itemEntries.map((e) =>
-    mapItem(e.slug, e.entry as RawItem, overrides)
+    mapItem(e.slug, e.entry as RawItem, overrides, optionGroupsMap)
   );
 
   const categories: MenuCategory[] = categoryEntries
@@ -151,12 +170,19 @@ async function readMenu(): Promise<MenuCategory[]> {
 }
 
 async function readItem(slug: string): Promise<MenuItem | null> {
-  const [entry, overrides] = await Promise.all([
+  const [entry, optionGroupEntries, overrides] = await Promise.all([
     reader.collections.items.read(slug),
+    reader.collections.optionGroups.all(),
     loadOverrides(),
   ]);
   if (!entry) return null;
-  return mapItem(slug, entry as RawItem, overrides);
+
+  const optionGroupsMap = new Map<string, RawOptionGroup>();
+  for (const g of optionGroupEntries) {
+    optionGroupsMap.set(g.slug, g.entry as RawOptionGroup);
+  }
+
+  return mapItem(slug, entry as RawItem, overrides, optionGroupsMap);
 }
 
 async function readSettings(): Promise<ShopSettings> {
