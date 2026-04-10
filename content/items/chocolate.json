@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "chocolate",
+  "title": {
+    "en": "Chocolate",
+    "el": "Σοκολάτα "
+  },
+  "description": {},
+  "category": "drinks",
+  "price": 4,
+  "displayOrder": 0,
+  "optionGroups": []
+}
