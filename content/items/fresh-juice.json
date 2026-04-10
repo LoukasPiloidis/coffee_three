@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "fresh juice",
+  "title": {
+    "en": "Fresh Juice",
+    "el": "Φρέσκος χυμός "
+  },
+  "description": {},
+  "category": "drinks",
+  "price": 5,
+  "displayOrder": 0,
+  "optionGroups": []
+}
