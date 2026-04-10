@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "schweppes soda",
+  "title": {
+    "en": "Schweppes Soda ",
+    "el": "Schweppes Σόδα"
+  },
+  "description": {},
+  "category": "soft-drinks",
+  "price": 3,
+  "displayOrder": 0,
+  "optionGroups": []
+}
