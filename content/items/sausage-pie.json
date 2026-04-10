@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "sausage pie",
+  "title": {
+    "en": "Sausage-Pie",
+    "el": "Λουκανικόπιτα"
+  },
+  "description": {},
+  "category": "food",
+  "price": 3,
+  "displayOrder": 0,
+  "optionGroups": []
+}
