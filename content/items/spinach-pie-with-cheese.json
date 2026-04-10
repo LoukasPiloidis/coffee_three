@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "spinach pie with cheese",
+  "title": {
+    "en": "Spinach-Pie with Cheese",
+    "el": "Σπανακοτυρόπιτα "
+  },
+  "description": {},
+  "category": "food",
+  "price": 3,
+  "displayOrder": 0,
+  "optionGroups": []
+}
