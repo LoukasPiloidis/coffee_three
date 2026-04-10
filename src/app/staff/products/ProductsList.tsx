@@ -18,6 +18,7 @@ export default function ProductsList({
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   // Track which row is currently saving so we can show feedback.
   const [saving, setSaving] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   const toggleExpanded = (slug: string) => {
     setExpanded((prev) => {
@@ -52,9 +53,30 @@ export default function ProductsList({
     });
   };
 
+  const q = query.toLowerCase().trim();
+  const filtered = q
+    ? categories
+        .map((cat) => ({
+          ...cat,
+          items: cat.items.filter(
+            (item) =>
+              item.title.en.toLowerCase().includes(q) ||
+              item.title.el.toLowerCase().includes(q)
+          ),
+        }))
+        .filter((cat) => cat.items.length > 0)
+    : categories;
+
   return (
     <div className="stack-md">
-      {categories.map((cat) => (
+      <input
+        type="search"
+        className="search-bar"
+        placeholder="Αναζήτηση προϊόντων…"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {filtered.map((cat) => (
         <section key={cat.slug}>
           <h2 style={{ marginBottom: "0.5rem" }}>{cat.title.el}</h2>
           {cat.items.length === 0 && (

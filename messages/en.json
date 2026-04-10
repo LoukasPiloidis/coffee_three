@@ -31,7 +31,8 @@
   "menu": {
     "title": "Menu",
     "empty": "No items available.",
-    "unavailable": "Unavailable"
+    "unavailable": "Unavailable",
+    "search": "Search menu…"
   },
   "item": {
     "quantity": "Quantity",

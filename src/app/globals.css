@@ -248,6 +248,22 @@ p {
   font-size: 0.95rem;
 }
 
+.search-bar {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-md);
+  background: var(--color-cream-50);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search-bar:focus {
+  border-color: var(--color-green-700);
+}
+
 .category {
   margin-bottom: 2rem;
 }
