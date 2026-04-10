@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "filter coffee",
+  "title": {
+    "en": "Filtered Coffee",
+    "el": "Καφές Φίλτρου "
+  },
+  "description": {},
+  "category": "coffees",
+  "price": 2,
+  "displayOrder": 0,
+  "optionGroups": []
+}
