@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "cappuccino",
+  "title": {
+    "en": "Cappuccino",
+    "el": "Καπουτσίνο "
+  },
+  "description": {},
+  "category": "coffees",
+  "price": 2.6,
+  "displayOrder": 0,
+  "optionGroups": []
+}
