@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "cinnamon roll",
+  "title": {
+    "en": "Cinnamon Roll",
+    "el": "Cinnamon Roll"
+  },
+  "description": {},
+  "category": "food",
+  "price": 3,
+  "displayOrder": 0,
+  "optionGroups": []
+}
