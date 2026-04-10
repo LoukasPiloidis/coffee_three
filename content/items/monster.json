@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "monster",
+  "title": {
+    "en": "Monster",
+    "el": "Monster"
+  },
+  "description": {},
+  "category": "soft-drinks",
+  "price": 4,
+  "displayOrder": 0,
+  "optionGroups": []
+}
