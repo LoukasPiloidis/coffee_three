@@ -9,33 +9,5 @@
   "category": "coffees",
   "price": 2,
   "displayOrder": 0,
-  "optionGroups": [
-    {
-      "key": "zesto kryo",
-      "name": {
-        "en": "Hot - Cold",
-        "el": "Ζεστό - Κρυο "
-      },
-      "selectionType": "single",
-      "required": true,
-      "options": [
-        {
-          "key": "hot",
-          "name": {
-            "en": "Hot",
-            "el": "Ζεστός "
-          },
-          "available": true
-        },
-        {
-          "key": "cold",
-          "name": {
-            "en": "Cold",
-            "el": "Κρύος "
-          },
-          "available": true
-        }
-      ]
-    }
-  ]
+  "optionGroups": []
 }
