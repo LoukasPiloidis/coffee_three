@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "bougatsa",
+  "title": {
+    "en": "Bougatsa",
+    "el": "Μπουγάτσα "
+  },
+  "description": {},
+  "category": "food",
+  "price": 3,
+  "displayOrder": 0,
+  "optionGroups": []
+}
