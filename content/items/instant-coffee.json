@@ -9,5 +9,11 @@
   "category": "coffees",
   "price": 2,
   "displayOrder": 0,
-  "optionGroups": []
+  "optionGroups": [
+    "cold-hot",
+    "size",
+    "sugar",
+    "sweetener",
+    "extras"
+  ]
 }
