@@ -10,6 +10,7 @@
   "price": 2.6,
   "displayOrder": 0,
   "optionGroups": [
+    "blends",
     "sugar",
     "sweetener",
     "extras"
