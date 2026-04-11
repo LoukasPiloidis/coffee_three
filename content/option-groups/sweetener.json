@@ -1,0 +1,51 @@
+{
+  "key": "Sweetener",
+  "name": {
+    "en": "Sweetener",
+    "el": "Γλυκαντικό "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "White Sugar",
+      "name": {
+        "en": "White Sugar",
+        "el": "Λευκή Ζάχαρη "
+      },
+      "available": true
+    },
+    {
+      "key": "Brown Sugar",
+      "name": {
+        "en": "Brown Sugar",
+        "el": "Καστανή Ζάχαρη "
+      },
+      "available": true
+    },
+    {
+      "key": "Saccharin",
+      "name": {
+        "en": "Saccharin",
+        "el": "Ζαχαρίνη "
+      },
+      "available": true
+    },
+    {
+      "key": "Stevia",
+      "name": {
+        "en": "Stevia",
+        "el": "Στέβια "
+      },
+      "available": true
+    },
+    {
+      "key": "Honey ",
+      "name": {
+        "en": "Honey ",
+        "el": "Μέλι "
+      },
+      "available": true
+    }
+  ]
+}
