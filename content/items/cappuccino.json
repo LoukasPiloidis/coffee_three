@@ -11,6 +11,7 @@
   "displayOrder": 0,
   "optionGroups": [
     "blends",
+    "size",
     "sugar",
     "sweetener",
     "extras"
