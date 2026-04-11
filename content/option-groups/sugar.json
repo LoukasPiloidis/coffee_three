@@ -1,0 +1,59 @@
+{
+  "key": "sugar",
+  "name": {
+    "en": "Sugar",
+    "el": "Ζάχαρη "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "No sugar",
+      "name": {
+        "en": "No sugar",
+        "el": "Σκέτος "
+      },
+      "available": true
+    },
+    {
+      "key": "A bit",
+      "name": {
+        "en": "A bit",
+        "el": "Με ολίγη "
+      },
+      "available": true
+    },
+    {
+      "key": "Medium",
+      "name": {
+        "en": "Medium",
+        "el": "Μέτριος "
+      },
+      "available": true
+    },
+    {
+      "key": "medium to sweet",
+      "name": {
+        "en": "Medium to Sweet",
+        "el": "Μέτριος προς γλυκός"
+      },
+      "available": true
+    },
+    {
+      "key": "Sweet",
+      "name": {
+        "en": "Sweet",
+        "el": "Γλυκός "
+      },
+      "available": true
+    },
+    {
+      "key": "Extra Sweet",
+      "name": {
+        "en": "Extra Sweet",
+        "el": "Πολύ γλυκός "
+      },
+      "available": true
+    }
+  ]
+}
