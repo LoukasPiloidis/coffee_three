@@ -1,0 +1,35 @@
+{
+  "key": "Blends",
+  "name": {
+    "en": "Blends",
+    "el": "Χαρμάνια "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "Flavor ",
+      "name": {
+        "en": "Flavor ",
+        "el": "Flavor"
+      },
+      "available": true
+    },
+    {
+      "key": "Premium",
+      "name": {
+        "en": "Premium",
+        "el": "Premium"
+      },
+      "available": true
+    },
+    {
+      "key": "Decaf",
+      "name": {
+        "en": "Decaf",
+        "el": "Decaf"
+      },
+      "available": true
+    }
+  ]
+}
