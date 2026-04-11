@@ -5,7 +5,10 @@
     "en": "Beer FIX 0%",
     "el": "Μπύρα ΦΙΞ 0%"
   },
-  "description": {},
+  "description": {
+    "en": "Alcohol free",
+    "el": "Χωρίς αλκοόλ "
+  },
   "category": "soft-drinks",
   "price": 3,
   "displayOrder": 0,
