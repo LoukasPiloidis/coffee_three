@@ -1,0 +1,35 @@
+{
+  "key": "Size",
+  "name": {
+    "en": "Size",
+    "el": "Μέγεθος "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "Single",
+      "name": {
+        "en": "Single",
+        "el": "Μονός"
+      },
+      "available": true
+    },
+    {
+      "key": "Double",
+      "name": {
+        "en": "Double",
+        "el": "Διπλός "
+      },
+      "available": true
+    },
+    {
+      "key": "Grande",
+      "name": {
+        "en": "Grande",
+        "el": "Grande"
+      },
+      "available": true
+    }
+  ]
+}
