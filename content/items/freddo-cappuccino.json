@@ -9,5 +9,11 @@
   "category": "coffees",
   "price": 2.6,
   "displayOrder": 0,
-  "optionGroups": []
+  "optionGroups": [
+    "blends",
+    "size",
+    "sugar",
+    "sweetener",
+    "extras"
+  ]
 }
