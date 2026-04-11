@@ -1,0 +1,67 @@
+{
+  "key": "extras",
+  "name": {
+    "en": "Extras",
+    "el": "Έξτρα "
+  },
+  "selectionType": "multi",
+  "required": true,
+  "options": [
+    {
+      "key": "Milk",
+      "name": {
+        "en": "Milk",
+        "el": "Γάλα "
+      },
+      "available": true
+    },
+    {
+      "key": "Evaporated Milk",
+      "name": {
+        "en": "Evaporated Milk",
+        "el": "Γάλα Εβαπορέ "
+      },
+      "available": true
+    },
+    {
+      "key": "Oat Milk",
+      "name": {
+        "en": "Oat Milk",
+        "el": "Γάλα Βρώμης "
+      },
+      "available": true
+    },
+    {
+      "key": "Almond Milk",
+      "name": {
+        "en": "Almond Milk",
+        "el": "Γάλα Αμυγδάλου "
+      },
+      "available": true
+    },
+    {
+      "key": "Plant Cream",
+      "name": {
+        "en": "Plant Cream",
+        "el": "Φυτική Κρέμα "
+      },
+      "available": true
+    },
+    {
+      "key": "Whipped Cream ",
+      "name": {
+        "en": "Whipped Cream ",
+        "el": "Σαντιγί "
+      },
+      "available": true
+    },
+    {
+      "key": "Syrup",
+      "name": {
+        "en": "Syrup",
+        "el": "Σιρόπι "
+      },
+      "available": true
+    }
+  ]
+}
