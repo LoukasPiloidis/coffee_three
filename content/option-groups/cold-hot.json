@@ -1,0 +1,27 @@
+{
+  "key": "cold hot ",
+  "name": {
+    "en": "Cold - Hot",
+    "el": "Κρύο - Ζεστό "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "Cold",
+      "name": {
+        "en": "Cold",
+        "el": "Κρύο "
+      },
+      "available": true
+    },
+    {
+      "key": "hot",
+      "name": {
+        "en": "Hot",
+        "el": "Ζεστό "
+      },
+      "available": true
+    }
+  ]
+}
