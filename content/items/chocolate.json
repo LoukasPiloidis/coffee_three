@@ -9,5 +9,7 @@
   "category": "drinks",
   "price": 4,
   "displayOrder": 0,
-  "optionGroups": []
+  "optionGroups": [
+    "hot-cold"
+  ]
 }
