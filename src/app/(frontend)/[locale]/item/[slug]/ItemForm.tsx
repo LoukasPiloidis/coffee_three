@@ -29,8 +29,9 @@ export default function ItemForm({
   const [selections, setSelections] = useState<Selections>({});
   const [error, setError] = useState<string | null>(null);
   const hasOptions = item.optionGroups.length > 0;
+  const firstRequiredIdx = item.optionGroups.findIndex((g) => g.required);
   const [openGroup, setOpenGroup] = useState<number | null>(
-    hasOptions ? 0 : null
+    hasOptions ? (firstRequiredIdx >= 0 ? firstRequiredIdx : 0) : null
   );
 
   const selectedSummary = (gi: number) => {
@@ -63,10 +64,11 @@ export default function ItemForm({
       };
     });
 
-    // Auto-advance: on single-select, close current and open next
+    // Auto-advance: on single-select, skip optional groups, open next required unfilled
     if (mode === "single") {
       const nextIdx = item.optionGroups.findIndex(
-        (_, i) => i > groupIdx && (selections[i]?.length ?? 0) === 0
+        (g, i) =>
+          i > groupIdx && g.required && (selections[i]?.length ?? 0) === 0
       );
       setOpenGroup(nextIdx >= 0 ? nextIdx : null);
     }
@@ -173,7 +175,25 @@ export default function ItemForm({
         <AccordionControlled
           items={accordionItems}
           openIndex={openGroup}
-          onToggle={(i) => setOpenGroup((prev) => (prev === i ? null : i))}
+          onToggle={(i) =>
+            setOpenGroup((prev) => {
+              if (prev === i) {
+                // Closing: if optional, advance to next required unfilled
+                const g = item.optionGroups[i];
+                if (!g.required) {
+                  const nextIdx = item.optionGroups.findIndex(
+                    (ng, ni) =>
+                      ni > i &&
+                      ng.required &&
+                      (selections[ni]?.length ?? 0) === 0
+                  );
+                  return nextIdx >= 0 ? nextIdx : null;
+                }
+                return null;
+              }
+              return i;
+            })
+          }
         />
       )}
 
