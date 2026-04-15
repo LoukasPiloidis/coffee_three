@@ -226,6 +226,26 @@ export async function assignDeliveryGuy(
     .where(eq(orders.id, orderId));
 }
 
+export async function getOrdersByDeliveryGuyAndDate(
+  deliveryGuy: string,
+  date: string // YYYY-MM-DD
+) {
+  const startOfDay = new Date(`${date}T00:00:00`);
+  const endOfDay = new Date(`${date}T23:59:59.999`);
+
+  return db
+    .select()
+    .from(orders)
+    .where(
+      and(
+        eq(orders.deliveryGuy, deliveryGuy),
+        sql`${orders.createdAt} >= ${startOfDay}`,
+        sql`${orders.createdAt} <= ${endOfDay}`
+      )
+    )
+    .orderBy(desc(orders.createdAt));
+}
+
 export async function getRecentUserOrders(userId: string, limit = 5) {
   const recent = await db
     .select()

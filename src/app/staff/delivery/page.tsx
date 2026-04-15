@@ -2,11 +2,11 @@ import Link from "next/link";
 import { getDeliveryGuys } from "@/lib/menu";
 import { getSession } from "@/lib/session";
 import { isDevStaffBypassActive } from "@/lib/staff-auth";
-import { staffSignOutAction } from "./actions";
-import StaffDashboard from "./StaffDashboard";
-import StaffSignInForm from "./StaffSignInForm";
+import { staffSignOutAction } from "../actions";
+import StaffSignInForm from "../StaffSignInForm";
+import DeliveryDashboard from "./DeliveryDashboard";
 
-export default async function StaffPage() {
+export default async function DeliveryPage() {
   const devBypass = isDevStaffBypassActive();
   const session = devBypass ? null : await getSession();
 
@@ -51,13 +51,10 @@ export default async function StaffPage() {
             marginBottom: "1rem",
           }}
         >
-          <h1>Παραγγελίες{devBypass && " (dev bypass)"}</h1>
+          <h1>Διανομές{devBypass && " (dev bypass)"}</h1>
           <div style={{ display: "flex", gap: "0.5rem" }}>
-            <Link href="/staff/delivery" className="btn btn--ghost btn--small">
-              Διανομές
-            </Link>
-            <Link href="/staff/products" className="btn btn--ghost btn--small">
-              Προϊόντα
+            <Link href="/staff" className="btn btn--ghost btn--small">
+              Παραγγελίες
             </Link>
             {!devBypass && (
               <form action={staffSignOutAction}>
@@ -68,7 +65,7 @@ export default async function StaffPage() {
             )}
           </div>
         </div>
-        <StaffDashboard deliveryGuys={deliveryGuys} />
+        <DeliveryDashboard deliveryGuys={deliveryGuys} />
       </div>
     </main>
   );
