@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { formatPrice, type Locale } from "@/lib/menu-types";
+import { formatOptionLabel, formatPrice, type Locale } from "@/lib/menu-types";
 
 type OrderDTO = {
   status: "received" | "preparing" | "on_its_way" | "completed" | "cancelled";
@@ -16,6 +16,7 @@ type OrderDTO = {
     options: {
       groupName: { en: string; el: string };
       optionName: { en: string; el: string };
+      priceCents?: number;
     }[];
     comment: string | null;
   }[];
@@ -161,7 +162,15 @@ export default function OrderStatusView({
                 </div>
                 {it.options.length > 0 && (
                   <div className="cart-line__meta">
-                    {it.options.map((o) => o.optionName[locale]).join(" · ")}
+                    {it.options
+                      .map((o) =>
+                        formatOptionLabel(
+                          o.optionName[locale],
+                          o.priceCents,
+                          locale
+                        )
+                      )
+                      .join(" · ")}
                   </div>
                 )}
                 {it.comment && (

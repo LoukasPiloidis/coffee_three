@@ -5,7 +5,12 @@ import { useState } from "react";
 import { AccordionControlled } from "@/components/Accordion";
 import { useRouter } from "@/i18n/navigation";
 import { type CartLineOption, cartStore } from "@/lib/cart";
-import { formatPrice, type Locale, type MenuItem } from "@/lib/menu-types";
+import {
+  formatOptionLabel,
+  formatPrice,
+  type Locale,
+  type MenuItem,
+} from "@/lib/menu-types";
 
 type Selections = Record<string, string[]>; // groupIndex → selected option indices as strings
 
@@ -33,7 +38,11 @@ export default function ItemForm({
     if (sel.length === 0) return null;
     const g = item.optionGroups[gi];
     return sel
-      .map((oi) => g.options[Number(oi)]?.name[locale])
+      .map((oi) => {
+        const o = g.options[Number(oi)];
+        if (!o) return null;
+        return formatOptionLabel(o.name[locale], o.priceCents, locale);
+      })
       .filter(Boolean)
       .join(", ");
   };

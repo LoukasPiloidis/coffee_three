@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { updateStatusAction, assignDeliveryGuyAction } from "./actions";
+import { formatOptionLabel } from "@/lib/menu-types";
+import { assignDeliveryGuyAction, updateStatusAction } from "./actions";
 
 type OrderDTO = {
   id: string;
@@ -24,6 +25,7 @@ type OrderDTO = {
     options: {
       groupName: { en: string; el: string };
       optionName: { en: string; el: string };
+      priceCents?: number;
     }[];
     comment: string | null;
   }[];
@@ -229,7 +231,15 @@ export default function StaffDashboard({
                     </div>
                     {it.options.length > 0 && (
                       <div className="cart-line__meta">
-                        {it.options.map((op) => op.optionName.el).join(" · ")}
+                        {it.options
+                          .map((op) =>
+                            formatOptionLabel(
+                              op.optionName.el,
+                              op.priceCents,
+                              "el"
+                            )
+                          )
+                          .join(" · ")}
                       </div>
                     )}
                     {it.comment && (

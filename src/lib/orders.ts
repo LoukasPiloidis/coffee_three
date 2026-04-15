@@ -86,6 +86,7 @@ export async function placeOrder(
     // Staff can toggle options off between "add to cart" and checkout, so
     // we must not trust the client-side cart snapshot.
     let optionSurchargeCents = 0;
+    const snapshotOptions: CartLine["options"] = [];
     for (const selected of line.options) {
       const group = item.optionGroups.find((g) => g.key === selected.groupKey);
       const option = group?.options.find((o) => o.key === selected.optionKey);
@@ -93,6 +94,10 @@ export async function placeOrder(
         return { ok: false, error: "unavailable" };
       }
       optionSurchargeCents += option.priceCents;
+      snapshotOptions.push({
+        ...selected,
+        priceCents: option.priceCents,
+      });
     }
 
     const unitPriceCents = Math.round(item.price * 100) + optionSurchargeCents;
@@ -102,7 +107,7 @@ export async function placeOrder(
       title: item.title,
       unitPriceCents,
       quantity: line.quantity,
-      options: line.options,
+      options: snapshotOptions,
       comment: line.comment,
     });
   }

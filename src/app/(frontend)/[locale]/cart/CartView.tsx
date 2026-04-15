@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { cartStore, cartTotalCents, lineTotalCents, useCart } from "@/lib/cart";
-import { formatPrice, type Locale } from "@/lib/menu-types";
+import { formatOptionLabel, formatPrice, type Locale } from "@/lib/menu-types";
 
 export default function CartView({ locale }: { locale: Locale }) {
   const t = useTranslations("cart");
@@ -40,7 +40,13 @@ export default function CartView({ locale }: { locale: Locale }) {
                   {line.options.length > 0 && (
                     <div className="cart-line__meta">
                       {line.options
-                        .map((o) => `${o.optionName[locale]}`)
+                        .map((o) =>
+                          formatOptionLabel(
+                            o.optionName[locale],
+                            o.priceCents,
+                            locale
+                          )
+                        )
                         .join(" · ")}
                     </div>
                   )}

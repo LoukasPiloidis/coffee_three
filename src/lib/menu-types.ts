@@ -54,3 +54,13 @@ export function formatPrice(price: number, locale: Locale): string {
     currency: "EUR",
   }).format(price);
 }
+
+/** Format an option label, appending "(+€0.30)" when priceCents > 0. */
+export function formatOptionLabel(
+  name: string,
+  priceCents: number | undefined,
+  locale: Locale
+): string {
+  if (!priceCents) return name;
+  return `${name} (+${formatPrice(priceCents / 100, locale)})`;
+}
