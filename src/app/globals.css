@@ -694,6 +694,12 @@ p {
   accent-color: var(--primary);
 }
 
+.option-price {
+  margin-left: 0.35em;
+  font-size: 0.85em;
+  color: var(--color-green-700, #5a7a5a);
+}
+
 /* --- Cart line --- */
 .cart-line {
   display: flex;

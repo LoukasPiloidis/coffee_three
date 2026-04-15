@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { cartStore, cartTotalCents, useCart } from "@/lib/cart";
+import { cartStore, cartTotalCents, lineTotalCents, useCart } from "@/lib/cart";
 import { formatPrice, type Locale } from "@/lib/menu-types";
 
 export default function CartView({ locale }: { locale: Locale }) {
@@ -50,7 +50,7 @@ export default function CartView({ locale }: { locale: Locale }) {
                 </div>
                 <div className="cart-line__right">
                   <div className="item-row__price">
-                    {formatPrice(line.unitPrice * line.quantity, locale)}
+                    {formatPrice(lineTotalCents(line) / 100, locale)}
                   </div>
                   <div className="qty">
                     <button

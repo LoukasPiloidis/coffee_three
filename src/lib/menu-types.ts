@@ -3,6 +3,7 @@ export type Locale = "en" | "el";
 export type MenuOption = {
   key: string;
   name: { en: string; el: string };
+  priceCents: number;
   available: boolean;
 };
 

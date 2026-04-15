@@ -93,6 +93,7 @@ type RawOptionGroup = {
   options: readonly {
     key: string;
     name: { en: string; el: string };
+    priceCents: number | null;
     available: boolean;
   }[];
 };
@@ -130,6 +131,7 @@ function mapItem(
         return {
           key: o.key,
           name: o.name,
+          priceCents: o.priceCents ?? 0,
           available: ovr ?? o.available,
         };
       }),

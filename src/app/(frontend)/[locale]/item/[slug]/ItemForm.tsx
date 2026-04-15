@@ -5,7 +5,7 @@ import { useState } from "react";
 import { AccordionControlled } from "@/components/Accordion";
 import { useRouter } from "@/i18n/navigation";
 import { type CartLineOption, cartStore } from "@/lib/cart";
-import type { Locale, MenuItem } from "@/lib/menu-types";
+import { formatPrice, type Locale, type MenuItem } from "@/lib/menu-types";
 
 type Selections = Record<string, string[]>; // groupIndex → selected option indices as strings
 
@@ -83,6 +83,7 @@ export default function ItemForm({
             optionKey: opt.key,
             groupName: g.name,
             optionName: opt.name,
+            priceCents: opt.priceCents,
           });
         }
       });
@@ -135,6 +136,11 @@ export default function ItemForm({
                     onChange={() => toggle(gi, value, g.selectionType)}
                   />
                   {o.name[locale]}
+                  {o.priceCents > 0 && (
+                    <span className="option-price">
+                      +{formatPrice(o.priceCents / 100, locale)}
+                    </span>
+                  )}
                 </label>
               );
             })}

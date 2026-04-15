@@ -70,6 +70,12 @@ export default config({
               validation: { length: { min: 1 } },
             }),
             name: bilingualText("Option"),
+            priceCents: fields.integer({
+              label: "Extra price (cents)",
+              description:
+                "Surcharge in euro-cents (e.g. 50 = €0.50). Leave 0 for free options.",
+              defaultValue: 0,
+            }),
             available: fields.checkbox({
               label: "Available",
               defaultValue: true,

@@ -82,18 +82,20 @@ export async function placeOrder(
     const item = await getItem(line.slug);
     if (!item || !item.available) return { ok: false, error: "unavailable" };
 
-    // Re-validate every selected option. Staff can toggle options off
-    // between "add to cart" and checkout, so we must not trust the
-    // client-side cart snapshot.
+    // Re-validate every selected option and compute authoritative prices.
+    // Staff can toggle options off between "add to cart" and checkout, so
+    // we must not trust the client-side cart snapshot.
+    let optionSurchargeCents = 0;
     for (const selected of line.options) {
       const group = item.optionGroups.find((g) => g.key === selected.groupKey);
       const option = group?.options.find((o) => o.key === selected.optionKey);
       if (!option || !option.available) {
         return { ok: false, error: "unavailable" };
       }
+      optionSurchargeCents += option.priceCents;
     }
 
-    const unitPriceCents = Math.round(item.price * 100);
+    const unitPriceCents = Math.round(item.price * 100) + optionSurchargeCents;
     totalCents += unitPriceCents * line.quantity;
     resolved.push({
       slug: item.slug,

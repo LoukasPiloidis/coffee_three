@@ -7,6 +7,7 @@ export type CartLineOption = {
   optionKey: string;
   groupName: { en: string; el: string };
   optionName: { en: string; el: string };
+  priceCents: number;
 };
 
 export type CartLine = {
@@ -23,9 +24,9 @@ export type Cart = {
   lines: CartLine[];
 };
 
-// v2: CartLineOption now carries groupKey/optionKey so placeOrder can
-// re-validate availability at checkout. v1 carts are silently discarded.
-const STORAGE_KEY = "coffee-three-cart-v2";
+// v3: CartLineOption now includes priceCents for option surcharges.
+// v2 carts are silently discarded.
+const STORAGE_KEY = "coffee-three-cart-v3";
 
 function readCart(): Cart {
   if (typeof window === "undefined") return { lines: [] };
@@ -125,11 +126,17 @@ export function useCart(): Cart {
   );
 }
 
-export function cartTotalCents(cart: Cart): number {
-  return cart.lines.reduce(
-    (sum, l) => sum + Math.round(l.unitPrice * 100) * l.quantity,
+export function lineTotalCents(line: CartLine): number {
+  const baseCents = Math.round(line.unitPrice * 100);
+  const optionsCents = line.options.reduce(
+    (s, o) => s + (o.priceCents ?? 0),
     0
   );
+  return (baseCents + optionsCents) * line.quantity;
+}
+
+export function cartTotalCents(cart: Cart): number {
+  return cart.lines.reduce((sum, l) => sum + lineTotalCents(l), 0);
 }
 
 export function cartItemCount(cart: Cart): number {

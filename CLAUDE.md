@@ -37,8 +37,10 @@ dashboard for personnel. See `requirements.md` for the original brief.
 4. **Polling over websockets** for real-time — staff dashboard polls
    `/api/staff/orders` every 6s, customer status page polls
    `/api/orders/[token]` every 7s. Sufficient for a few hundred orders/day.
-5. **Free modifiers only.** Options (milk, sweetener, etc.) have no price
-   delta. The schema enforces this: `optionGroups[].options[]` has only `name`.
+5. **Options may have a surcharge.** Each option has an optional `priceCents`
+   field (defaults to 0). The surcharge is displayed in the item accordion,
+   included in the cart line total, and snapshotted into `unitPriceCents`
+   at checkout using the authoritative Keystatic price (never the client value).
 6. **Guest contact constraint.** `orders` has a CHECK: every order must have
    either `user_id`, `guest_email`, or `guest_phone`. Enforced at DB + form.
 7. **Delivery rules from Keystatic.** `settings` singleton holds
