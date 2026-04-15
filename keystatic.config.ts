@@ -61,6 +61,11 @@ export default config({
           label: "Required",
           defaultValue: false,
         }),
+        defaultOptionKey: fields.text({
+          label: "Default option key",
+          description:
+            "Enter the key of the option that should be pre-selected (e.g. 'White Sugar'). Must match an option key exactly. Leave empty for no default.",
+        }),
         options: fields.array(
           fields.object({
             key: fields.text({

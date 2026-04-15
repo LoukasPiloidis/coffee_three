@@ -90,6 +90,7 @@ type RawOptionGroup = {
   name: { en: string; el: string };
   selectionType: "single" | "multi";
   required: boolean;
+  defaultOptionKey: string | null;
   options: readonly {
     key: string;
     name: { en: string; el: string };
@@ -126,6 +127,7 @@ function mapItem(
       name: g.name,
       selectionType: g.selectionType,
       required: g.required,
+      defaultOptionKey: g.defaultOptionKey ?? null,
       options: (g.options ?? []).map((o) => {
         const ovr = overrides.options.get(optionMapKey(slug, g.key, o.key));
         return {

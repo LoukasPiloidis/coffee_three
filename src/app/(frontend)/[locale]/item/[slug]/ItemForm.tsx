@@ -26,12 +26,32 @@ export default function ItemForm({
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [comment, setComment] = useState("");
-  const [selections, setSelections] = useState<Selections>({});
+  const [selections, setSelections] = useState<Selections>(() => {
+    const init: Selections = {};
+    item.optionGroups.forEach((g, gi) => {
+      if (g.defaultOptionKey) {
+        const idx = g.options.findIndex(
+          (o) => o.key === g.defaultOptionKey && o.available
+        );
+        if (idx >= 0) init[gi] = [String(idx)];
+      }
+    });
+    return init;
+  });
   const [error, setError] = useState<string | null>(null);
   const hasOptions = item.optionGroups.length > 0;
+  const firstUnfilledRequiredIdx = item.optionGroups.findIndex(
+    (g, gi) => g.required && !selections[gi]?.length
+  );
   const firstRequiredIdx = item.optionGroups.findIndex((g) => g.required);
   const [openGroup, setOpenGroup] = useState<number | null>(
-    hasOptions ? (firstRequiredIdx >= 0 ? firstRequiredIdx : 0) : null
+    hasOptions
+      ? firstUnfilledRequiredIdx >= 0
+        ? firstUnfilledRequiredIdx
+        : firstRequiredIdx >= 0
+          ? firstRequiredIdx
+          : 0
+      : null
   );
 
   const selectedSummary = (gi: number) => {

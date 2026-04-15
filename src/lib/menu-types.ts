@@ -12,6 +12,7 @@ export type MenuOptionGroup = {
   name: { en: string; el: string };
   selectionType: "single" | "multi";
   required: boolean;
+  defaultOptionKey: string | null;
   options: MenuOption[];
 };
 
