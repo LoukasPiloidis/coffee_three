@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import type { MenuCategory, Locale } from "@/lib/menu-types";
+import type { Locale, MenuCategory } from "@/lib/menu-types";
 import { formatPrice } from "@/lib/menu-types";
 
 export default function MenuList({
@@ -55,7 +55,7 @@ export default function MenuList({
   const scrollTo = useCallback((slug: string) => {
     const el = sectionRefs.current.get(slug);
     if (!el) return;
-    const y = el.getBoundingClientRect().top + window.scrollY - 120;
+    const y = el.getBoundingClientRect().top + window.scrollY - 170;
     window.scrollTo({ top: y, behavior: "smooth" });
   }, []);
 
