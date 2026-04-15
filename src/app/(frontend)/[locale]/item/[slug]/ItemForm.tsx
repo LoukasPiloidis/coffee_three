@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { AccordionControlled } from "@/components/Accordion";
 import { useRouter } from "@/i18n/navigation";
 import { type CartLineOption, cartStore } from "@/lib/cart";
 import type { Locale, MenuItem } from "@/lib/menu-types";
@@ -22,6 +23,20 @@ export default function ItemForm({
   const [comment, setComment] = useState("");
   const [selections, setSelections] = useState<Selections>({});
   const [error, setError] = useState<string | null>(null);
+  const hasOptions = item.optionGroups.length > 0;
+  const [openGroup, setOpenGroup] = useState<number | null>(
+    hasOptions ? 0 : null
+  );
+
+  const selectedSummary = (gi: number) => {
+    const sel = selections[gi] ?? [];
+    if (sel.length === 0) return null;
+    const g = item.optionGroups[gi];
+    return sel
+      .map((oi) => g.options[Number(oi)]?.name[locale])
+      .filter(Boolean)
+      .join(", ");
+  };
 
   const toggle = (
     groupIdx: number,
@@ -38,14 +53,22 @@ export default function ItemForm({
           : [...cur, optIdx],
       };
     });
+
+    // Auto-advance: on single-select, close current and open next
+    if (mode === "single") {
+      const nextIdx = item.optionGroups.findIndex(
+        (_, i) => i > groupIdx && (selections[i]?.length ?? 0) === 0
+      );
+      setOpenGroup(nextIdx >= 0 ? nextIdx : null);
+    }
   };
 
   const handleAdd = () => {
-    // Validate required groups
     for (let i = 0; i < item.optionGroups.length; i++) {
       const g = item.optionGroups[i];
       if (g.required && !(selections[i]?.length > 0)) {
         setError(`${g.name[locale]}: ${t("required")}`);
+        setOpenGroup(i);
         return;
       }
     }
@@ -75,55 +98,69 @@ export default function ItemForm({
     router.push("/cart");
   };
 
+  const accordionItems = item.optionGroups.map((g, gi) => {
+    const hasAnyAvailable = g.options.some((o) => o.available);
+    return {
+      key: g.key,
+      summary: selectedSummary(gi),
+      title: (
+        <span className="option-accordion__title">
+          {g.name[locale]}
+          {g.required && <span className="option-group__required">*</span>}
+        </span>
+      ),
+      content: (
+        <>
+          <div className="option-list">
+            {g.options.map((o, oi) => {
+              const name = `group-${gi}`;
+              const value = String(oi);
+              const checked = selections[gi]?.includes(value) ?? false;
+              const disabled = !o.available;
+              return (
+                <label
+                  key={oi}
+                  style={
+                    disabled
+                      ? { opacity: 0.45, textDecoration: "line-through" }
+                      : undefined
+                  }
+                >
+                  <input
+                    type={g.selectionType === "single" ? "radio" : "checkbox"}
+                    name={name}
+                    value={value}
+                    checked={checked && !disabled}
+                    disabled={disabled}
+                    onChange={() => toggle(gi, value, g.selectionType)}
+                  />
+                  {o.name[locale]}
+                </label>
+              );
+            })}
+          </div>
+          {g.required && !hasAnyAvailable && (
+            <div
+              className="notice notice--error"
+              style={{ marginTop: "0.5rem" }}
+            >
+              {t("allOptionsUnavailable")}
+            </div>
+          )}
+        </>
+      ),
+    };
+  });
+
   return (
     <div className="stack-md">
-      {item.optionGroups.map((g, gi) => {
-        const hasAnyAvailable = g.options.some((o) => o.available);
-        return (
-          <div key={gi} className="option-group">
-            <div className="option-group__label">
-              {g.name[locale]}
-              {g.required && <span className="option-group__required">*</span>}
-            </div>
-            <div className="option-list">
-              {g.options.map((o, oi) => {
-                const name = `group-${gi}`;
-                const value = String(oi);
-                const checked = selections[gi]?.includes(value) ?? false;
-                const disabled = !o.available;
-                return (
-                  <label
-                    key={oi}
-                    style={
-                      disabled
-                        ? { opacity: 0.45, textDecoration: "line-through" }
-                        : undefined
-                    }
-                  >
-                    <input
-                      type={g.selectionType === "single" ? "radio" : "checkbox"}
-                      name={name}
-                      value={value}
-                      checked={checked && !disabled}
-                      disabled={disabled}
-                      onChange={() => toggle(gi, value, g.selectionType)}
-                    />
-                    {o.name[locale]}
-                  </label>
-                );
-              })}
-            </div>
-            {g.required && !hasAnyAvailable && (
-              <div
-                className="notice notice--error"
-                style={{ marginTop: "0.5rem" }}
-              >
-                {t("allOptionsUnavailable")}
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {hasOptions && (
+        <AccordionControlled
+          items={accordionItems}
+          openIndex={openGroup}
+          onToggle={(i) => setOpenGroup((prev) => (prev === i ? null : i))}
+        />
+      )}
 
       <div className="field">
         <label>{t("comments")}</label>

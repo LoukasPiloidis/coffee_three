@@ -12,6 +12,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-coffee}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-coffee}
       POSTGRES_DB: ${POSTGRES_DB:-coffee}
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
