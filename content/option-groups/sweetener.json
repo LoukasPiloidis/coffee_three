@@ -5,7 +5,7 @@
     "el": "Γλυκαντικό "
   },
   "selectionType": "single",
-  "required": true,
+  "required": false,
   "options": [
     {
       "key": "White Sugar",
