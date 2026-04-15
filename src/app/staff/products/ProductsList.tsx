@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import ScrollPills from "@/components/ScrollPills";
 import type { MenuCategory } from "@/lib/menu-types";
 import {
   setItemAvailabilityAction,
@@ -69,15 +70,35 @@ export default function ProductsList({
 
   return (
     <div className="stack-md">
-      <input
-        type="search"
-        className="search-bar"
-        placeholder="Αναζήτηση προϊόντων…"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 15,
+          background: "var(--bg)",
+          paddingBlock: "0.75rem",
+        }}
+      >
+        <input
+          type="search"
+          className="search-bar"
+          placeholder="Αναζήτηση προϊόντων…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        {!q && (
+          <ScrollPills
+            items={filtered.map((cat) => ({
+              slug: cat.slug,
+              label: cat.title.el,
+            }))}
+            scrollOffset={100}
+            observerRootMargin="-80px 0px -60% 0px"
+          />
+        )}
+      </div>
       {filtered.map((cat) => (
-        <section key={cat.slug}>
+        <section key={cat.slug} data-slug={cat.slug}>
           <h2 style={{ marginBottom: "0.5rem" }}>{cat.title.el}</h2>
           {cat.items.length === 0 && (
             <p style={{ color: "var(--text-muted)" }}>Κανένα προϊόν.</p>

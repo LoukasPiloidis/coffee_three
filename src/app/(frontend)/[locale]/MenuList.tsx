@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import ScrollPills from "@/components/ScrollPills";
 import { Link } from "@/i18n/navigation";
 import type { Locale, MenuCategory } from "@/lib/menu-types";
 import { formatPrice } from "@/lib/menu-types";
@@ -15,8 +16,6 @@ export default function MenuList({
   translations: { unavailable: string; search: string };
 }) {
   const [query, setQuery] = useState("");
-  const [activeSlug, setActiveSlug] = useState<string | null>(null);
-  const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
   const q = query.toLowerCase().trim();
 
   const filtered = q
@@ -32,38 +31,6 @@ export default function MenuList({
         .filter((cat) => cat.items.length > 0)
     : categories;
 
-  // Track which category is in view
-  useEffect(() => {
-    const sections = Array.from(sectionRefs.current.values());
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveSlug(entry.target.getAttribute("data-slug"));
-          }
-        }
-      },
-      { rootMargin: "-120px 0px -60% 0px", threshold: 0 }
-    );
-
-    sections.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [filtered]);
-
-  const scrollTo = useCallback((slug: string) => {
-    const el = sectionRefs.current.get(slug);
-    if (!el) return;
-    const y = el.getBoundingClientRect().top + window.scrollY - 170;
-    window.scrollTo({ top: y, behavior: "smooth" });
-  }, []);
-
-  const setRef = useCallback((slug: string, el: HTMLElement | null) => {
-    if (el) sectionRefs.current.set(slug, el);
-    else sectionRefs.current.delete(slug);
-  }, []);
-
   return (
     <>
       <div className="menu-nav">
@@ -74,21 +41,13 @@ export default function MenuList({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        {!q && filtered.length > 1 && (
-          <div className="menu-nav__pills">
-            {filtered.map((cat) => (
-              <button
-                key={cat.slug}
-                type="button"
-                className={`menu-nav__pill${
-                  activeSlug === cat.slug ? " menu-nav__pill--active" : ""
-                }`}
-                onClick={() => scrollTo(cat.slug)}
-              >
-                {cat.title[locale]}
-              </button>
-            ))}
-          </div>
+        {!q && (
+          <ScrollPills
+            items={filtered.map((cat) => ({
+              slug: cat.slug,
+              label: cat.title[locale],
+            }))}
+          />
         )}
       </div>
 
@@ -97,12 +56,7 @@ export default function MenuList({
       )}
 
       {filtered.map((cat) => (
-        <section
-          key={cat.slug}
-          className="category"
-          data-slug={cat.slug}
-          ref={(el) => setRef(cat.slug, el)}
-        >
+        <section key={cat.slug} className="category" data-slug={cat.slug}>
           <h2 className="category__title">{cat.title[locale]}</h2>
           <div>
             {cat.items.map((item) => {
