@@ -9,27 +9,27 @@
   "defaultOptionKey": "Favourite",
   "options": [
     {
-      "key": "Favourite",
+      "key": "Favourite Selection",
       "name": {
-        "en": "Favourite ",
-        "el": "Favourite"
+        "en": "Favourite Selection",
+        "el": "Favourite Selection"
       },
       "available": true
     },
     {
-      "key": "Premium",
+      "key": "Premium Selection",
       "name": {
-        "en": "Premium",
-        "el": "Premium"
+        "en": "Premium Selection",
+        "el": "Premium Selection"
       },
-      "priceCents": 40,
+      "priceCents": 50,
       "available": true
     },
     {
-      "key": "Decaf",
+      "key": "Decaffeine",
       "name": {
-        "en": "Decaf",
-        "el": "Decaf"
+        "en": "Decaffeine",
+        "el": "Decaffeine"
       },
       "priceCents": 30,
       "available": true
