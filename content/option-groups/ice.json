@@ -1,0 +1,29 @@
+{
+  "key": "Ice",
+  "name": {
+    "en": "Ice Cubes",
+    "el": "Παγάκια "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "ice",
+      "name": {
+        "en": "With Ice Cubes",
+        "el": "Με Παγάκια "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Without Ice Cubes ",
+      "name": {
+        "en": "Without Ice Cubes ",
+        "el": "Χωρίς Παγάκια "
+      },
+      "priceCents": 0,
+      "available": true
+    }
+  ]
+}
