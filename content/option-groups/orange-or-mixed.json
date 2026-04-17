@@ -1,0 +1,30 @@
+{
+  "key": "orange or mixed ",
+  "name": {
+    "en": "Orange or Mixed ",
+    "el": "Πορτοκάλι ή Ανάμεικτος"
+  },
+  "selectionType": "single",
+  "required": true,
+  "defaultOptionKey": "Orange",
+  "options": [
+    {
+      "key": "Orange",
+      "name": {
+        "en": "Orange",
+        "el": "Πορτοκάλι "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Mixed",
+      "name": {
+        "en": "Mixed",
+        "el": "Ανάμεικτος "
+      },
+      "priceCents": 0,
+      "available": true
+    }
+  ]
+}
