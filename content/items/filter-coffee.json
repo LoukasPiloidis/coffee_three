@@ -5,7 +5,10 @@
     "en": "Filtered Coffee",
     "el": "Καφές Φίλτρου "
   },
-  "description": {},
+  "description": {
+    "en": "Cold or Hot",
+    "el": "Κρύο ή Ζεστό"
+  },
   "category": "coffees",
   "price": 2,
   "displayOrder": 10,
