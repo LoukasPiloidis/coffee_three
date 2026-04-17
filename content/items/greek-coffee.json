@@ -8,7 +8,7 @@
   "description": {},
   "category": "coffees",
   "price": 2,
-  "displayOrder": 0,
+  "displayOrder": 5,
   "optionGroups": [
     "size",
     "sugar",
