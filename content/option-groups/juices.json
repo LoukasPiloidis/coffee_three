@@ -5,8 +5,7 @@
     "el": "Φρούτα & Λαχανικά "
   },
   "selectionType": "multi",
-  "required": true,
-  "defaultOptionKey": "Orange ",
+  "required": false,
   "options": [
     {
       "key": "Orange ",
