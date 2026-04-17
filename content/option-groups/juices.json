@@ -1,0 +1,66 @@
+{
+  "key": "juices",
+  "name": {
+    "en": "Fruits & Veggies",
+    "el": "Φρούτα & Λαχανικά "
+  },
+  "selectionType": "multi",
+  "required": true,
+  "defaultOptionKey": "Orange",
+  "options": [
+    {
+      "key": "Orange ",
+      "name": {
+        "en": "Orange ",
+        "el": "Πορτοκάλι"
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Apple",
+      "name": {
+        "en": "Apple",
+        "el": "Μήλο "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Carrot",
+      "name": {
+        "en": "Carrot",
+        "el": "Καρότο "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Spinach",
+      "name": {
+        "en": "Spinach",
+        "el": "Σπανάκι "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Banana ",
+      "name": {
+        "en": "Banana ",
+        "el": "Μπανάνα "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Ginger",
+      "name": {
+        "en": "Ginger",
+        "el": "Ginger"
+      },
+      "priceCents": 0,
+      "available": true
+    }
+  ]
+}
