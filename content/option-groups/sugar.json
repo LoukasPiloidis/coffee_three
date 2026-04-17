@@ -6,7 +6,6 @@
   },
   "selectionType": "single",
   "required": false,
-  "defaultOptionKey": "No sugar",
   "options": [
     {
       "key": "No sugar",
