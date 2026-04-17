@@ -5,7 +5,10 @@
     "en": "Tea",
     "el": "Τσάι "
   },
-  "description": {},
+  "description": {
+    "en": "Cold or Hot",
+    "el": "Κρύο ή Ζεστό "
+  },
   "category": "drinks",
   "price": 2,
   "displayOrder": 0,
