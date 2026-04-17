@@ -5,7 +5,10 @@
     "en": "Chocolate",
     "el": "Σοκολάτα "
   },
-  "description": {},
+  "description": {
+    "en": "Cold or Hot",
+    "el": "Κρύο ή Ζεστό"
+  },
   "category": "drinks",
   "price": 4,
   "displayOrder": 0,
