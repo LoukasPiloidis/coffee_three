@@ -1,0 +1,10 @@
+{
+  "key": "drinks extras",
+  "name": {
+    "en": "Extras",
+    "el": "Έξτρα "
+  },
+  "selectionType": "multi",
+  "required": false,
+  "options": []
+}
