@@ -5,8 +5,7 @@
     "el": "Μέγεθος"
   },
   "selectionType": "single",
-  "required": false,
-  "defaultOptionKey": "Regular",
+  "required": true,
   "options": [
     {
       "key": "Regular",
