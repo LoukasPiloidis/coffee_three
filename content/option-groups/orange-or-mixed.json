@@ -5,8 +5,7 @@
     "el": "Πορτοκάλι ή Ανάμεικτος"
   },
   "selectionType": "single",
-  "required": true,
-  "defaultOptionKey": "Orange",
+  "required": false,
   "options": [
     {
       "key": "Orange",
