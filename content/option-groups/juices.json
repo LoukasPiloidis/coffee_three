@@ -6,7 +6,7 @@
   },
   "selectionType": "multi",
   "required": true,
-  "defaultOptionKey": "Orange",
+  "defaultOptionKey": "Orange ",
   "options": [
     {
       "key": "Orange ",
