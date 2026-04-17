@@ -6,7 +6,6 @@
   },
   "selectionType": "single",
   "required": false,
-  "defaultOptionKey": "Without",
   "options": [
     {
       "key": "White Sugar",
