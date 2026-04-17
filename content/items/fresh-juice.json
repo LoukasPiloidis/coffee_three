@@ -12,5 +12,8 @@
   "category": "drinks",
   "price": 5,
   "displayOrder": 0,
-  "optionGroups": []
+  "optionGroups": [
+    "orange-or-mixed",
+    "juices"
+  ]
 }
