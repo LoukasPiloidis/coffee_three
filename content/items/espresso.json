@@ -8,7 +8,7 @@
   "description": {},
   "category": "coffees",
   "price": 2,
-  "displayOrder": -1,
+  "displayOrder": 0,
   "optionGroups": [
     "blends",
     "size",
