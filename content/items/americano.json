@@ -5,7 +5,10 @@
     "en": "Americano",
     "el": "Americano"
   },
-  "description": {},
+  "description": {
+    "en": "Cold or Hot",
+    "el": "Κρύο ή Ζεστό"
+  },
   "category": "coffees",
   "price": 3,
   "displayOrder": 8,
