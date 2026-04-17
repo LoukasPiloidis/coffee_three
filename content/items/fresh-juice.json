@@ -3,11 +3,11 @@
   "slug": "fresh juice",
   "title": {
     "en": "Fresh Juice",
-    "el": "Φρέσκος χυμός "
+    "el": "Φυσικός χυμός "
   },
   "description": {
-    "en": "Juice from fresh fruits",
-    "el": "Χυμός από φρέσκα φρούτα "
+    "en": "Fresh juice with ingredients of your choice ",
+    "el": "Φυσικός χυμός με υλικά της επιλογής σας"
   },
   "category": "drinks",
   "price": 5,
