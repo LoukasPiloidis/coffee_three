@@ -5,7 +5,7 @@
     "el": "Έξτρα "
   },
   "selectionType": "multi",
-  "required": true,
+  "required": false,
   "options": [
     {
       "key": "Milk",
@@ -13,7 +13,7 @@
         "en": "Milk",
         "el": "Γάλα "
       },
-      "priceCents": 30,
+      "priceCents": 0,
       "available": true
     },
     {
@@ -22,6 +22,7 @@
         "en": "Evaporated Milk",
         "el": "Γάλα Εβαπορέ "
       },
+      "priceCents": 30,
       "available": true
     },
     {
@@ -30,6 +31,7 @@
         "en": "Oat Milk",
         "el": "Γάλα Βρώμης "
       },
+      "priceCents": 30,
       "available": true
     },
     {
@@ -38,6 +40,7 @@
         "en": "Almond Milk",
         "el": "Γάλα Αμυγδάλου "
       },
+      "priceCents": 30,
       "available": true
     },
     {
@@ -46,6 +49,7 @@
         "en": "Plant Cream",
         "el": "Φυτική Κρέμα "
       },
+      "priceCents": 40,
       "available": true
     },
     {
@@ -54,6 +58,7 @@
         "en": "Whipped Cream ",
         "el": "Σαντιγί "
       },
+      "priceCents": 30,
       "available": true
     },
     {
@@ -62,6 +67,7 @@
         "en": "Syrup",
         "el": "Σιρόπι "
       },
+      "priceCents": 50,
       "available": true
     }
   ]
