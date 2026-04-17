@@ -1,0 +1,38 @@
+{
+  "key": "Monsters",
+  "name": {
+    "en": "Flavours",
+    "el": "Γεύσεις "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "Green",
+      "name": {
+        "en": "Green",
+        "el": "Πράσινο "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Mango",
+      "name": {
+        "en": "Mango",
+        "el": "Mango"
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Zero Sugar",
+      "name": {
+        "en": "Zero Sugar",
+        "el": "Χωρίς Ζάχαρη "
+      },
+      "priceCents": 0,
+      "available": true
+    }
+  ]
+}
