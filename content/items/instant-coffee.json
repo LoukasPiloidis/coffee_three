@@ -5,7 +5,10 @@
     "en": "Instant Coffee",
     "el": "Στιγμιαίος Καφές "
   },
-  "description": {},
+  "description": {
+    "en": "Cold or Hot",
+    "el": "Κρύο ή Ζεστό"
+  },
   "category": "coffees",
   "price": 2,
   "displayOrder": 11,
