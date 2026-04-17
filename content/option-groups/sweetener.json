@@ -6,7 +6,7 @@
   },
   "selectionType": "single",
   "required": false,
-  "defaultOptionKey": "White Sugar",
+  "defaultOptionKey": "Without",
   "options": [
     {
       "key": "White Sugar",
@@ -46,6 +46,15 @@
         "en": "Honey ",
         "el": "Μέλι "
       },
+      "available": true
+    },
+    {
+      "key": "Without",
+      "name": {
+        "en": "Without",
+        "el": "Χωρίς"
+      },
+      "priceCents": 0,
       "available": true
     }
   ]
