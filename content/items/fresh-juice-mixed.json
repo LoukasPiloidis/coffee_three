@@ -1,0 +1,19 @@
+{
+  "available": true,
+  "slug": "Fresh Juice Mixed",
+  "title": {
+    "en": "Fresh Juice Mixed",
+    "el": "Φυσικός Χυμός Ανάμεικτος "
+  },
+  "description": {
+    "en": "Fresh Juice with ingredients of your choice ",
+    "el": "Φυσικός Χυμός με υλικά της επιλογής σας"
+  },
+  "category": "drinks",
+  "price": 4,
+  "displayOrder": 0,
+  "optionGroups": [
+    "juices",
+    "ice"
+  ]
+}
