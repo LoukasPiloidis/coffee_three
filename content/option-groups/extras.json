@@ -35,15 +35,6 @@
       "available": true
     },
     {
-      "key": "Plant Cream",
-      "name": {
-        "en": "Plant Cream",
-        "el": "Φυτική Κρέμα "
-      },
-      "priceCents": 40,
-      "available": true
-    },
-    {
       "key": "Cinnamon",
       "name": {
         "en": "Cinnamon",
@@ -62,12 +53,21 @@
       "available": true
     },
     {
+      "key": "Plant Cream",
+      "name": {
+        "en": "Plant Cream",
+        "el": "Φυτική Κρέμα "
+      },
+      "priceCents": 40,
+      "available": true
+    },
+    {
       "key": "Whipped Cream ",
       "name": {
         "en": "Whipped Cream ",
         "el": "Σαντιγί "
       },
-      "priceCents": 30,
+      "priceCents": 40,
       "available": true
     },
     {
