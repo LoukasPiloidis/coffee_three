@@ -6,7 +6,7 @@
   },
   "selectionType": "single",
   "required": false,
-  "defaultOptionKey": "Favourite",
+  "defaultOptionKey": "Favourite Selection",
   "options": [
     {
       "key": "Favourite Selection",
