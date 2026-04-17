@@ -5,8 +5,7 @@
     "el": "Χαρμάνια "
   },
   "selectionType": "single",
-  "required": false,
-  "defaultOptionKey": "Favourite Selection",
+  "required": true,
   "options": [
     {
       "key": "Favourite Selection",
