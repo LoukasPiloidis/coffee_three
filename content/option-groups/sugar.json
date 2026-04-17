@@ -5,7 +5,8 @@
     "el": "Ζάχαρη "
   },
   "selectionType": "single",
-  "required": true,
+  "required": false,
+  "defaultOptionKey": "No sugar",
   "options": [
     {
       "key": "No sugar",
