@@ -8,15 +8,6 @@
   "required": false,
   "options": [
     {
-      "key": "Milk",
-      "name": {
-        "en": "Milk",
-        "el": "Γάλα "
-      },
-      "priceCents": 0,
-      "available": true
-    },
-    {
       "key": "Evaporated Milk",
       "name": {
         "en": "Evaporated Milk",
