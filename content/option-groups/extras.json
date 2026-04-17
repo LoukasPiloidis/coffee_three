@@ -53,21 +53,12 @@
       "available": true
     },
     {
-      "key": "Whipped Cream ",
+      "key": "Cinnamon",
       "name": {
-        "en": "Whipped Cream ",
-        "el": "Σαντιγί "
+        "en": "Cinnamon",
+        "el": "Κανέλλα "
       },
-      "priceCents": 30,
-      "available": true
-    },
-    {
-      "key": "Syrup",
-      "name": {
-        "en": "Syrup",
-        "el": "Σιρόπι "
-      },
-      "priceCents": 50,
+      "priceCents": 10,
       "available": true
     },
     {
@@ -80,12 +71,48 @@
       "available": true
     },
     {
-      "key": "Cinnamon",
+      "key": "Whipped Cream ",
       "name": {
-        "en": "Cinnamon",
-        "el": "Κανέλλα "
+        "en": "Whipped Cream ",
+        "el": "Σαντιγί "
       },
-      "priceCents": 10,
+      "priceCents": 30,
+      "available": true
+    },
+    {
+      "key": "Chocolate Syrup",
+      "name": {
+        "en": "Chocolate Syrup",
+        "el": "Σιρόπι Σοκολάτα"
+      },
+      "priceCents": 50,
+      "available": true
+    },
+    {
+      "key": "Strawberry Syrup",
+      "name": {
+        "en": "Strawberry Syrup",
+        "el": "Σιρόπι Φράουλα"
+      },
+      "priceCents": 50,
+      "available": true
+    },
+    {
+      "key": "Caramel Syrup",
+      "name": {
+        "en": "Caramel Syrup",
+        "el": "Σιρόπι Καραμέλα"
+      },
+      "priceCents": 50,
+      "available": true
+    },
+    {
+      "key": "Hazelnut Syrup",
+      "name": {
+        "en": "Hazelnut Syrup",
+        "el": "Σιρόπι Φουντούκι"
+      },
+      "priceCents": 50,
       "available": true
     }
   ]
