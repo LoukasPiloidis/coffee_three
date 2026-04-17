@@ -1,0 +1,30 @@
+{
+  "key": "2 size",
+  "name": {
+    "en": "Size ",
+    "el": "Μέγεθος"
+  },
+  "selectionType": "single",
+  "required": false,
+  "defaultOptionKey": "Regular",
+  "options": [
+    {
+      "key": "Regular",
+      "name": {
+        "en": "Regular",
+        "el": "Regular"
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Grande",
+      "name": {
+        "en": "Grande",
+        "el": "Grande"
+      },
+      "priceCents": 50,
+      "available": true
+    }
+  ]
+}
