@@ -1,5 +1,5 @@
 {
-  "key": "extras",
+  "key": "drinks extras",
   "name": {
     "en": "Extras",
     "el": "Έξτρα "
@@ -68,6 +68,24 @@
         "el": "Σιρόπι "
       },
       "priceCents": 50,
+      "available": true
+    },
+    {
+      "key": "cocoa ",
+      "name": {
+        "en": "Cocoa",
+        "el": "Κακάο "
+      },
+      "priceCents": 10,
+      "available": true
+    },
+    {
+      "key": "Cinnamon",
+      "name": {
+        "en": "Cinnamon",
+        "el": "Κανέλλα "
+      },
+      "priceCents": 10,
       "available": true
     }
   ]
