@@ -13,7 +13,9 @@
   "price": 4,
   "displayOrder": 0,
   "optionGroups": [
-    "hot-cold",
+    "cold-hot",
+    "sugar",
+    "sweetener",
     "extras"
   ]
 }
