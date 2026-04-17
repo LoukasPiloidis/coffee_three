@@ -6,12 +6,13 @@
   },
   "selectionType": "single",
   "required": true,
+  "defaultOptionKey": "Favourite",
   "options": [
     {
-      "key": "Flavor ",
+      "key": "Favourite",
       "name": {
-        "en": "Flavor ",
-        "el": "Flavor"
+        "en": "Favourite ",
+        "el": "Favourite"
       },
       "available": true
     },
@@ -21,6 +22,7 @@
         "en": "Premium",
         "el": "Premium"
       },
+      "priceCents": 40,
       "available": true
     },
     {
@@ -29,6 +31,7 @@
         "en": "Decaf",
         "el": "Decaf"
       },
+      "priceCents": 30,
       "available": true
     }
   ]
