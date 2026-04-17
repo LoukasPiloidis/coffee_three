@@ -8,7 +8,7 @@
   "description": {},
   "category": "coffees",
   "price": 3,
-  "displayOrder": 0,
+  "displayOrder": 7,
   "optionGroups": [
     "blends",
     "cold-hot",
