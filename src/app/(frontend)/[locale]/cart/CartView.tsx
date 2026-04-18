@@ -2,11 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import PriceWithDiscount from "@/components/PriceWithDiscount";
 import { Link } from "@/i18n/navigation";
 import {
   cartStore,
   cartTotalCents,
-  cartTotalCentsWithOffers,
   lineDiscountCents,
   lineTotalCents,
   offerForLine,
@@ -27,7 +27,6 @@ export default function CartView({
   const t = useTranslations("cart");
   const tOffers = useTranslations("offers");
   const cart = useCart();
-  const totalCents = cartTotalCentsWithOffers(cart);
   const savingsCents = totalOfferDiscountCents(cart);
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
@@ -135,16 +134,11 @@ export default function CartView({
                   </div>
                   <div className="cart-line__right">
                     <div className="item-row__price">
-                      {discount > 0 ? (
-                        <>
-                          <span className="offer-item-pick__original">
-                            {formatPrice(lineTotal / 100, locale)}
-                          </span>{" "}
-                          {formatPrice((lineTotal - discount) / 100, locale)}
-                        </>
-                      ) : (
-                        formatPrice(lineTotal / 100, locale)
-                      )}
+                      <PriceWithDiscount
+                        originalCents={lineTotal}
+                        discountCents={discount}
+                        locale={locale}
+                      />
                     </div>
                     <div className="qty">
                       <button
@@ -215,27 +209,13 @@ export default function CartView({
           <div className="totals">
             <span>{t("total")}</span>
             <strong>
-              {savingsCents > 0 && (
-                <span
-                  className="offer-item-pick__original"
-                  style={{ marginRight: "0.5rem" }}
-                >
-                  {formatPrice(cartTotalCents(cart) / 100, locale)}
-                </span>
-              )}
-              {formatPrice(totalCents / 100, locale)}
+              <PriceWithDiscount
+                originalCents={cartTotalCents(cart)}
+                discountCents={savingsCents}
+                locale={locale}
+              />
             </strong>
           </div>
-
-          {savingsCents > 0 && (
-            <div style={{ textAlign: "center" }}>
-              <span className="offer-discount">
-                {tOffers("youSave", {
-                  amount: formatPrice(savingsCents / 100, locale),
-                })}
-              </span>
-            </div>
-          )}
 
           <Link href="/checkout" className="btn btn--primary btn--block">
             {t("proceed")}

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import PriceWithDiscount from "@/components/PriceWithDiscount";
 import ItemOptionSelector, {
   type ItemSelectionResult,
 } from "@/components/ItemOptionSelector";
@@ -9,7 +10,6 @@ import { useRouter } from "@/i18n/navigation";
 import { type CartLineOption, cartStore } from "@/lib/cart";
 import {
   computeSlotDiscountCents,
-  formatPrice,
   type Locale,
   type MenuItem,
   type Offer,
@@ -198,16 +198,11 @@ export default function OfferForm({
                         {item.title[locale]}
                       </span>
                       <span className="offer-item-pick__price">
-                        {discount > 0 ? (
-                          <>
-                            <span className="offer-item-pick__original">
-                              {formatPrice(item.price, locale)}
-                            </span>{" "}
-                            {formatPrice((baseCents - discount) / 100, locale)}
-                          </>
-                        ) : (
-                          formatPrice(item.price, locale)
-                        )}
+                        <PriceWithDiscount
+                          originalCents={baseCents}
+                          discountCents={discount}
+                          locale={locale}
+                        />
                       </span>
                     </button>
                   );
@@ -306,16 +301,11 @@ export default function OfferForm({
                   )}
                 </div>
                 <div className="offer-summary__slot-price">
-                  {discount > 0 ? (
-                    <>
-                      <span className="offer-item-pick__original">
-                        {formatPrice(itemTotal / 100, locale)}
-                      </span>{" "}
-                      {formatPrice((itemTotal - discount) / 100, locale)}
-                    </>
-                  ) : (
-                    formatPrice(itemTotal / 100, locale)
-                  )}
+                  <PriceWithDiscount
+                    originalCents={itemTotal}
+                    discountCents={discount}
+                    locale={locale}
+                  />
                 </div>
               </div>
             );
@@ -326,20 +316,14 @@ export default function OfferForm({
       {/* Final summary + add to cart */}
       {allConfirmed && summary && (
         <div className="offer-total">
-          {summary.discountCents > 0 && (
-            <div className="offer-total__savings">
-              {t("youSave", {
-                amount: formatPrice(summary.discountCents / 100, locale),
-              })}
-            </div>
-          )}
           <div className="offer-total__final">
-            {summary.discountCents > 0 && (
-              <span className="offer-item-pick__original">
-                {formatPrice(summary.originalCents / 100, locale)}
-              </span>
-            )}{" "}
-            <strong>{formatPrice(summary.finalCents / 100, locale)}</strong>
+            <strong>
+              <PriceWithDiscount
+                originalCents={summary.originalCents}
+                discountCents={summary.discountCents}
+                locale={locale}
+              />
+            </strong>
           </div>
           <button
             className="btn btn--primary btn--block"

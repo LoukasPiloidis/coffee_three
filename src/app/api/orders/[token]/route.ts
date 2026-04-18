@@ -21,6 +21,7 @@ export async function GET(
       title: i.titleSnapshot,
       quantity: i.quantity,
       unitPriceCents: i.unitPriceCents,
+      discountCents: i.discountCents,
       options: i.optionsJson,
       comment: i.comment,
     })),

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
+import PriceWithDiscount from "@/components/PriceWithDiscount";
 import { useRouter } from "@/i18n/navigation";
 import {
   cartStore,
@@ -40,7 +41,6 @@ export default function CheckoutForm({
   const t = useTranslations("checkout");
   const tErr = useTranslations("checkout.errors");
   const router = useRouter();
-  const tOffers = useTranslations("offers");
   const cart = useCart();
   const totalCents = cartTotalCentsWithOffers(cart);
   const savingsCents = totalOfferDiscountCents(cart);
@@ -341,20 +341,14 @@ export default function CheckoutForm({
             </div>
           </div>
 
-          {savingsCents > 0 && (
-            <div style={{ textAlign: "center" }}>
-              <span className="offer-discount">
-                {tOffers("youSave", {
-                  amount: formatPrice(savingsCents / 100, locale),
-                })}
-              </span>
-            </div>
-          )}
-
           <div className="totals">
             <span>{t("title")}</span>
             <strong>
-              {formatPrice((totalCents + parsedTipCents) / 100, locale)}
+              <PriceWithDiscount
+                originalCents={totalCents + savingsCents + parsedTipCents}
+                discountCents={savingsCents}
+                locale={locale}
+              />
             </strong>
           </div>
           {parsedTipCents > 0 && (

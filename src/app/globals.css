@@ -949,7 +949,8 @@ p {
   font-size: 0.85rem;
   color: var(--color-green-800);
 }
-.offer-item-pick__original {
+.offer-item-pick__original,
+.price-discount__original {
   text-decoration: line-through;
   color: var(--text-muted);
   font-weight: 400;

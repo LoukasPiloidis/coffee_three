@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import PriceWithDiscount from "@/components/PriceWithDiscount";
 import { formatOptionLabel, formatPrice, type Locale } from "@/lib/menu-types";
 
 type OrderDTO = {
@@ -13,6 +14,7 @@ type OrderDTO = {
     title: { en: string; el: string };
     quantity: number;
     unitPriceCents: number;
+    discountCents: number;
     options: {
       groupName: { en: string; el: string };
       optionName: { en: string; el: string };
@@ -179,7 +181,11 @@ export default function OrderStatusView({
               </div>
               <div className="cart-line__right">
                 <div className="item-row__price">
-                  {formatPrice((it.unitPriceCents * it.quantity) / 100, locale)}
+                  <PriceWithDiscount
+                    originalCents={it.unitPriceCents * it.quantity}
+                    discountCents={it.discountCents}
+                    locale={locale}
+                  />
                 </div>
               </div>
             </div>
