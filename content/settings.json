@@ -3,6 +3,7 @@
   "allowedPostcodes": [],
   "deliveryHours": {
     "mon": "09:00-22:00",
-    "thu": "09:00-22:00"
+    "thu": "09:00-22:00",
+    "sat": "09:00-22:00"
   }
 }
