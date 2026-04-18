@@ -1,0 +1,34 @@
+{
+  "slug": "Two Espressos",
+  "available": true,
+  "title": {
+    "en": "Buy 2 Espressos - Get one 50% off",
+    "el": "Πάρε 2 Εσπρέσσο - Με 50% έκπτωση στον έναν"
+  },
+  "description": {},
+  "displayOrder": 0,
+  "slots": [
+    {
+      "label": {
+        "en": "Espresso 1",
+        "el": "Εσπρεσσο 1"
+      },
+      "eligibleItems": [
+        "espresso"
+      ],
+      "discountType": "percentage",
+      "discountValue": 0
+    },
+    {
+      "label": {
+        "en": "Espresso 2",
+        "el": "Εσπρέσσο 2"
+      },
+      "eligibleItems": [
+        "espresso"
+      ],
+      "discountType": "percentage",
+      "discountValue": 50
+    }
+  ]
+}
