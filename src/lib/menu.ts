@@ -5,7 +5,7 @@ import { unstable_cache } from "next/cache";
 import { db } from "@/db";
 import { itemOverrides, optionOverrides } from "@/db/schema";
 import keystaticConfig from "../../keystatic.config";
-import type { MenuCategory, MenuItem, ShopSettings } from "./menu-types";
+import type { MenuCategory, MenuItem, Offer, ShopSettings } from "./menu-types";
 
 export type {
   Locale,
@@ -13,9 +13,11 @@ export type {
   MenuItem,
   MenuOption,
   MenuOptionGroup,
+  Offer,
+  OfferSlot,
   ShopSettings,
 } from "./menu-types";
-export { formatPrice } from "./menu-types";
+export { computeSlotDiscountCents, formatPrice } from "./menu-types";
 
 /**
  * Tag used by `unstable_cache` to invalidate menu/settings reads when the
@@ -194,6 +196,67 @@ async function readDeliveryGuys(): Promise<string[]> {
   return entries.map((e) => e.slug);
 }
 
+type RawOffer = {
+  slug: string;
+  available: boolean;
+  title: { en: string; el: string };
+  description: { en: string; el: string };
+  displayOrder: number | null;
+  slots: readonly {
+    label: { en: string; el: string };
+    eligibleItems: readonly (string | null)[];
+    discountType: "none" | "percentage" | "fixed_cents";
+    discountValue: number | null;
+  }[];
+};
+
+async function readOffers(): Promise<Offer[]> {
+  const entries = await reader.collections.offers.all();
+  return entries
+    .map((e) => {
+      const o = e.entry as RawOffer;
+      return {
+        slug: e.slug,
+        title: o.title,
+        description: o.description,
+        available: o.available,
+        displayOrder: o.displayOrder ?? 0,
+        slots: (o.slots ?? []).map((s) => ({
+          label: s.label,
+          eligibleItems: (s.eligibleItems ?? []).filter(
+            (i): i is string => i != null
+          ),
+          discountType: s.discountType,
+          discountValue: s.discountValue ?? 0,
+        })),
+      };
+    })
+    .filter((o) => o.available)
+    .sort((a, b) => a.displayOrder - b.displayOrder);
+}
+
+async function readOffer(slug: string): Promise<Offer | null> {
+  const entry = await reader.collections.offers.read(slug);
+  if (!entry) return null;
+  const o = entry as RawOffer;
+  if (!o.available) return null;
+  return {
+    slug,
+    title: o.title,
+    description: o.description,
+    available: o.available,
+    displayOrder: o.displayOrder ?? 0,
+    slots: (o.slots ?? []).map((s) => ({
+      label: s.label,
+      eligibleItems: (s.eligibleItems ?? []).filter(
+        (i): i is string => i != null
+      ),
+      discountType: s.discountType,
+      discountValue: s.discountValue ?? 0,
+    })),
+  };
+}
+
 async function readSettings(): Promise<ShopSettings> {
   const s = await reader.singletons.settings.read();
   return {
@@ -233,6 +296,18 @@ export const getDeliveryGuys: () => Promise<string[]> = useRemoteCache
       tags: [KEYSTATIC_CACHE_TAG],
     })
   : readDeliveryGuys;
+
+export const getOffers: () => Promise<Offer[]> = useRemoteCache
+  ? unstable_cache(readOffers, ["keystatic-offers"], {
+      tags: [KEYSTATIC_CACHE_TAG],
+    })
+  : readOffers;
+
+export const getOffer: (slug: string) => Promise<Offer | null> = useRemoteCache
+  ? unstable_cache(readOffer, ["keystatic-offer"], {
+      tags: [KEYSTATIC_CACHE_TAG],
+    })
+  : readOffer;
 
 export const getSettings: () => Promise<ShopSettings> = useRemoteCache
   ? unstable_cache(readSettings, ["keystatic-settings"], {

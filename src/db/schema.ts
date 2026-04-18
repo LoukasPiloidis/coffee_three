@@ -137,6 +137,7 @@ export const orders = pgTable(
     paymentMethod: paymentMethod("payment_method").notNull(),
     status: orderStatus("status").notNull().default("received"),
     totalCents: integer("total_cents").notNull(),
+    offersJson: jsonb("offers_json").notNull().default(sql`'[]'::jsonb`),
     tipCents: integer("tip_cents").notNull().default(0),
     deliveryGuy: text("delivery_guy"),
     notes: text("notes"),
@@ -203,5 +204,6 @@ export const orderItems = pgTable("order_items", {
   unitPriceCents: integer("unit_price_cents").notNull(),
   quantity: integer("quantity").notNull(),
   optionsJson: jsonb("options_json").notNull().default(sql`'[]'::jsonb`),
+  discountCents: integer("discount_cents").notNull().default(0),
   comment: text("comment"),
 });

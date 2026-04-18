@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { getMenu } from "@/lib/menu";
+import { getMenu, getOffers } from "@/lib/menu";
 import type { Locale } from "@/lib/menu-types";
 import MenuList from "./MenuList";
 
@@ -11,7 +11,8 @@ export default async function HomePage({
   const { locale } = await params;
   const loc = locale as Locale;
   const t = await getTranslations("menu");
-  const categories = await getMenu();
+  const tOffers = await getTranslations("offers");
+  const [categories, offers] = await Promise.all([getMenu(), getOffers()]);
 
   return (
     <main className="page">
@@ -24,10 +25,12 @@ export default async function HomePage({
         {categories.length > 0 && (
           <MenuList
             categories={categories}
+            offers={offers}
             locale={loc}
             translations={{
               unavailable: t("unavailable"),
               search: t("search"),
+              offersTitle: tOffers("title"),
             }}
           />
         )}

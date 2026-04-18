@@ -3,17 +3,19 @@
 import { useState } from "react";
 import ScrollPills from "@/components/ScrollPills";
 import { Link } from "@/i18n/navigation";
-import type { Locale, MenuCategory } from "@/lib/menu-types";
+import type { Locale, MenuCategory, Offer } from "@/lib/menu-types";
 import { formatPrice } from "@/lib/menu-types";
 
 export default function MenuList({
   categories,
+  offers,
   locale,
   translations,
 }: {
   categories: MenuCategory[];
+  offers: Offer[];
   locale: Locale;
-  translations: { unavailable: string; search: string };
+  translations: { unavailable: string; search: string; offersTitle: string };
 }) {
   const [query, setQuery] = useState("");
   const q = query.toLowerCase().trim();
@@ -50,6 +52,28 @@ export default function MenuList({
           />
         )}
       </div>
+
+      {offers.length > 0 && !q && (
+        <section className="offers-section">
+          <h2 className="offers-section__title">{translations.offersTitle}</h2>
+          <div className="offers-section__list">
+            {offers.map((offer) => (
+              <Link
+                key={offer.slug}
+                href={`/offer/${offer.slug}`}
+                className="offer-card"
+              >
+                <div className="offer-card__title">{offer.title[locale]}</div>
+                {offer.description[locale] && (
+                  <div className="offer-card__desc">
+                    {offer.description[locale]}
+                  </div>
+                )}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {filtered.length === 0 && (
         <p className="empty">{translations.unavailable}</p>

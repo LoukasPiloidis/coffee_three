@@ -155,6 +155,61 @@ export default config({
         ),
       },
     }),
+    offers: collection({
+      label: "Offers",
+      slugField: "slug",
+      path: "content/offers/*",
+      format: { data: "json" },
+      columns: ["available", "displayOrder"],
+      schema: {
+        slug: fields.slug({ name: { label: "Slug" } }),
+        available: fields.checkbox({
+          label: "Available",
+          defaultValue: true,
+        }),
+        title: bilingualText("Title"),
+        description: bilingualTextOptional("Description"),
+        displayOrder: fields.integer({
+          label: "Display order",
+          defaultValue: 0,
+        }),
+        slots: fields.array(
+          fields.object({
+            label: bilingualText("Slot label"),
+            eligibleItems: fields.array(
+              fields.relationship({
+                label: "Eligible item",
+                collection: "items",
+              }),
+              {
+                label: "Eligible items",
+                itemLabel: (props) => props.value ?? "Select item",
+              }
+            ),
+            discountType: fields.select({
+              label: "Discount type",
+              options: [
+                { label: "None", value: "none" },
+                { label: "Percentage", value: "percentage" },
+                { label: "Fixed (cents)", value: "fixed_cents" },
+              ],
+              defaultValue: "none",
+            }),
+            discountValue: fields.integer({
+              label: "Discount value",
+              description:
+                "For percentage: 0–100. For fixed: amount in euro-cents.",
+              defaultValue: 0,
+            }),
+          }),
+          {
+            label: "Slots",
+            itemLabel: (props) =>
+              props.fields.label.fields.en.value || "Slot",
+          }
+        ),
+      },
+    }),
   },
   singletons: {
     settings: singleton({

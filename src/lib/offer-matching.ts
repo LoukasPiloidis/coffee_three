@@ -1,0 +1,95 @@
+"use client";
+
+import type { Cart } from "./cart";
+import { lineTotalCents } from "./cart";
+import type { Offer } from "./menu-types";
+import { computeSlotDiscountCents } from "./menu-types";
+
+export type OfferSuggestion = {
+  offer: Offer;
+  suggestedAssignments: {
+    slotIndex: number;
+    lineId: string;
+    discountCents: number;
+  }[];
+  totalSavingsCents: number;
+};
+
+/**
+ * Detect which available offers can be fulfilled by the current cart lines.
+ * Each offer is checked independently. Lines already assigned to an applied
+ * offer are excluded. Returns suggestions sorted by savings (highest first).
+ */
+export function detectApplicableOffers(
+  cart: Cart,
+  offers: Offer[]
+): OfferSuggestion[] {
+  // Collect lineIds already locked to an applied offer
+  const lockedLineIds = new Set<string>();
+  for (const ao of cart.appliedOffers) {
+    for (const a of ao.slotAssignments) lockedLineIds.add(a.lineId);
+  }
+
+  // Also skip offers already applied
+  const appliedSlugs = new Set(cart.appliedOffers.map((o) => o.offerSlug));
+
+  const suggestions: OfferSuggestion[] = [];
+
+  for (const offer of offers) {
+    if (appliedSlugs.has(offer.slug)) continue;
+    if (offer.slots.length === 0) continue;
+
+    // Try to greedily assign cart lines to slots.
+    // For each slot, find the first available line whose slug is eligible.
+    const usedLineIds = new Set<string>();
+    const assignments: OfferSuggestion["suggestedAssignments"] = [];
+    let allSlotsFilled = true;
+
+    for (let si = 0; si < offer.slots.length; si++) {
+      const slot = offer.slots[si];
+      const eligibleSet = new Set(slot.eligibleItems);
+
+      // Find best matching line: prefer quantity-1 lines to avoid splitting
+      const candidate = cart.lines.find(
+        (l) =>
+          eligibleSet.has(l.slug) &&
+          !lockedLineIds.has(l.lineId) &&
+          !usedLineIds.has(l.lineId)
+      );
+
+      if (!candidate) {
+        allSlotsFilled = false;
+        break;
+      }
+
+      usedLineIds.add(candidate.lineId);
+      const itemPriceCents = Math.round(
+        lineTotalCents(candidate) / candidate.quantity
+      );
+      const discountCents = computeSlotDiscountCents(slot, itemPriceCents);
+      assignments.push({
+        slotIndex: si,
+        lineId: candidate.lineId,
+        discountCents,
+      });
+    }
+
+    if (allSlotsFilled) {
+      const totalSavingsCents = assignments.reduce(
+        (s, a) => s + a.discountCents,
+        0
+      );
+      if (totalSavingsCents > 0) {
+        suggestions.push({
+          offer,
+          suggestedAssignments: assignments,
+          totalSavingsCents,
+        });
+      }
+    }
+  }
+
+  // Sort by savings descending
+  suggestions.sort((a, b) => b.totalSavingsCents - a.totalSavingsCents);
+  return suggestions;
+}

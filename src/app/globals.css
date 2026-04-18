@@ -837,3 +837,211 @@ p {
   padding: 3rem 1rem;
   color: var(--text-muted);
 }
+
+/* =====================================================================
+   Offers
+   ===================================================================== */
+
+/* --- Offers section on menu page --- */
+.offers-section {
+  margin-bottom: 1.5rem;
+}
+.offers-section__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--color-green-800);
+  margin-bottom: 0.75rem;
+}
+.offers-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.offer-card {
+  display: block;
+  padding: 0.875rem 1rem;
+  background: var(--color-cream-200);
+  border-left: 3px solid var(--color-green-700);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text);
+  transition: background 0.15s;
+}
+.offer-card:hover {
+  background: var(--color-cream-300);
+}
+.offer-card__title {
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+.offer-card__desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* --- Offer stepper (slot pills) --- */
+.offer-stepper {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.offer-stepper__step {
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.offer-stepper__step--active {
+  border-color: var(--color-green-700);
+  background: var(--color-green-800);
+  color: var(--primary-contrast);
+}
+.offer-stepper__step--done {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+.offer-stepper__step--active.offer-stepper__step--done {
+  color: var(--primary-contrast);
+}
+
+/* --- Offer slot panel --- */
+.offer-slot {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+.offer-slot__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--color-green-800);
+}
+
+/* --- Item pick buttons inside offer --- */
+.offer-item-pick {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.95rem;
+  transition: border-color 0.15s;
+}
+.offer-item-pick:hover {
+  border-color: var(--color-green-700);
+}
+.offer-item-pick__title {
+  font-weight: 500;
+}
+.offer-item-pick__price {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-green-800);
+}
+.offer-item-pick__original {
+  text-decoration: line-through;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* --- Offer summary (confirmed slots) --- */
+.offer-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.offer-summary__slot {
+  background: var(--surface-alt);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+}
+.offer-summary__slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.offer-summary__slot-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-green-700);
+}
+.offer-summary__slot-item {
+  font-size: 0.9rem;
+}
+.offer-summary__slot-price {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-green-800);
+  margin-top: 0.25rem;
+}
+
+/* --- Offer total --- */
+.offer-total {
+  text-align: center;
+  padding: 1rem 0;
+}
+.offer-total__savings {
+  font-weight: 600;
+  color: var(--color-success);
+  margin-bottom: 0.5rem;
+}
+.offer-total__final {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  color: var(--color-green-800);
+  margin-bottom: 1rem;
+}
+
+/* --- Offer badge in cart --- */
+.offer-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: var(--color-green-800);
+  color: var(--primary-contrast);
+  font-weight: 500;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+.offer-discount {
+  color: var(--color-success);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* --- Offer suggestion banner in cart --- */
+.offer-suggestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #e8f3ec;
+  border: 1px solid #b8d9c3;
+  border-radius: var(--radius-md);
+  margin-bottom: 0.75rem;
+}
+.offer-suggestion__text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-green-900);
+  flex: 1;
+}
+.offer-suggestion__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}

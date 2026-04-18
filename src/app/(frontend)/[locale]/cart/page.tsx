@@ -1,3 +1,4 @@
+import { getOffers } from "@/lib/menu";
 import CartView from "./CartView";
 
 export default async function CartPage({
@@ -6,5 +7,6 @@ export default async function CartPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  return <CartView locale={locale as "en" | "el"} />;
+  const offers = await getOffers();
+  return <CartView locale={locale as "en" | "el"} offers={offers} />;
 }

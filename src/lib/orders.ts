@@ -4,12 +4,14 @@ import { randomBytes } from "crypto";
 import { and, desc, eq, inArray, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
-import type { CartLine } from "./cart";
+import type { AppliedOffer, CartLine } from "./cart";
 import { isWithinDeliveryHours } from "./hours";
-import { getItem, getSettings } from "./menu";
+import { getItem, getOffer, getSettings } from "./menu";
+import { computeSlotDiscountCents } from "./menu-types";
 
 export type PlaceOrderInput = {
   lines: CartLine[];
+  appliedOffers?: AppliedOffer[];
   contact: {
     userId?: string | null;
     name: string;
@@ -38,7 +40,8 @@ export type PlaceOrderResult =
         | "contactRequired"
         | "phoneRequired"
         | "empty"
-        | "unavailable";
+        | "unavailable"
+        | "offerUnavailable";
     };
 
 export async function placeOrder(
@@ -112,6 +115,71 @@ export async function placeOrder(
     });
   }
 
+  // Validate and compute authoritative offer discounts server-side.
+  // Build a map of lineIndex → discountCents and an offersJson snapshot.
+  const lineDiscounts = new Map<number, number>();
+  type OfferSnapshot = {
+    offerSlug: string;
+    offerTitle: { en: string; el: string };
+    slots: {
+      menuSlug: string;
+      slotLabel: { en: string; el: string };
+      discountCents: number;
+    }[];
+  };
+  const offersJsonData: OfferSnapshot[] = [];
+
+  if (input.appliedOffers && input.appliedOffers.length > 0) {
+    for (const ao of input.appliedOffers) {
+      const offer = await getOffer(ao.offerSlug);
+      if (!offer) return { ok: false, error: "offerUnavailable" };
+
+      const snapshotSlots: OfferSnapshot["slots"] = [];
+      for (const assignment of ao.slotAssignments) {
+        const slot = offer.slots[assignment.slotIndex];
+        if (!slot) return { ok: false, error: "offerUnavailable" };
+
+        // Find the matching line by lineId
+        const lineIdx = input.lines.findIndex(
+          (l) => l.lineId === assignment.lineId
+        );
+        if (lineIdx < 0) return { ok: false, error: "offerUnavailable" };
+
+        const r = resolved[lineIdx];
+        if (!r) return { ok: false, error: "offerUnavailable" };
+
+        // Verify eligibility
+        if (!slot.eligibleItems.includes(r.slug)) {
+          return { ok: false, error: "offerUnavailable" };
+        }
+
+        // Compute authoritative discount from server-side item price
+        const discountCents = computeSlotDiscountCents(
+          slot,
+          r.unitPriceCents
+        );
+        lineDiscounts.set(lineIdx, discountCents);
+        snapshotSlots.push({
+          menuSlug: r.slug,
+          slotLabel: slot.label,
+          discountCents,
+        });
+      }
+      offersJsonData.push({
+        offerSlug: ao.offerSlug,
+        offerTitle: offer.title,
+        slots: snapshotSlots,
+      });
+    }
+  }
+
+  // Subtract offer discounts from total
+  let totalDiscountCents = 0;
+  for (const d of lineDiscounts.values()) {
+    totalDiscountCents += d;
+  }
+  totalCents -= totalDiscountCents;
+
   if (totalCents < settings.minOrderCents) {
     return { ok: false, error: "minOrder" };
   }
@@ -140,19 +208,21 @@ export async function placeOrder(
       paymentMethod: input.paymentMethod,
       status: "received",
       totalCents: grandTotalCents,
+      offersJson: offersJsonData,
       tipCents,
       notes: input.notes,
     })
     .returning({ id: orders.id });
 
   await db.insert(orderItems).values(
-    resolved.map((r) => ({
+    resolved.map((r, idx) => ({
       orderId: order.id,
       menuSlug: r.slug,
       titleSnapshot: r.title,
       unitPriceCents: r.unitPriceCents,
       quantity: r.quantity,
       optionsJson: r.options,
+      discountCents: lineDiscounts.get(idx) ?? 0,
       comment: r.comment || null,
     }))
   );

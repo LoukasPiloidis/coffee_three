@@ -42,10 +42,12 @@ export async function GET() {
       deliveryPostcode: o.deliveryPostcode,
       deliveryGuy: o.deliveryGuy,
       notes: o.notes,
+      offersJson: o.offersJson,
       items: (itemsByOrder.get(o.id) ?? []).map((i) => ({
         title: i.titleSnapshot,
         quantity: i.quantity,
         options: i.optionsJson,
+        discountCents: i.discountCents,
         comment: i.comment,
       })),
     })),

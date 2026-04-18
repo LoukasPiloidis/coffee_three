@@ -1,0 +1,37 @@
+{
+  "slug": "double-espresso",
+  "available": true,
+  "title": {
+    "en": "2 Espressos Deal",
+    "el": "Προσφορά 2 Espresso"
+  },
+  "description": {
+    "en": "Get 2 espressos, second one 50% off!",
+    "el": "Πάρτε 2 espresso, το δεύτερο στη μισή τιμή!"
+  },
+  "displayOrder": 0,
+  "slots": [
+    {
+      "label": {
+        "en": "Espresso 1",
+        "el": "Espresso 1"
+      },
+      "eligibleItems": [
+        "espresso"
+      ],
+      "discountType": "none",
+      "discountValue": 0
+    },
+    {
+      "label": {
+        "en": "Espresso 2 (50% off)",
+        "el": "Espresso 2 (50% έκπτωση)"
+      },
+      "eligibleItems": [
+        "espresso"
+      ],
+      "discountType": "percentage",
+      "discountValue": 50
+    }
+  ]
+}

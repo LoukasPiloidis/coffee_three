@@ -20,22 +20,33 @@ export type CartLine = {
   comment: string;
 };
 
-export type Cart = {
-  lines: CartLine[];
+export type AppliedOffer = {
+  offerSlug: string;
+  offerTitle: { en: string; el: string };
+  slotAssignments: {
+    slotIndex: number;
+    lineId: string;
+    discountCents: number;
+  }[];
 };
 
-// v3: CartLineOption now includes priceCents for option surcharges.
-// v2 carts are silently discarded.
-const STORAGE_KEY = "coffee-three-cart-v3";
+export type Cart = {
+  lines: CartLine[];
+  appliedOffers: AppliedOffer[];
+};
+
+// v4: Added appliedOffers for offer tracking.
+// v3 carts are silently discarded.
+const STORAGE_KEY = "coffee-three-cart-v4";
 
 function readCart(): Cart {
-  if (typeof window === "undefined") return { lines: [] };
+  if (typeof window === "undefined") return { lines: [], appliedOffers: [] };
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { lines: [] };
+    if (!raw) return { lines: [], appliedOffers: [] };
     return JSON.parse(raw) as Cart;
   } catch {
-    return { lines: [] };
+    return { lines: [], appliedOffers: [] };
   }
 }
 
@@ -45,8 +56,8 @@ const listeners = new Set<Listener>();
 // SSR. Actual localStorage data is pulled in via `hydrate()` the first time
 // a component subscribes (i.e. after mount), which then notifies listeners
 // to re-render with the real cart.
-let snapshot: Cart = { lines: [] };
-const serverSnapshot: Cart = { lines: [] };
+let snapshot: Cart = { lines: [], appliedOffers: [] };
+const serverSnapshot: Cart = { lines: [], appliedOffers: [] };
 let hydrated = false;
 
 function hydrate() {
@@ -97,24 +108,80 @@ export const cartStore = {
     const lineId = `${line.slug}-${Date.now()}-${Math.random()
       .toString(36)
       .slice(2, 7)}`;
-    persist({ lines: [...snapshot.lines, { ...line, lineId }] });
+    persist({
+      ...snapshot,
+      lines: [...snapshot.lines, { ...line, lineId }],
+    });
   },
   updateQty(lineId: string, qty: number) {
     if (qty <= 0) {
-      persist({ lines: snapshot.lines.filter((l) => l.lineId !== lineId) });
+      this.removeLine(lineId);
       return;
     }
     persist({
+      ...snapshot,
       lines: snapshot.lines.map((l) =>
         l.lineId === lineId ? { ...l, quantity: qty } : l
       ),
     });
   },
   removeLine(lineId: string) {
-    persist({ lines: snapshot.lines.filter((l) => l.lineId !== lineId) });
+    // Also remove any offer that references this line
+    const appliedOffers = snapshot.appliedOffers.filter(
+      (o) => !o.slotAssignments.some((a) => a.lineId === lineId)
+    );
+    persist({
+      lines: snapshot.lines.filter((l) => l.lineId !== lineId),
+      appliedOffers,
+    });
   },
   clear() {
-    persist({ lines: [] });
+    persist({ lines: [], appliedOffers: [] });
+  },
+  addOfferLines(
+    lines: Omit<CartLine, "lineId">[],
+    offer: {
+      offerSlug: string;
+      offerTitle: { en: string; el: string };
+      slotDiscounts: { slotIndex: number; discountCents: number }[];
+    }
+  ) {
+    const newLines: CartLine[] = lines.map((line) => ({
+      ...line,
+      lineId: `${line.slug}-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 7)}`,
+    }));
+    const slotAssignments = offer.slotDiscounts.map((sd, i) => ({
+      slotIndex: sd.slotIndex,
+      lineId: newLines[i].lineId,
+      discountCents: sd.discountCents,
+    }));
+    persist({
+      lines: [...snapshot.lines, ...newLines],
+      appliedOffers: [
+        ...snapshot.appliedOffers,
+        {
+          offerSlug: offer.offerSlug,
+          offerTitle: offer.offerTitle,
+          slotAssignments,
+        },
+      ],
+    });
+  },
+  applyOffer(offer: AppliedOffer) {
+    persist({
+      ...snapshot,
+      appliedOffers: [...snapshot.appliedOffers, offer],
+    });
+  },
+  removeOffer(offerSlug: string) {
+    persist({
+      ...snapshot,
+      appliedOffers: snapshot.appliedOffers.filter(
+        (o) => o.offerSlug !== offerSlug
+      ),
+    });
   },
 };
 
@@ -141,4 +208,35 @@ export function cartTotalCents(cart: Cart): number {
 
 export function cartItemCount(cart: Cart): number {
   return cart.lines.reduce((sum, l) => sum + l.quantity, 0);
+}
+
+export function lineDiscountCents(lineId: string, cart: Cart): number {
+  for (const o of cart.appliedOffers) {
+    const slot = o.slotAssignments.find((a) => a.lineId === lineId);
+    if (slot) return slot.discountCents;
+  }
+  return 0;
+}
+
+export function offerForLine(
+  lineId: string,
+  cart: Cart
+): AppliedOffer | null {
+  return (
+    cart.appliedOffers.find((o) =>
+      o.slotAssignments.some((a) => a.lineId === lineId)
+    ) ?? null
+  );
+}
+
+export function totalOfferDiscountCents(cart: Cart): number {
+  return cart.appliedOffers.reduce(
+    (sum, o) =>
+      sum + o.slotAssignments.reduce((s, a) => s + a.discountCents, 0),
+    0
+  );
+}
+
+export function cartTotalCentsWithOffers(cart: Cart): number {
+  return cartTotalCents(cart) - totalOfferDiscountCents(cart);
 }

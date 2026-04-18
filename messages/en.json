@@ -40,6 +40,22 @@
     "commentsPlaceholder": "Anything we should know?",
     "required": "Required"
   },
+  "offers": {
+    "title": "Offers",
+    "step": "Step {current} of {total}",
+    "pickItem": "Choose your item",
+    "confirmSlot": "Confirm",
+    "editSlot": "Edit",
+    "addToCart": "Add offer to cart",
+    "applied": "Offer applied",
+    "youSave": "You save {amount}",
+    "suggestion": "Save {amount} with \"{offerName}\"!",
+    "apply": "Apply",
+    "dismiss": "Dismiss",
+    "removeOffer": "Remove offer",
+    "discount": "-{amount}",
+    "offerRemoved": "Offer \"{name}\" was removed because an item was changed."
+  },
   "cart": {
     "title": "Your cart",
     "empty": "Your cart is empty.",

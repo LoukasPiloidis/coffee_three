@@ -3,7 +3,12 @@
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { cartStore, cartTotalCents, useCart } from "@/lib/cart";
+import {
+  cartStore,
+  cartTotalCentsWithOffers,
+  totalOfferDiscountCents,
+  useCart,
+} from "@/lib/cart";
 import { formatPrice, type Locale } from "@/lib/menu-types";
 import type { PlaceOrderInput } from "@/lib/orders";
 import { submitOrderAction } from "./actions";
@@ -35,8 +40,10 @@ export default function CheckoutForm({
   const t = useTranslations("checkout");
   const tErr = useTranslations("checkout.errors");
   const router = useRouter();
+  const tOffers = useTranslations("offers");
   const cart = useCart();
-  const totalCents = cartTotalCents(cart);
+  const totalCents = cartTotalCentsWithOffers(cart);
+  const savingsCents = totalOfferDiscountCents(cart);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -100,6 +107,8 @@ export default function CheckoutForm({
 
     const input: PlaceOrderInput = {
       lines: cart.lines,
+      appliedOffers:
+        cart.appliedOffers.length > 0 ? cart.appliedOffers : undefined,
       contact: {
         userId: null,
         name: name.trim(),
@@ -133,6 +142,8 @@ export default function CheckoutForm({
         else if (result.error === "closed") setError(tErr("closed"));
         else if (result.error === "minOrder") setError(tErr("minOrder"));
         else if (result.error === "outOfArea") setError(tErr("outOfArea"));
+        else if (result.error === "offerUnavailable")
+          setError("An offer is no longer available.");
         else setError("Something went wrong.");
       }
     });
@@ -329,6 +340,16 @@ export default function CheckoutForm({
               />
             </div>
           </div>
+
+          {savingsCents > 0 && (
+            <div style={{ textAlign: "center" }}>
+              <span className="offer-discount">
+                {tOffers("youSave", {
+                  amount: formatPrice(savingsCents / 100, locale),
+                })}
+              </span>
+            </div>
+          )}
 
           <div className="totals">
             <span>{t("title")}</span>

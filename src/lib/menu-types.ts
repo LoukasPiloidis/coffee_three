@@ -49,6 +49,35 @@ export type ShopSettings = {
   };
 };
 
+export type OfferSlot = {
+  label: { en: string; el: string };
+  eligibleItems: string[];
+  discountType: "none" | "percentage" | "fixed_cents";
+  discountValue: number;
+};
+
+export type Offer = {
+  slug: string;
+  title: { en: string; el: string };
+  description: { en: string; el: string };
+  available: boolean;
+  displayOrder: number;
+  slots: OfferSlot[];
+};
+
+/** Compute the discount in cents for a single slot given the item's full price. */
+export function computeSlotDiscountCents(
+  slot: OfferSlot,
+  itemPriceCents: number
+): number {
+  if (slot.discountType === "none") return 0;
+  if (slot.discountType === "percentage")
+    return Math.round((itemPriceCents * slot.discountValue) / 100);
+  if (slot.discountType === "fixed_cents")
+    return Math.min(slot.discountValue, itemPriceCents);
+  return 0;
+}
+
 export function formatPrice(price: number, locale: Locale): string {
   return new Intl.NumberFormat(locale === "el" ? "el-GR" : "en-US", {
     style: "currency",

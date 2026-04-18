@@ -17,6 +17,15 @@ export type OrderDTO = {
   deliveryPostcode: string;
   deliveryGuy: string | null;
   notes: string | null;
+  offersJson: {
+    offerSlug: string;
+    offerTitle: { en: string; el: string };
+    slots: {
+      menuSlug: string;
+      slotLabel: { en: string; el: string };
+      discountCents: number;
+    }[];
+  }[];
   items: {
     title: { en: string; el: string };
     quantity: number;
@@ -25,6 +34,7 @@ export type OrderDTO = {
       optionName: { en: string; el: string };
       priceCents?: number;
     }[];
+    discountCents: number;
     comment: string | null;
   }[];
 };
@@ -119,6 +129,11 @@ export default function OrderCard({
             <div className="cart-line__main">
               <div className="cart-line__title">
                 {it.quantity}× {it.title.el}
+                {it.discountCents > 0 && (
+                  <span className="offer-discount" style={{ marginLeft: "0.5rem", fontSize: "0.8rem" }}>
+                    -{formatEuro(it.discountCents)}
+                  </span>
+                )}
               </div>
               {it.options.length > 0 && (
                 <div className="cart-line__meta">
@@ -136,6 +151,23 @@ export default function OrderCard({
           </div>
         ))}
       </div>
+
+      {o.offersJson && o.offersJson.length > 0 && (
+        <div style={{ fontSize: "0.85rem" }}>
+          {o.offersJson.map((offer, i) => {
+            const totalDiscount = offer.slots.reduce(
+              (s, sl) => s + sl.discountCents,
+              0
+            );
+            return (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                <span className="offer-badge">{offer.offerTitle.el}</span>
+                <span className="offer-discount">-{formatEuro(totalDiscount)}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {o.notes && (
         <div
