@@ -59,6 +59,9 @@ export default async function StaffPage() {
             <Link href="/staff/products" className="btn btn--ghost btn--small">
               Προϊόντα
             </Link>
+            <Link href="/staff/analytics" className="btn btn--ghost btn--small">
+              Analytics
+            </Link>
             {!devBypass && (
               <form action={staffSignOutAction}>
                 <button className="btn btn--ghost btn--small">

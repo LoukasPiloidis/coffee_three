@@ -1,26 +1,29 @@
-import { isDevStaffBypassActive, isStaffAuthorized } from "@/lib/staff-auth";
-import { getMenu } from "@/lib/menu";
-import { staffSignOutAction } from "../actions";
-import ProductsList from "./ProductsList";
-import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { getAnalyticsByDateRange } from "@/lib/analytics";
+import { isDevStaffBypassActive, isStaffAuthorized } from "@/lib/staff-auth";
+import { staffSignOutAction } from "../actions";
+import AnalyticsDashboard from "./AnalyticsDashboard";
 
-export default async function StaffProductsPage() {
+export default async function AnalyticsPage() {
   const devBypass = isDevStaffBypassActive();
   const authorized = await isStaffAuthorized();
-  const t = await getTranslations("staff");
 
   if (!authorized) {
     return (
       <main className="page">
         <div className="container">
-          <div className="notice notice--error">{t("forbidden")}</div>
+          <div className="notice notice--error">
+            Access denied. Staff login required.
+          </div>
         </div>
       </main>
     );
   }
 
-  const categories = await getMenu();
+  const today = new Date()
+    .toLocaleDateString("sv-SE", { timeZone: "Europe/Athens" })
+    .slice(0, 10);
+  const todayData = await getAnalyticsByDateRange(today, today);
 
   return (
     <main className="page">
@@ -33,30 +36,27 @@ export default async function StaffProductsPage() {
             marginBottom: "1rem",
           }}
         >
-          <h1>
-            {t("orders.title")}
-            {devBypass && " (dev bypass)"}
-          </h1>
+          <h1>Analytics{devBypass && " (dev bypass)"}</h1>
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <Link href="/staff" className="btn btn--ghost btn--small">
-              {t("title")}
+              Παραγγελίες
             </Link>
-            <Link href="/staff/analytics" className="btn btn--ghost btn--small">
-              Analytics
+            <Link href="/staff/delivery" className="btn btn--ghost btn--small">
+              Διανομές
+            </Link>
+            <Link href="/staff/products" className="btn btn--ghost btn--small">
+              Προϊόντα
             </Link>
             {!devBypass && (
               <form action={staffSignOutAction}>
                 <button className="btn btn--ghost btn--small">
-                  {t("signOut")}
+                  Αποσύνδεση
                 </button>
               </form>
             )}
           </div>
         </div>
-        <p style={{ color: "var(--text-muted)", marginBottom: "1rem" }}>
-          {t("orders.explanation")}
-        </p>
-        <ProductsList categories={categories} />
+        <AnalyticsDashboard todayData={todayData[0] ?? null} />
       </div>
     </main>
   );

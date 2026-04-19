@@ -1078,3 +1078,64 @@ p {
   gap: 0.5rem;
   flex-shrink: 0;
 }
+
+/* --- Analytics --- */
+.analytics-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.analytics-table th,
+.analytics-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: right;
+  border-bottom: 1px solid var(--color-border);
+}
+.analytics-table th {
+  font-weight: 600;
+  color: var(--color-green-900);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.analytics-table td:first-child,
+.analytics-table th:first-child {
+  text-align: left;
+}
+.analytics-table .mono {
+  font-family: var(--font-mono);
+}
+.analytics-table tfoot td {
+  font-weight: 700;
+  border-top: 2px solid var(--color-green-800);
+  border-bottom: none;
+}
+
+.analytics-chart-wrap {
+  position: relative;
+  height: 350px;
+  margin-top: 1rem;
+}
+
+.analytics-range {
+  display: flex;
+  gap: 0.75rem;
+  align-items: end;
+  flex-wrap: wrap;
+}
+.analytics-range label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.analytics-range input[type="date"] {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-md);
+  background: var(--color-cream-50);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}

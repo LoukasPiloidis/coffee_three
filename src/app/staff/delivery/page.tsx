@@ -56,6 +56,9 @@ export default async function DeliveryPage() {
             <Link href="/staff" className="btn btn--ghost btn--small">
               Παραγγελίες
             </Link>
+            <Link href="/staff/analytics" className="btn btn--ghost btn--small">
+              Analytics
+            </Link>
             {!devBypass && (
               <form action={staffSignOutAction}>
                 <button className="btn btn--ghost btn--small">
