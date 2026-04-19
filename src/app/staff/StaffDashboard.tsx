@@ -45,15 +45,7 @@ async function fetchStaffOrders(): Promise<OrderDTO[] | null> {
   return json.orders;
 }
 
-const ALL_STATUSES: OrderDTO["status"][] = [
-  "received",
-  "preparing",
-  "on_its_way",
-  "completed",
-  "cancelled",
-];
-// Default view: active orders only (staff's working queue).
-const DEFAULT_FILTER: OrderDTO["status"][] = ["received", "preparing"];
+type Tab = "active" | "completed";
 
 function ActionButtons({
   order,
@@ -142,21 +134,70 @@ function DeliveryGuySelect({
   );
 }
 
+function OrderColumn({
+  label,
+  orders,
+  deliveryGuys,
+  onTransition,
+  onAssign,
+}: {
+  label: string;
+  orders: OrderDTO[];
+  deliveryGuys: string[];
+  onTransition: (id: string, status: OrderDTO["status"]) => void;
+  onAssign: (orderId: string, guy: string | null) => void;
+}) {
+  const isTerminal = (s: OrderDTO["status"]) =>
+    s === "completed" || s === "cancelled" || s === "on_its_way";
+
+  return (
+    <div>
+      <div className="staff-column__header">
+        {label}
+        <span className="staff-column__count">{orders.length}</span>
+      </div>
+      {orders.length === 0 && (
+        <p className="empty" style={{ fontSize: "0.85rem" }}>
+          Κενό
+        </p>
+      )}
+      <div className="stack-md">
+        {orders.map((o) => (
+          <OrderCard
+            key={o.id}
+            order={o}
+            className={o.status === "cancelled" ? "staff-card--cancelled" : undefined}
+            actions={
+              <ActionButtons
+                order={o}
+                isTerminal={isTerminal(o.status)}
+                next={getNextStatus(o)}
+                onTransition={onTransition}
+              />
+            }
+          >
+            {o.type === "delivery" && (
+              <DeliveryGuySelect
+                order={o}
+                deliveryGuys={deliveryGuys}
+                onAssign={onAssign}
+              />
+            )}
+          </OrderCard>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function StaffDashboard({
   deliveryGuys,
 }: {
   deliveryGuys: string[];
 }) {
   const [orders, setOrders] = useState<OrderDTO[]>([]);
-  const [statusFilter, setStatusFilter] =
-    useState<OrderDTO["status"][]>(DEFAULT_FILTER);
+  const [tab, setTab] = useState<Tab>("active");
   const [, startTransition] = useTransition();
-
-  const toggleStatus = (s: OrderDTO["status"]) => {
-    setStatusFilter((prev) =>
-      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
-    );
-  };
 
   useEffect(() => {
     let cancelled = false;
@@ -171,10 +212,6 @@ export default function StaffDashboard({
       clearInterval(id);
     };
   }, []);
-
-  const isTerminal = (s: OrderDTO["status"]) =>
-    s === "completed" || s === "cancelled" || s === "on_its_way";
-  const visible = orders.filter((o) => statusFilter.includes(o.status));
 
   const transition = (id: string, status: OrderDTO["status"]) => {
     startTransition(async () => {
@@ -192,63 +229,74 @@ export default function StaffDashboard({
     });
   };
 
-  const countsByStatus = orders.reduce<Record<string, number>>((acc, o) => {
-    acc[o.status] = (acc[o.status] ?? 0) + 1;
-    return acc;
-  }, {});
+  const received = orders.filter((o) => o.status === "received");
+  const preparing = orders.filter((o) => o.status === "preparing");
+  const onItsWay = orders.filter((o) => o.status === "on_its_way");
+  const done = orders.filter(
+    (o) => o.status === "completed" || o.status === "cancelled"
+  );
+
+  const activeCount = received.length + preparing.length;
+  const completedCount = onItsWay.length + done.length;
 
   return (
-    <div className="stack-md">
-      <div className="staff-filter">
-        <div className="staff-filter__label">Φίλτρο κατάστασης</div>
-        <div className="staff-filter__chips">
-          {ALL_STATUSES.map((s) => {
-            const active = statusFilter.includes(s);
-            const count = countsByStatus[s] ?? 0;
-            return (
-              <button
-                key={s}
-                type="button"
-                className={`staff-filter__chip${
-                  active ? " staff-filter__chip--active" : ""
-                }`}
-                onClick={() => toggleStatus(s)}
-                aria-pressed={active}
-              >
-                {STATUS_LABEL[s]}
-                <span className="staff-filter__count">{count}</span>
-              </button>
-            );
-          })}
-        </div>
+    <div>
+      <div className="staff-tabs">
+        <button
+          type="button"
+          className={`staff-tabs__tab${tab === "active" ? " staff-tabs__tab--active" : ""}`}
+          onClick={() => setTab("active")}
+        >
+          Ενεργές
+          <span className="staff-tabs__count">{activeCount}</span>
+        </button>
+        <button
+          type="button"
+          className={`staff-tabs__tab${tab === "completed" ? " staff-tabs__tab--active" : ""}`}
+          onClick={() => setTab("completed")}
+        >
+          Ολοκληρωμένες
+          <span className="staff-tabs__count">{completedCount}</span>
+        </button>
       </div>
 
-      {visible.length === 0 && (
-        <p className="empty">Δεν υπάρχουν παραγγελίες με αυτά τα φίλτρα.</p>
+      {tab === "active" && (
+        <div className="staff-columns">
+          <OrderColumn
+            label={STATUS_LABEL.received}
+            orders={received}
+            deliveryGuys={deliveryGuys}
+            onTransition={transition}
+            onAssign={handleAssign}
+          />
+          <OrderColumn
+            label={STATUS_LABEL.preparing}
+            orders={preparing}
+            deliveryGuys={deliveryGuys}
+            onTransition={transition}
+            onAssign={handleAssign}
+          />
+        </div>
       )}
 
-      {visible.map((o) => (
-        <OrderCard
-          key={o.id}
-          order={o}
-          actions={
-            <ActionButtons
-              order={o}
-              isTerminal={isTerminal(o.status)}
-              next={getNextStatus(o)}
-              onTransition={transition}
-            />
-          }
-        >
-          {o.type === "delivery" && (
-            <DeliveryGuySelect
-              order={o}
-              deliveryGuys={deliveryGuys}
-              onAssign={handleAssign}
-            />
-          )}
-        </OrderCard>
-      ))}
+      {tab === "completed" && (
+        <div className="staff-columns">
+          <OrderColumn
+            label={STATUS_LABEL.on_its_way}
+            orders={onItsWay}
+            deliveryGuys={deliveryGuys}
+            onTransition={transition}
+            onAssign={handleAssign}
+          />
+          <OrderColumn
+            label="Ολοκληρωμένες / Ακυρωμένες"
+            orders={done}
+            deliveryGuys={deliveryGuys}
+            onTransition={transition}
+            onAssign={handleAssign}
+          />
+        </div>
+      )}
     </div>
   );
 }

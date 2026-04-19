@@ -11,7 +11,7 @@ export default function StaffLayout({
 }) {
   return (
     <html lang="el">
-      <body>{children}</body>
+      <body className="staff">{children}</body>
     </html>
   );
 }

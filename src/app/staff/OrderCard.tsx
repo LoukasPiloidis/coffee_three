@@ -69,13 +69,15 @@ export default function OrderCard({
   order: o,
   children,
   actions,
+  className,
 }: {
   order: OrderDTO;
   children?: React.ReactNode;
   actions?: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="card stack-md">
+    <div className={`card stack-md${className ? ` ${className}` : ""}`}>
       <div
         style={{
           display: "flex",
@@ -113,9 +115,6 @@ export default function OrderCard({
             gap: "0.3rem",
           }}
         >
-          <span className={`status-pill status-pill--${o.status}`}>
-            {STATUS_LABEL[o.status]}
-          </span>
           <span className={`status-pill status-pill--${o.type}`}>
             {TYPE_LABEL[o.type]}
           </span>
@@ -141,7 +140,10 @@ export default function OrderCard({
               <div className="cart-line__title">
                 {it.quantity}× {it.title.el}
                 {it.discountCents > 0 && (
-                  <span className="offer-discount" style={{ marginLeft: "0.5rem", fontSize: "0.8rem" }}>
+                  <span
+                    className="offer-discount"
+                    style={{ marginLeft: "0.5rem", fontSize: "0.8rem" }}
+                  >
                     -{formatEuro(it.discountCents)}
                   </span>
                 )}
@@ -171,9 +173,14 @@ export default function OrderCard({
               0
             );
             return (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span className="offer-badge">{offer.offerTitle.el}</span>
-                <span className="offer-discount">-{formatEuro(totalDiscount)}</span>
+              <div
+                key={i}
+                style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}
+              >
+                <span className="offer-badge">προσφορά</span>
+                <span className="offer-discount">
+                  -{formatEuro(totalDiscount)}
+                </span>
               </div>
             );
           })}
