@@ -12,13 +12,14 @@ import { applySlotOverrides, computeSlotDiscountCents } from "./menu-types";
 export type PlaceOrderInput = {
   lines: CartLine[];
   appliedOffers?: AppliedOffer[];
+  orderType: "delivery" | "takeaway";
   contact: {
     userId?: string | null;
     name: string;
     email: string | null;
     phone: string | null;
   };
-  delivery: {
+  delivery?: {
     street: string;
     city: string;
     postcode: string;
@@ -48,11 +49,24 @@ export async function placeOrder(
   input: PlaceOrderInput
 ): Promise<PlaceOrderResult> {
   if (input.lines.length === 0) return { ok: false, error: "empty" };
-  if (!input.contact.phone || !input.contact.phone.trim()) {
-    return { ok: false, error: "phoneRequired" };
+
+  const isDelivery = input.orderType === "delivery";
+
+  if (isDelivery) {
+    if (!input.contact.phone || !input.contact.phone.trim()) {
+      return { ok: false, error: "phoneRequired" };
+    }
   }
-  if (!input.contact.userId && !input.contact.email && !input.contact.phone) {
-    return { ok: false, error: "contactRequired" };
+
+  // For delivery: need userId, email, or phone. For takeaway: name suffices (DB CHECK includes guest_name).
+  if (isDelivery) {
+    if (!input.contact.userId && !input.contact.email && !input.contact.phone) {
+      return { ok: false, error: "contactRequired" };
+    }
+  } else {
+    if (!input.contact.name.trim()) {
+      return { ok: false, error: "contactRequired" };
+    }
   }
 
   const settings = await getSettings();
@@ -61,12 +75,14 @@ export async function placeOrder(
     return { ok: false, error: "closed" };
   }
 
-  const postcode = input.delivery.postcode.trim();
-  if (
-    settings.allowedPostcodes.length > 0 &&
-    !settings.allowedPostcodes.includes(postcode)
-  ) {
-    return { ok: false, error: "outOfArea" };
+  if (isDelivery) {
+    const postcode = input.delivery!.postcode.trim();
+    if (
+      settings.allowedPostcodes.length > 0 &&
+      !settings.allowedPostcodes.includes(postcode)
+    ) {
+      return { ok: false, error: "outOfArea" };
+    }
   }
 
   // Re-fetch each item from Keystatic to snapshot authoritative price/title.
@@ -218,7 +234,7 @@ export async function placeOrder(
   }
   totalCents -= totalDiscountCents;
 
-  if (totalCents < settings.minOrderCents) {
+  if (isDelivery && totalCents < settings.minOrderCents) {
     return { ok: false, error: "minOrder" };
   }
 
@@ -238,11 +254,11 @@ export async function placeOrder(
       guestName: input.contact.name,
       guestEmail: input.contact.email,
       guestPhone: input.contact.phone,
-      deliveryStreet: input.delivery.street,
-      deliveryCity: input.delivery.city,
-      deliveryPostcode: postcode,
-      deliveryNotes: input.delivery.notes,
-      type: "delivery",
+      deliveryStreet: isDelivery ? input.delivery!.street : null,
+      deliveryCity: isDelivery ? input.delivery!.city : null,
+      deliveryPostcode: isDelivery ? input.delivery!.postcode.trim() : null,
+      deliveryNotes: isDelivery ? input.delivery!.notes : null,
+      type: input.orderType,
       paymentMethod: input.paymentMethod,
       status: "received",
       totalCents: grandTotalCents,
@@ -307,7 +323,7 @@ export async function getActiveStaffOrders() {
         // Exclude terminal statuses
         // We can't negate enum easily in Drizzle short form; use sql template:
         // but for simplicity, fetch all non-completed/cancelled client-side.
-        eq(orders.type, "delivery")
+        inArray(orders.type, ["delivery", "takeaway"])
       )
     )
     .orderBy(desc(orders.createdAt))

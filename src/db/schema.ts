@@ -20,7 +20,7 @@ export const orderStatus = pgEnum("order_status", [
   "cancelled",
 ]);
 
-export const orderType = pgEnum("order_type", ["delivery", "store"]);
+export const orderType = pgEnum("order_type", ["delivery", "store", "takeaway"]);
 export const paymentMethod = pgEnum("payment_method", ["cash", "card"]);
 
 // ─────────────────────────────────────────────────────────────────────
@@ -129,9 +129,9 @@ export const orders = pgTable(
     guestName: text("guest_name"),
     guestEmail: text("guest_email"),
     guestPhone: text("guest_phone"),
-    deliveryStreet: text("delivery_street").notNull(),
-    deliveryCity: text("delivery_city").notNull(),
-    deliveryPostcode: text("delivery_postcode").notNull(),
+    deliveryStreet: text("delivery_street"),
+    deliveryCity: text("delivery_city"),
+    deliveryPostcode: text("delivery_postcode"),
     deliveryNotes: text("delivery_notes"),
     type: orderType("type").notNull().default("delivery"),
     paymentMethod: paymentMethod("payment_method").notNull(),
@@ -152,7 +152,7 @@ export const orders = pgTable(
     // Guest orders must carry either email or phone
     check(
       "guest_contact_required",
-      sql`${t.userId} IS NOT NULL OR ${t.guestEmail} IS NOT NULL OR ${t.guestPhone} IS NOT NULL`
+      sql`${t.userId} IS NOT NULL OR ${t.guestEmail} IS NOT NULL OR ${t.guestPhone} IS NOT NULL OR ${t.guestName} IS NOT NULL`
     ),
   ]
 );

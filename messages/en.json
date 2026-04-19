@@ -68,10 +68,14 @@
   "checkout": {
     "title": "Checkout",
     "guest": "Continue as guest",
+    "orderType": "Order type",
+    "delivery": "Delivery",
+    "takeaway": "Take away",
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
     "phoneHint": "Required so our delivery rider can reach you if needed",
+    "phoneOptional": "Optional",
     "contactHint": "Provide either email or phone",
     "address": "Address",
     "savedAddress": "Saved address",
@@ -95,7 +99,8 @@
       "minOrder": "Minimum order amount not met.",
       "outOfArea": "Sorry, we don't deliver to this postcode.",
       "contactRequired": "Please provide either an email or a phone number.",
-      "phoneRequired": "A contact phone number is required for delivery."
+      "phoneRequired": "A contact phone number is required for delivery.",
+      "nameRequired": "Please provide a name for your order."
     }
   },
   "order": {

@@ -30,6 +30,7 @@ export async function GET() {
     orders: rows.map((o) => ({
       id: o.id,
       publicToken: o.publicToken,
+      type: o.type,
       status: o.status,
       createdAt: o.createdAt,
       totalCents: o.totalCents,

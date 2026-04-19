@@ -47,6 +47,11 @@ export default function CheckoutForm({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
+  const [orderType, setOrderType] = useState<"delivery" | "takeaway">(
+    "delivery"
+  );
+  const isDelivery = orderType === "delivery";
+
   const [name, setName] = useState(loggedInName ?? "");
   const [email, setEmail] = useState(loggedInEmail ?? "");
   const [phone, setPhone] = useState(loggedInPhone ?? "");
@@ -100,7 +105,12 @@ export default function CheckoutForm({
     e.preventDefault();
     setError(null);
 
-    if (!phone.trim()) {
+    if (!name.trim()) {
+      setError(tErr("nameRequired"));
+      return;
+    }
+
+    if (isDelivery && !phone.trim()) {
       setError(tErr("phoneRequired"));
       return;
     }
@@ -109,25 +119,30 @@ export default function CheckoutForm({
       lines: cart.lines,
       appliedOffers:
         cart.appliedOffers.length > 0 ? cart.appliedOffers : undefined,
+      orderType,
       contact: {
         userId: null,
         name: name.trim(),
-        email: email.trim() || null,
+        email: isDelivery ? email.trim() || null : null,
         phone: phone.trim() || null,
       },
-      delivery: {
-        street: street.trim(),
-        city: city.trim(),
-        postcode: postcode.trim(),
-        notes: null,
-      },
+      ...(isDelivery
+        ? {
+            delivery: {
+              street: street.trim(),
+              city: city.trim(),
+              postcode: postcode.trim(),
+              notes: null,
+            },
+          }
+        : {}),
       paymentMethod: payment,
       tipCents: parsedTipCents,
       notes: notes.trim() || null,
     };
 
     // Don't bother re-saving an address that came from the picker.
-    const shouldSave = saveAddress && selectedAddressId === "";
+    const shouldSave = isDelivery && saveAddress && selectedAddressId === "";
 
     startTransition(async () => {
       const result = await submitOrderAction(input, shouldSave);
@@ -155,7 +170,24 @@ export default function CheckoutForm({
         <h1 className="page__title">{t("title")}</h1>
 
         <form onSubmit={handleSubmit} className="card stack-md">
-          <div className="fields-row fields-row--2">
+          <div className="order-type-toggle">
+            <button
+              type="button"
+              className={`order-type-toggle__btn${isDelivery ? " order-type-toggle__btn--active" : ""}`}
+              onClick={() => setOrderType("delivery")}
+            >
+              {t("delivery")}
+            </button>
+            <button
+              type="button"
+              className={`order-type-toggle__btn${!isDelivery ? " order-type-toggle__btn--active" : ""}`}
+              onClick={() => setOrderType("takeaway")}
+            >
+              {t("takeaway")}
+            </button>
+          </div>
+
+          <div className={isDelivery ? "fields-row fields-row--2" : ""}>
             <div className="field">
               <label>{t("name")}</label>
               <input
@@ -164,32 +196,48 @@ export default function CheckoutForm({
                 required
               />
             </div>
+            {isDelivery && (
+              <div className="field">
+                <label>
+                  {t("phone")}
+                  <span className="option-group__required">*</span>
+                </label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
+                <div className="field__hint">{t("phoneHint")}</div>
+              </div>
+            )}
+          </div>
+
+          {!isDelivery && (
             <div className="field">
-              <label>
-                {t("phone")}
-                <span className="option-group__required">*</span>
-              </label>
+              <label>{t("phone")}</label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                required
               />
-              <div className="field__hint">{t("phoneHint")}</div>
+              <div className="field__hint">{t("phoneOptional")}</div>
             </div>
-          </div>
+          )}
 
-          <div className="field">
-            <label>{t("email")}</label>
-            <input
-              type="email"
-              value={email}
-              disabled={!!loggedInEmail}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+          {isDelivery && (
+            <div className="field">
+              <label>{t("email")}</label>
+              <input
+                type="email"
+                value={email}
+                disabled={!!loggedInEmail}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+          )}
 
-          {savedAddresses.length > 0 && (
+          {isDelivery && savedAddresses.length > 0 && (
             <div className="field">
               <label>{t("savedAddress")}</label>
               <select
@@ -206,42 +254,46 @@ export default function CheckoutForm({
             </div>
           )}
 
-          <div className="field">
-            <label>{t("address")}</label>
-            <input
-              value={street}
-              onChange={(e) => {
-                setStreet(e.target.value);
-                setSelectedAddressId("");
-              }}
-              required
-            />
-          </div>
+          {isDelivery && (
+            <>
+              <div className="field">
+                <label>{t("address")}</label>
+                <input
+                  value={street}
+                  onChange={(e) => {
+                    setStreet(e.target.value);
+                    setSelectedAddressId("");
+                  }}
+                  required
+                />
+              </div>
 
-          <div className="fields-row fields-row--2">
-            <div className="field">
-              <label>{t("city")}</label>
-              <input
-                value={city}
-                onChange={(e) => {
-                  setCity(e.target.value);
-                  setSelectedAddressId("");
-                }}
-                required
-              />
-            </div>
-            <div className="field">
-              <label>{t("postcode")}</label>
-              <input
-                value={postcode}
-                onChange={(e) => {
-                  setPostcode(e.target.value);
-                  setSelectedAddressId("");
-                }}
-                required
-              />
-            </div>
-          </div>
+              <div className="fields-row fields-row--2">
+                <div className="field">
+                  <label>{t("city")}</label>
+                  <input
+                    value={city}
+                    onChange={(e) => {
+                      setCity(e.target.value);
+                      setSelectedAddressId("");
+                    }}
+                    required
+                  />
+                </div>
+                <div className="field">
+                  <label>{t("postcode")}</label>
+                  <input
+                    value={postcode}
+                    onChange={(e) => {
+                      setPostcode(e.target.value);
+                      setSelectedAddressId("");
+                    }}
+                    required
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="field">
             <label>{t("notes")}</label>
@@ -251,7 +303,7 @@ export default function CheckoutForm({
             />
           </div>
 
-          {loggedInEmail && selectedAddressId === "" && (
+          {isDelivery && loggedInEmail && selectedAddressId === "" && (
             <label
               style={{
                 display: "flex",

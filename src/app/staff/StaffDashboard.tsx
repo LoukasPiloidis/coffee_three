@@ -7,23 +7,36 @@ import OrderCard, {
   STATUS_LABEL,
 } from "./OrderCard";
 
-// Staff flow: received -> preparing -> on_its_way. After on_its_way, orders
-// auto-complete one hour after they were placed (handled server-side), so
-// staff never has to mark "completed" manually.
-const NEXT_STATUS: Record<OrderDTO["status"], OrderDTO["status"] | null> = {
+// Staff flow: received -> preparing -> on_its_way (delivery) or completed (takeaway).
+// After on_its_way, orders auto-complete one hour after they were placed (server-side).
+const DELIVERY_NEXT_STATUS: Record<OrderDTO["status"], OrderDTO["status"] | null> = {
   received: "preparing",
   preparing: "on_its_way",
   on_its_way: null,
   completed: null,
   cancelled: null,
 };
-const NEXT_LABEL: Record<OrderDTO["status"], string> = {
-  received: "Έναρξη ετοιμασίας",
-  preparing: "Αποστολή",
-  on_its_way: "",
-  completed: "",
-  cancelled: "",
+const TAKEAWAY_NEXT_STATUS: Record<OrderDTO["status"], OrderDTO["status"] | null> = {
+  received: "preparing",
+  preparing: "completed",
+  on_its_way: null,
+  completed: null,
+  cancelled: null,
 };
+
+function getNextStatus(order: OrderDTO): OrderDTO["status"] | null {
+  return order.type === "takeaway"
+    ? TAKEAWAY_NEXT_STATUS[order.status]
+    : DELIVERY_NEXT_STATUS[order.status];
+}
+
+function getNextLabel(order: OrderDTO): string {
+  if (order.status === "received") return "Έναρξη ετοιμασίας";
+  if (order.status === "preparing") {
+    return order.type === "takeaway" ? "Έτοιμο" : "Αποστολή";
+  }
+  return "";
+}
 
 async function fetchStaffOrders(): Promise<OrderDTO[] | null> {
   const res = await fetch("/api/staff/orders", { cache: "no-store" });
@@ -68,7 +81,7 @@ function ActionButtons({
           className="btn btn--primary btn--small"
           onClick={() => onTransition(order.id, next)}
         >
-          {NEXT_LABEL[order.status]}
+          {getNextLabel(order)}
         </button>
       )}
     </div>
@@ -222,16 +235,18 @@ export default function StaffDashboard({
             <ActionButtons
               order={o}
               isTerminal={isTerminal(o.status)}
-              next={NEXT_STATUS[o.status]}
+              next={getNextStatus(o)}
               onTransition={transition}
             />
           }
         >
-          <DeliveryGuySelect
-            order={o}
-            deliveryGuys={deliveryGuys}
-            onAssign={handleAssign}
-          />
+          {o.type === "delivery" && (
+            <DeliveryGuySelect
+              order={o}
+              deliveryGuys={deliveryGuys}
+              onAssign={handleAssign}
+            />
+          )}
         </OrderCard>
       ))}
     </div>

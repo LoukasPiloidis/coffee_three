@@ -552,6 +552,38 @@ p {
   background: #e8b6b1;
   color: var(--color-danger);
 }
+.status-pill--delivery {
+  background: #a8c9b1;
+  color: var(--color-green-900);
+}
+.status-pill--takeaway {
+  background: #e6c77a;
+  color: var(--color-green-900);
+}
+
+/* --- Order type toggle --- */
+.order-type-toggle {
+  display: flex;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 2px solid var(--color-green-800);
+}
+.order-type-toggle__btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  border: none;
+  cursor: pointer;
+  background: var(--color-cream-50);
+  color: var(--color-green-800);
+  transition: background 0.15s, color 0.15s;
+}
+.order-type-toggle__btn--active {
+  background: var(--color-green-800);
+  color: var(--color-cream-50);
+}
 
 /* --- Staff status filter --- */
 .staff-filter {

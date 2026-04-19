@@ -18,7 +18,13 @@ export async function submitOrderAction(
 
   const result = await placeOrder(input);
 
-  if (result.ok && saveAddress && session?.user?.id) {
+  if (
+    result.ok &&
+    saveAddress &&
+    session?.user?.id &&
+    input.orderType === "delivery" &&
+    input.delivery
+  ) {
     await db.insert(addresses).values({
       userId: session.user.id,
       label: null,

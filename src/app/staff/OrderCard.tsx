@@ -5,6 +5,7 @@ import { formatOptionLabel } from "@/lib/menu-types";
 export type OrderDTO = {
   id: string;
   publicToken: string;
+  type: "delivery" | "takeaway";
   status: "received" | "preparing" | "on_its_way" | "completed" | "cancelled";
   createdAt: string;
   totalCents: number;
@@ -12,9 +13,9 @@ export type OrderDTO = {
   paymentMethod: "cash" | "card";
   guestName: string | null;
   guestPhone: string | null;
-  deliveryStreet: string;
-  deliveryCity: string;
-  deliveryPostcode: string;
+  deliveryStreet: string | null;
+  deliveryCity: string | null;
+  deliveryPostcode: string | null;
   deliveryGuy: string | null;
   notes: string | null;
   offersJson: {
@@ -50,6 +51,11 @@ export const STATUS_LABEL: Record<OrderDTO["status"], string> = {
 export const PAYMENT_LABEL: Record<OrderDTO["paymentMethod"], string> = {
   cash: "Μετρητά",
   card: "Κάρτα",
+};
+
+const TYPE_LABEL: Record<OrderDTO["type"], string> = {
+  delivery: "Παράδοση",
+  takeaway: "Take away",
 };
 
 export function formatEuro(cents: number) {
@@ -93,9 +99,11 @@ export default function OrderCard({
           <div style={{ fontWeight: 600, marginTop: "0.2rem" }}>
             {o.guestName ?? "—"} · {o.guestPhone ?? "χωρίς τηλέφωνο"}
           </div>
-          <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-            {o.deliveryStreet}, {o.deliveryCity} {o.deliveryPostcode}
-          </div>
+          {o.type === "delivery" && o.deliveryStreet && (
+            <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+              {o.deliveryStreet}, {o.deliveryCity} {o.deliveryPostcode}
+            </div>
+          )}
         </div>
         <div
           style={{
@@ -107,6 +115,9 @@ export default function OrderCard({
         >
           <span className={`status-pill status-pill--${o.status}`}>
             {STATUS_LABEL[o.status]}
+          </span>
+          <span className={`status-pill status-pill--${o.type}`}>
+            {TYPE_LABEL[o.type]}
           </span>
           <span
             className={`status-pill status-pill--${o.paymentMethod}`}

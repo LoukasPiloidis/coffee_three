@@ -12,6 +12,7 @@ export async function GET(
   }
   const { order, items } = result;
   return NextResponse.json({
+    type: order.type,
     status: order.status,
     createdAt: order.createdAt,
     totalCents: order.totalCents,

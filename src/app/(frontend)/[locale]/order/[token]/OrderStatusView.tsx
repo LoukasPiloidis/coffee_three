@@ -6,6 +6,7 @@ import PriceWithDiscount from "@/components/PriceWithDiscount";
 import { formatOptionLabel, formatPrice, type Locale } from "@/lib/menu-types";
 
 type OrderDTO = {
+  type: "delivery" | "takeaway";
   status: "received" | "preparing" | "on_its_way" | "completed" | "cancelled";
   totalCents: number;
   tipCents: number;
@@ -24,11 +25,15 @@ type OrderDTO = {
   }[];
 };
 
-// Customer-facing flow has 4 steps.
-const STEPS: OrderDTO["status"][] = [
+const DELIVERY_STEPS: OrderDTO["status"][] = [
   "received",
   "preparing",
   "on_its_way",
+  "completed",
+];
+const TAKEAWAY_STEPS: OrderDTO["status"][] = [
+  "received",
+  "preparing",
   "completed",
 ];
 
@@ -98,7 +103,8 @@ export default function OrderStatusView({
     );
   }
 
-  const activeIdx = STEPS.indexOf(statusToStep(data.status));
+  const steps = data.type === "takeaway" ? TAKEAWAY_STEPS : DELIVERY_STEPS;
+  const activeIdx = steps.indexOf(statusToStep(data.status));
   const isCancelled = data.status === "cancelled";
 
   return (
@@ -117,9 +123,9 @@ export default function OrderStatusView({
         {!isCancelled &&
           (() => {
             const visible: { step: OrderDTO["status"]; active: boolean }[] = [
-              { step: STEPS[activeIdx], active: true },
+              { step: steps[activeIdx], active: true },
             ];
-            const next = STEPS[activeIdx + 1];
+            const next = steps[activeIdx + 1];
             if (next) visible.push({ step: next, active: false });
             return (
               <div
