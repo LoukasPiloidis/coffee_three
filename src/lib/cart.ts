@@ -118,11 +118,19 @@ export const cartStore = {
       this.removeLine(lineId);
       return;
     }
+    // Remove any offer whose slot assignments for this line exceed the new qty
+    const appliedOffers = snapshot.appliedOffers.filter((o) => {
+      const count = o.slotAssignments.filter(
+        (a) => a.lineId === lineId
+      ).length;
+      return count <= qty;
+    });
     persist({
       ...snapshot,
       lines: snapshot.lines.map((l) =>
         l.lineId === lineId ? { ...l, quantity: qty } : l
       ),
+      appliedOffers,
     });
   },
   removeLine(lineId: string) {
@@ -211,11 +219,13 @@ export function cartItemCount(cart: Cart): number {
 }
 
 export function lineDiscountCents(lineId: string, cart: Cart): number {
+  let total = 0;
   for (const o of cart.appliedOffers) {
-    const slot = o.slotAssignments.find((a) => a.lineId === lineId);
-    if (slot) return slot.discountCents;
+    for (const a of o.slotAssignments) {
+      if (a.lineId === lineId) total += a.discountCents;
+    }
   }
-  return 0;
+  return total;
 }
 
 export function offerForLine(

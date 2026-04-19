@@ -24,10 +24,15 @@ export function detectApplicableOffers(
   cart: Cart,
   offers: Offer[]
 ): OfferSuggestion[] {
-  // Collect lineIds already locked to an applied offer
-  const lockedLineIds = new Set<string>();
+  // Count how many units of each line are already locked to applied offers
+  const lockedLineCounts = new Map<string, number>();
   for (const ao of cart.appliedOffers) {
-    for (const a of ao.slotAssignments) lockedLineIds.add(a.lineId);
+    for (const a of ao.slotAssignments) {
+      lockedLineCounts.set(
+        a.lineId,
+        (lockedLineCounts.get(a.lineId) ?? 0) + 1
+      );
+    }
   }
 
   // Also skip offers already applied
@@ -41,7 +46,8 @@ export function detectApplicableOffers(
 
     // Try to greedily assign cart lines to slots.
     // For each slot, find the first available line whose slug is eligible.
-    const usedLineIds = new Set<string>();
+    // A line with quantity N can fill up to N slots (minus already-locked units).
+    const lineUseCounts = new Map<string, number>(lockedLineCounts);
     const assignments: OfferSuggestion["suggestedAssignments"] = [];
     let allSlotsFilled = true;
 
@@ -49,20 +55,21 @@ export function detectApplicableOffers(
       const slot = offer.slots[si];
       const eligibleSet = new Set(slot.eligibleItems);
 
-      // Find best matching line: prefer quantity-1 lines to avoid splitting
-      const candidate = cart.lines.find(
-        (l) =>
-          eligibleSet.has(l.slug) &&
-          !lockedLineIds.has(l.lineId) &&
-          !usedLineIds.has(l.lineId)
-      );
+      const candidate = cart.lines.find((l) => {
+        if (!eligibleSet.has(l.slug)) return false;
+        const used = lineUseCounts.get(l.lineId) ?? 0;
+        return used < l.quantity;
+      });
 
       if (!candidate) {
         allSlotsFilled = false;
         break;
       }
 
-      usedLineIds.add(candidate.lineId);
+      lineUseCounts.set(
+        candidate.lineId,
+        (lineUseCounts.get(candidate.lineId) ?? 0) + 1
+      );
       const itemPriceCents = Math.round(
         lineTotalCents(candidate) / candidate.quantity
       );
