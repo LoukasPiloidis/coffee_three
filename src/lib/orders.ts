@@ -7,7 +7,7 @@ import { orderItems, orders } from "@/db/schema";
 import type { AppliedOffer, CartLine } from "./cart";
 import { isWithinDeliveryHours } from "./hours";
 import { getItem, getOffer, getSettings } from "./menu";
-import { computeSlotDiscountCents } from "./menu-types";
+import { applySlotOverrides, computeSlotDiscountCents } from "./menu-types";
 
 export type PlaceOrderInput = {
   lines: CartLine[];
@@ -75,15 +75,21 @@ export async function placeOrder(
   const resolved: {
     slug: string;
     title: { en: string; el: string };
+    basePriceCents: number;
+    optionSurchargeCents: number;
     unitPriceCents: number;
     quantity: number;
     options: CartLine["options"];
     comment: string;
   }[] = [];
+  // Keep item references for offer override validation
+  const itemsByLineIdx = new Map<number, Awaited<ReturnType<typeof getItem>>>();
 
-  for (const line of input.lines) {
+  for (let li = 0; li < input.lines.length; li++) {
+    const line = input.lines[li];
     const item = await getItem(line.slug);
     if (!item || !item.available) return { ok: false, error: "unavailable" };
+    itemsByLineIdx.set(li, item);
 
     // Re-validate every selected option and compute authoritative prices.
     // Staff can toggle options off between "add to cart" and checkout, so
@@ -103,11 +109,14 @@ export async function placeOrder(
       });
     }
 
-    const unitPriceCents = Math.round(item.price * 100) + optionSurchargeCents;
+    const basePriceCents = Math.round(item.price * 100);
+    const unitPriceCents = basePriceCents + optionSurchargeCents;
     totalCents += unitPriceCents * line.quantity;
     resolved.push({
       slug: item.slug,
       title: item.title,
+      basePriceCents,
+      optionSurchargeCents,
       unitPriceCents,
       quantity: line.quantity,
       options: snapshotOptions,
@@ -151,6 +160,35 @@ export async function placeOrder(
         // Verify eligibility
         if (!slot.eligibleItems.includes(r.slug)) {
           return { ok: false, error: "offerUnavailable" };
+        }
+
+        // Apply option group overrides (e.g. excludePrice) for this slot
+        if (slot.optionGroupOverrides.length > 0) {
+          const item = itemsByLineIdx.get(lineIdx)!;
+          const overriddenGroups = applySlotOverrides(
+            item.optionGroups,
+            slot.optionGroupOverrides
+          );
+          let correctedSurcharge = 0;
+          const correctedOptions: CartLine["options"] = [];
+          for (const selected of input.lines[lineIdx].options) {
+            const group = overriddenGroups.find(
+              (g) => g.key === selected.groupKey
+            );
+            const option = group?.options.find(
+              (o) => o.key === selected.optionKey
+            );
+            if (!option || !option.available) {
+              return { ok: false, error: "unavailable" };
+            }
+            correctedSurcharge += option.priceCents;
+            correctedOptions.push({ ...selected, priceCents: option.priceCents });
+          }
+          const oldUnit = r.unitPriceCents;
+          r.optionSurchargeCents = correctedSurcharge;
+          r.unitPriceCents = r.basePriceCents + correctedSurcharge;
+          r.options = correctedOptions;
+          totalCents += (r.unitPriceCents - oldUnit) * r.quantity;
         }
 
         // Compute authoritative discount from server-side item price

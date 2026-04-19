@@ -46,6 +46,15 @@ export default function ItemOptionSelector({
         );
         if (idx >= 0) init[gi] = [String(idx)];
       }
+      // Auto-select if only one available option
+      if (!init[gi]) {
+        const available = g.options
+          .map((o, i) => ({ o, i }))
+          .filter((x) => x.o.available);
+        if (available.length === 1) {
+          init[gi] = [String(available[0].i)];
+        }
+      }
     });
     return init;
   });

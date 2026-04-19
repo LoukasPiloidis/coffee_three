@@ -49,11 +49,18 @@ export type ShopSettings = {
   };
 };
 
+export type SlotOptionGroupOverride = {
+  optionGroup: string;
+  excludePrice: boolean;
+  allowedOptionKeys: string[];
+};
+
 export type OfferSlot = {
   label: { en: string; el: string };
   eligibleItems: string[];
   discountType: "none" | "percentage" | "fixed_cents";
   discountValue: number;
+  optionGroupOverrides: SlotOptionGroupOverride[];
 };
 
 export type Offer = {
@@ -93,4 +100,36 @@ export function formatOptionLabel(
 ): string {
   if (!priceCents) return name;
   return `${name} + ${formatPrice(priceCents / 100, locale)}`;
+}
+
+/**
+ * Apply slot-level option group overrides to an item's option groups.
+ * Groups not mentioned in overrides pass through unchanged.
+ */
+export function applySlotOverrides(
+  groups: MenuOptionGroup[],
+  overrides: SlotOptionGroupOverride[]
+): MenuOptionGroup[] {
+  if (overrides.length === 0) return groups;
+
+  const overrideMap = new Map(overrides.map((o) => [o.optionGroup, o]));
+
+  return groups.map((g) => {
+    const override = overrideMap.get(g.key);
+    if (!override) return g;
+
+    let options = g.options;
+
+    if (override.allowedOptionKeys.length > 0) {
+      options = options.filter((o) =>
+        override.allowedOptionKeys.includes(o.key)
+      );
+    }
+
+    if (override.excludePrice) {
+      options = options.map((o) => ({ ...o, priceCents: 0 }));
+    }
+
+    return { ...g, options };
+  });
 }

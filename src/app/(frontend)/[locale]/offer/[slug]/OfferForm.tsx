@@ -2,13 +2,14 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import PriceWithDiscount from "@/components/PriceWithDiscount";
 import ItemOptionSelector, {
   type ItemSelectionResult,
 } from "@/components/ItemOptionSelector";
+import PriceWithDiscount from "@/components/PriceWithDiscount";
 import { useRouter } from "@/i18n/navigation";
 import { type CartLineOption, cartStore } from "@/lib/cart";
 import {
+  applySlotOverrides,
   computeSlotDiscountCents,
   type Locale,
   type MenuItem,
@@ -246,7 +247,13 @@ export default function OfferForm({
               </div>
               <ItemOptionSelector
                 key={`${activeSlot}-${slots[activeSlot].selectedSlug}`}
-                item={items[slots[activeSlot].selectedSlug!]}
+                item={{
+                  ...items[slots[activeSlot].selectedSlug!],
+                  optionGroups: applySlotOverrides(
+                    items[slots[activeSlot].selectedSlug!].optionGroups,
+                    offer.slots[activeSlot].optionGroupOverrides
+                  ),
+                }}
                 locale={locale}
                 submitLabel={t("confirmSlot")}
                 onComplete={(result) => handleConfirmSlot(activeSlot, result)}

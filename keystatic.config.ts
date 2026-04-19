@@ -201,6 +201,32 @@ export default config({
                 "For percentage: 0–100. For fixed: amount in euro-cents.",
               defaultValue: 0,
             }),
+            optionGroupOverrides: fields.array(
+              fields.object({
+                optionGroup: fields.relationship({
+                  label: "Option group",
+                  collection: "optionGroups",
+                }),
+                excludePrice: fields.checkbox({
+                  label: "Exclude surcharges (treat as €0)",
+                  defaultValue: false,
+                }),
+                allowedOptionKeys: fields.array(
+                  fields.text({ label: "Option key" }),
+                  {
+                    label: "Allowed options (leave empty = all)",
+                    itemLabel: (props) => props.value || "key",
+                  }
+                ),
+              }),
+              {
+                label: "Option group overrides",
+                itemLabel: (props) =>
+                  props.fields.optionGroup.value ?? "Select group",
+                description:
+                  "Override option groups for items in this slot. Unlisted groups pass through unchanged.",
+              }
+            ),
           }),
           {
             label: "Slots",

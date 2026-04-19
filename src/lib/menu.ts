@@ -207,6 +207,11 @@ type RawOffer = {
     eligibleItems: readonly (string | null)[];
     discountType: "none" | "percentage" | "fixed_cents";
     discountValue: number | null;
+    optionGroupOverrides?: readonly {
+      optionGroup: string | null;
+      excludePrice: boolean;
+      allowedOptionKeys: readonly string[];
+    }[];
   }[];
 };
 
@@ -228,6 +233,13 @@ async function readOffers(): Promise<Offer[]> {
           ),
           discountType: s.discountType,
           discountValue: s.discountValue ?? 0,
+          optionGroupOverrides: (s.optionGroupOverrides ?? [])
+            .filter((og) => og.optionGroup != null)
+            .map((og) => ({
+              optionGroup: og.optionGroup!,
+              excludePrice: og.excludePrice,
+              allowedOptionKeys: [...(og.allowedOptionKeys ?? [])],
+            })),
         })),
       };
     })
@@ -253,6 +265,13 @@ async function readOffer(slug: string): Promise<Offer | null> {
       ),
       discountType: s.discountType,
       discountValue: s.discountValue ?? 0,
+      optionGroupOverrides: (s.optionGroupOverrides ?? [])
+        .filter((og) => og.optionGroup != null)
+        .map((og) => ({
+          optionGroup: og.optionGroup!,
+          excludePrice: og.excludePrice,
+          allowedOptionKeys: [...(og.allowedOptionKeys ?? [])],
+        })),
     })),
   };
 }
