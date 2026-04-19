@@ -323,6 +323,9 @@ export default function CheckoutForm({
 
           <div className="option-group">
             <div className="option-group__label">{t("paymentMethod")}</div>
+            <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.35rem" }}>
+              {t("paymentHint")}
+            </div>
             <div className="option-list">
               <label>
                 <input

@@ -85,6 +85,7 @@
     "city": "City",
     "notes": "Order notes",
     "paymentMethod": "Payment method",
+    "paymentHint": "Payment is handled upon delivery",
     "cash": "Cash",
     "card": "Card",
     "tipTitle": "Leave a tip",
