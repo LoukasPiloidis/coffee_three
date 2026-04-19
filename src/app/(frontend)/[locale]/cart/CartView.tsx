@@ -109,7 +109,7 @@ export default function CartView({
                       {line.title[locale]}
                       {offer && (
                         <span className="offer-badge">
-                          {offer.offerTitle[locale]}
+                          {tOffers("offer")}
                         </span>
                       )}
                     </div>
@@ -166,45 +166,6 @@ export default function CartView({
               );
             })}
           </div>
-
-          {/* Applied offers with remove option */}
-          {cart.appliedOffers.length > 0 && (
-            <div>
-              {cart.appliedOffers.map((ao) => {
-                const savings = ao.slotAssignments.reduce(
-                  (s, a) => s + a.discountCents,
-                  0
-                );
-                return (
-                  <div
-                    key={ao.offerSlug}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "0.5rem 0",
-                    }}
-                  >
-                    <span className="offer-discount">
-                      {tOffers("applied")}: {ao.offerTitle[locale]} (
-                      {tOffers("discount", {
-                        amount: formatPrice(savings / 100, locale),
-                      })}
-                      )
-                    </span>
-                    <button
-                      type="button"
-                      className="btn btn--ghost btn--small"
-                      style={{ color: "var(--color-danger)" }}
-                      onClick={() => cartStore.removeOffer(ao.offerSlug)}
-                    >
-                      {tOffers("removeOffer")}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
 
           <div className="totals">
             <span>{t("total")}</span>

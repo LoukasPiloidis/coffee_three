@@ -47,6 +47,7 @@
     "confirmSlot": "Confirm",
     "editSlot": "Edit",
     "addToCart": "Add offer to cart",
+    "offer": "Offer",
     "applied": "Offer applied",
     "youSave": "You save {amount}",
     "suggestion": "Save {amount} with \"{offerName}\"!",

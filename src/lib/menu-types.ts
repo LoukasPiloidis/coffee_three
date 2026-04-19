@@ -92,5 +92,5 @@ export function formatOptionLabel(
   locale: Locale
 ): string {
   if (!priceCents) return name;
-  return `${name} (+${formatPrice(priceCents / 100, locale)})`;
+  return `${name} + ${formatPrice(priceCents / 100, locale)}`;
 }

@@ -177,7 +177,7 @@ export default function ItemOptionSelector({
                   {o.name[locale]}
                   {o.priceCents > 0 && (
                     <span className="option-price">
-                      +{formatOptionLabel("", o.priceCents, locale).slice(2)}
+                      {formatOptionLabel("", o.priceCents, locale)}
                     </span>
                   )}
                 </label>
