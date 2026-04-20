@@ -64,7 +64,7 @@ export function mapItem(
 
   const resolvedGroups = (entry.optionGroups ?? [])
     .map((ref) => (ref ? optionGroupsMap.get(ref) : undefined))
-    .filter((g): g is RawOptionGroup => g != null);
+    .filter((group): group is RawOptionGroup => group != null);
 
   return {
     slug,
@@ -75,40 +75,40 @@ export function mapItem(
     image: entry.image,
     available: itemOverride ?? entry.available,
     displayOrder: entry.displayOrder ?? 0,
-    optionGroups: resolvedGroups.map((g) => ({
-      key: g.key,
-      name: g.name,
-      selectionType: g.selectionType,
-      required: g.required,
-      defaultOptionKey: g.defaultOptionKey ?? null,
-      options: (g.options ?? []).map((o) => {
-        const ovr = overrides.options.get(optionMapKey(slug, g.key, o.key));
+    optionGroups: resolvedGroups.map((group) => ({
+      key: group.key,
+      name: group.name,
+      selectionType: group.selectionType,
+      required: group.required,
+      defaultOptionKey: group.defaultOptionKey ?? null,
+      options: (group.options ?? []).map((opt) => {
+        const ovr = overrides.options.get(optionMapKey(slug, group.key, opt.key));
         return {
-          key: o.key,
-          name: o.name,
-          priceCents: o.priceCents ?? 0,
-          available: ovr ?? o.available,
+          key: opt.key,
+          name: opt.name,
+          priceCents: opt.priceCents ?? 0,
+          available: ovr ?? opt.available,
         };
       }),
     })),
   };
 }
 
-export function transformOffer(slug: string, o: RawOffer): Offer {
+export function transformOffer(slug: string, raw: RawOffer): Offer {
   return {
     slug,
-    title: o.title,
-    description: o.description,
-    available: o.available,
-    displayOrder: o.displayOrder ?? 0,
-    slots: (o.slots ?? []).map((s) => ({
-      label: s.label,
-      eligibleItems: (s.eligibleItems ?? []).filter(
-        (i): i is string => i != null
+    title: raw.title,
+    description: raw.description,
+    available: raw.available,
+    displayOrder: raw.displayOrder ?? 0,
+    slots: (raw.slots ?? []).map((slot) => ({
+      label: slot.label,
+      eligibleItems: (slot.eligibleItems ?? []).filter(
+        (item): item is string => item != null
       ),
-      discountType: s.discountType,
-      discountValue: s.discountValue ?? 0,
-      optionGroupOverrides: (s.optionGroupOverrides ?? [])
+      discountType: slot.discountType,
+      discountValue: slot.discountValue ?? 0,
+      optionGroupOverrides: (slot.optionGroupOverrides ?? [])
         .filter((og) => og.optionGroup != null)
         .map((og) => ({
           optionGroup: og.optionGroup!,

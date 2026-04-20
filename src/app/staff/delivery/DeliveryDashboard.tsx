@@ -46,14 +46,14 @@ export default function DeliveryDashboard({
   }, [load]);
 
   // Exclude cancelled orders from totals
-  const activeOrders = orders.filter((o) => o.status !== "cancelled");
+  const activeOrders = orders.filter((order) => order.status !== "cancelled");
   const totalCash = activeOrders
-    .filter((o) => o.paymentMethod === "cash")
-    .reduce((sum, o) => sum + o.totalCents, 0);
+    .filter((order) => order.paymentMethod === "cash")
+    .reduce((sum, order) => sum + order.totalCents, 0);
   const totalCard = activeOrders
-    .filter((o) => o.paymentMethod === "card")
-    .reduce((sum, o) => sum + o.totalCents, 0);
-  const totalTips = activeOrders.reduce((sum, o) => sum + o.tipCents, 0);
+    .filter((order) => order.paymentMethod === "card")
+    .reduce((sum, order) => sum + order.totalCents, 0);
+  const totalTips = activeOrders.reduce((sum, order) => sum + order.tipCents, 0);
 
   return (
     <div className="stack-md">
@@ -96,7 +96,7 @@ export default function DeliveryDashboard({
         <p className="empty">Δεν βρέθηκαν παραγγελίες.</p>
       )}
 
-      {!isPending && orders.map((o) => <OrderCard key={o.id} order={o} />)}
+      {!isPending && orders.map((order) => <OrderCard key={order.id} order={order} />)}
     </div>
   );
 }

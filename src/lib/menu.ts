@@ -56,10 +56,10 @@ async function loadOverrides(): Promise<OverrideMaps> {
     db.select().from(optionOverrides),
   ]);
   const items = new Map<string, boolean>();
-  for (const r of itemRows) items.set(r.slug, r.available);
+  for (const row of itemRows) items.set(row.slug, row.available);
   const options = new Map<string, boolean>();
-  for (const r of optionRows) {
-    options.set(optionMapKey(r.itemSlug, r.groupKey, r.optionKey), r.available);
+  for (const row of optionRows) {
+    options.set(optionMapKey(row.itemSlug, row.groupKey, row.optionKey), row.available);
   }
   return { items, options };
 }
@@ -67,8 +67,8 @@ async function loadOverrides(): Promise<OverrideMaps> {
 async function loadOptionGroupsMap(): Promise<Map<string, RawOptionGroup>> {
   const entries = await reader.collections.optionGroups.all();
   const map = new Map<string, RawOptionGroup>();
-  for (const g of entries) {
-    map.set(g.slug, g.entry as RawOptionGroup);
+  for (const group of entries) {
+    map.set(group.slug, group.entry as RawOptionGroup);
   }
   return map;
 }
@@ -82,17 +82,17 @@ async function readMenu(): Promise<MenuCategory[]> {
       loadOverrides(),
     ]);
 
-  const items: MenuItem[] = itemEntries.map((e) =>
-    mapItem(e.slug, e.entry as RawItem, overrides, optionGroupsMap)
+  const items: MenuItem[] = itemEntries.map((entry) =>
+    mapItem(entry.slug, entry.entry as RawItem, overrides, optionGroupsMap)
   );
 
   const categories: MenuCategory[] = categoryEntries
-    .map((c) => ({
-      slug: c.slug,
-      title: c.entry.title,
-      order: c.entry.order ?? 0,
+    .map((cat) => ({
+      slug: cat.slug,
+      title: cat.entry.title,
+      order: cat.entry.order ?? 0,
       items: items
-        .filter((i) => i.category === c.slug)
+        .filter((item) => item.category === cat.slug)
         .sort((a, b) => a.displayOrder - b.displayOrder),
     }))
     .sort((a, b) => a.order - b.order);
@@ -112,14 +112,14 @@ async function readItem(slug: string): Promise<MenuItem | null> {
 
 async function readDeliveryGuys(): Promise<string[]> {
   const entries = await reader.collections.deliveryGuys.all();
-  return entries.map((e) => e.slug);
+  return entries.map((entry) => entry.slug);
 }
 
 async function readOffers(): Promise<Offer[]> {
   const entries = await reader.collections.offers.all();
   return entries
-    .map((e) => transformOffer(e.slug, e.entry as RawOffer))
-    .filter((o) => o.available)
+    .map((entry) => transformOffer(entry.slug, entry.entry as RawOffer))
+    .filter((offer) => offer.available)
     .sort((a, b) => a.displayOrder - b.displayOrder);
 }
 

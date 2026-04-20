@@ -18,13 +18,13 @@ export async function GET(
     totalCents: order.totalCents,
     tipCents: order.tipCents,
     paymentMethod: order.paymentMethod,
-    items: items.map((i) => ({
-      title: i.titleSnapshot,
-      quantity: i.quantity,
-      unitPriceCents: i.unitPriceCents,
-      discountCents: i.discountCents,
-      options: i.optionsJson,
-      comment: i.comment,
+    items: items.map((item) => ({
+      title: item.titleSnapshot,
+      quantity: item.quantity,
+      unitPriceCents: item.unitPriceCents,
+      discountCents: item.discountCents,
+      options: item.optionsJson,
+      comment: item.comment,
     })),
   });
 }

@@ -66,7 +66,7 @@ function hydrate() {
   const fromStorage = readCart();
   if (fromStorage.lines.length > 0) {
     snapshot = fromStorage;
-    listeners.forEach((l) => l());
+    listeners.forEach((listener) => listener());
   }
 }
 
@@ -79,7 +79,7 @@ function persist(next: Cart) {
       /* ignore */
     }
   }
-  listeners.forEach((l) => l());
+  listeners.forEach((listener) => listener());
 }
 
 // Sync across tabs
@@ -87,7 +87,7 @@ if (typeof window !== "undefined") {
   window.addEventListener("storage", (e) => {
     if (e.key === STORAGE_KEY) {
       snapshot = readCart();
-      listeners.forEach((l) => l());
+      listeners.forEach((listener) => listener());
     }
   });
 }
@@ -119,16 +119,16 @@ export const cartStore = {
       return;
     }
     // Remove any offer whose slot assignments for this line exceed the new qty
-    const appliedOffers = snapshot.appliedOffers.filter((o) => {
-      const count = o.slotAssignments.filter(
-        (a) => a.lineId === lineId
+    const appliedOffers = snapshot.appliedOffers.filter((offer) => {
+      const count = offer.slotAssignments.filter(
+        (assignment) => assignment.lineId === lineId
       ).length;
       return count <= qty;
     });
     persist({
       ...snapshot,
-      lines: snapshot.lines.map((l) =>
-        l.lineId === lineId ? { ...l, quantity: qty } : l
+      lines: snapshot.lines.map((line) =>
+        line.lineId === lineId ? { ...line, quantity: qty } : line
       ),
       appliedOffers,
     });
@@ -136,10 +136,10 @@ export const cartStore = {
   removeLine(lineId: string) {
     // Also remove any offer that references this line
     const appliedOffers = snapshot.appliedOffers.filter(
-      (o) => !o.slotAssignments.some((a) => a.lineId === lineId)
+      (offer) => !offer.slotAssignments.some((assignment) => assignment.lineId === lineId)
     );
     persist({
-      lines: snapshot.lines.filter((l) => l.lineId !== lineId),
+      lines: snapshot.lines.filter((line) => line.lineId !== lineId),
       appliedOffers,
     });
   },
@@ -187,7 +187,7 @@ export const cartStore = {
     persist({
       ...snapshot,
       appliedOffers: snapshot.appliedOffers.filter(
-        (o) => o.offerSlug !== offerSlug
+        (offer) => offer.offerSlug !== offerSlug
       ),
     });
   },
@@ -204,25 +204,25 @@ export function useCart(): Cart {
 export function lineTotalCents(line: CartLine): number {
   const baseCents = Math.round(line.unitPrice * 100);
   const optionsCents = line.options.reduce(
-    (s, o) => s + (o.priceCents ?? 0),
+    (sum, opt) => sum + (opt.priceCents ?? 0),
     0
   );
   return (baseCents + optionsCents) * line.quantity;
 }
 
 export function cartTotalCents(cart: Cart): number {
-  return cart.lines.reduce((sum, l) => sum + lineTotalCents(l), 0);
+  return cart.lines.reduce((sum, line) => sum + lineTotalCents(line), 0);
 }
 
 export function cartItemCount(cart: Cart): number {
-  return cart.lines.reduce((sum, l) => sum + l.quantity, 0);
+  return cart.lines.reduce((sum, line) => sum + line.quantity, 0);
 }
 
 export function lineDiscountCents(lineId: string, cart: Cart): number {
   let total = 0;
-  for (const o of cart.appliedOffers) {
-    for (const a of o.slotAssignments) {
-      if (a.lineId === lineId) total += a.discountCents;
+  for (const offer of cart.appliedOffers) {
+    for (const assignment of offer.slotAssignments) {
+      if (assignment.lineId === lineId) total += assignment.discountCents;
     }
   }
   return total;
@@ -233,16 +233,16 @@ export function offerForLine(
   cart: Cart
 ): AppliedOffer | null {
   return (
-    cart.appliedOffers.find((o) =>
-      o.slotAssignments.some((a) => a.lineId === lineId)
+    cart.appliedOffers.find((offer) =>
+      offer.slotAssignments.some((assignment) => assignment.lineId === lineId)
     ) ?? null
   );
 }
 
 export function totalOfferDiscountCents(cart: Cart): number {
   return cart.appliedOffers.reduce(
-    (sum, o) =>
-      sum + o.slotAssignments.reduce((s, a) => s + a.discountCents, 0),
+    (sum, offer) =>
+      sum + offer.slotAssignments.reduce((acc, assignment) => acc + assignment.discountCents, 0),
     0
   );
 }

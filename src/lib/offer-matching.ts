@@ -26,17 +26,17 @@ export function detectApplicableOffers(
 ): OfferSuggestion[] {
   // Count how many units of each line are already locked to applied offers
   const lockedLineCounts = new Map<string, number>();
-  for (const ao of cart.appliedOffers) {
-    for (const a of ao.slotAssignments) {
+  for (const applied of cart.appliedOffers) {
+    for (const assignment of applied.slotAssignments) {
       lockedLineCounts.set(
-        a.lineId,
-        (lockedLineCounts.get(a.lineId) ?? 0) + 1
+        assignment.lineId,
+        (lockedLineCounts.get(assignment.lineId) ?? 0) + 1
       );
     }
   }
 
   // Also skip offers already applied
-  const appliedSlugs = new Set(cart.appliedOffers.map((o) => o.offerSlug));
+  const appliedSlugs = new Set(cart.appliedOffers.map((offer) => offer.offerSlug));
 
   const suggestions: OfferSuggestion[] = [];
 
@@ -55,10 +55,10 @@ export function detectApplicableOffers(
       const slot = offer.slots[si];
       const eligibleSet = new Set(slot.eligibleItems);
 
-      const candidate = cart.lines.find((l) => {
-        if (!eligibleSet.has(l.slug)) return false;
-        const used = lineUseCounts.get(l.lineId) ?? 0;
-        return used < l.quantity;
+      const candidate = cart.lines.find((line) => {
+        if (!eligibleSet.has(line.slug)) return false;
+        const used = lineUseCounts.get(line.lineId) ?? 0;
+        return used < line.quantity;
       });
 
       if (!candidate) {
@@ -83,7 +83,7 @@ export function detectApplicableOffers(
 
     if (allSlotsFilled) {
       const totalSavingsCents = assignments.reduce(
-        (s, a) => s + a.discountCents,
+        (sum, assignment) => sum + assignment.discountCents,
         0
       );
       if (totalSavingsCents > 0) {

@@ -46,7 +46,7 @@ export default async function ProfilePage({
     phone: null,
   };
 
-  const orderIds = recent.map((o) => o.id);
+  const orderIds = recent.map((order) => order.id);
   const recentItems =
     orderIds.length > 0 ? await db.select().from(orderItems) : [];
   const itemsByOrder = new Map<string, typeof recentItems>();

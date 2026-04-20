@@ -33,33 +33,33 @@ export async function GET(req: NextRequest) {
     .where(inArray(orderItems.orderId, orderIds));
 
   const itemsByOrder = new Map<string, typeof items>();
-  for (const it of items) {
-    const arr = itemsByOrder.get(it.orderId) ?? [];
-    arr.push(it);
-    itemsByOrder.set(it.orderId, arr);
+  for (const item of items) {
+    const arr = itemsByOrder.get(item.orderId) ?? [];
+    arr.push(item);
+    itemsByOrder.set(item.orderId, arr);
   }
 
   return NextResponse.json({
-    orders: rows.map((o) => ({
-      id: o.id,
-      publicToken: o.publicToken,
-      status: o.status,
-      createdAt: o.createdAt,
-      totalCents: o.totalCents,
-      tipCents: o.tipCents,
-      paymentMethod: o.paymentMethod,
-      guestName: o.guestName,
-      guestPhone: o.guestPhone,
-      deliveryStreet: o.deliveryStreet,
-      deliveryCity: o.deliveryCity,
-      deliveryPostcode: o.deliveryPostcode,
-      deliveryGuy: o.deliveryGuy,
-      notes: o.notes,
-      items: (itemsByOrder.get(o.id) ?? []).map((i) => ({
-        title: i.titleSnapshot,
-        quantity: i.quantity,
-        options: i.optionsJson,
-        comment: i.comment,
+    orders: rows.map((order) => ({
+      id: order.id,
+      publicToken: order.publicToken,
+      status: order.status,
+      createdAt: order.createdAt,
+      totalCents: order.totalCents,
+      tipCents: order.tipCents,
+      paymentMethod: order.paymentMethod,
+      guestName: order.guestName,
+      guestPhone: order.guestPhone,
+      deliveryStreet: order.deliveryStreet,
+      deliveryCity: order.deliveryCity,
+      deliveryPostcode: order.deliveryPostcode,
+      deliveryGuy: order.deliveryGuy,
+      notes: order.notes,
+      items: (itemsByOrder.get(order.id) ?? []).map((item) => ({
+        title: item.titleSnapshot,
+        quantity: item.quantity,
+        options: item.optionsJson,
+        comment: item.comment,
       })),
     })),
   });
