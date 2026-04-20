@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import ItemOptionSelector from "@/components/ItemOptionSelector";
+import { QuantityStepper } from "@/components/QuantityStepper";
 import { useRouter } from "@/i18n/navigation";
 import { cartStore } from "@/lib/cart";
 import type { Locale, MenuItem } from "@/lib/menu-types";
@@ -38,18 +39,7 @@ export default function ItemForm({
     >
       <div className="field">
         <label>{t("quantity")}</label>
-        <div className="qty" style={{ alignSelf: "flex-start" }}>
-          <button
-            type="button"
-            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-          >
-            −
-          </button>
-          <span className="qty__value">{quantity}</span>
-          <button type="button" onClick={() => setQuantity((q) => q + 1)}>
-            +
-          </button>
-        </div>
+        <QuantityStepper value={quantity} onChange={setQuantity} />
       </div>
     </ItemOptionSelector>
   );

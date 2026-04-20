@@ -2,20 +2,20 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import ItemOptionSelector, {
-  type ItemSelectionResult,
-} from "@/components/ItemOptionSelector";
+import type { ItemSelectionResult } from "@/components/ItemOptionSelector";
 import PriceWithDiscount from "@/components/PriceWithDiscount";
 import { useRouter } from "@/i18n/navigation";
 import { type CartLineOption, cartStore } from "@/lib/cart";
 import {
-  applySlotOverrides,
   computeSlotDiscountCents,
   type Locale,
   type MenuItem,
   type Offer,
 } from "@/lib/menu-types";
+import { ConfirmedSlots } from "./ConfirmedSlots";
+import { ItemPicker } from "./ItemPicker";
 import styles from "./OfferForm.module.css";
+import { SlotStepper } from "./SlotStepper";
 
 type SlotState = {
   selectedSlug: string | null;
@@ -48,20 +48,30 @@ export default function OfferForm({
 
   const allConfirmed = slots.every((s) => s.confirmed);
 
-  const handleSelectItem = (slotIdx: number, slug: string) => {
+  const handleSelectItem = (slug: string) => {
     setSlots((prev) =>
       prev.map((s, i) =>
-        i === slotIdx
+        i === activeSlot
           ? { selectedSlug: slug, options: [], comment: "", confirmed: false }
           : s
       )
     );
   };
 
-  const handleConfirmSlot = (slotIdx: number, result: ItemSelectionResult) => {
+  const handleClearItem = () => {
     setSlots((prev) =>
       prev.map((s, i) =>
-        i === slotIdx
+        i === activeSlot
+          ? { selectedSlug: null, options: [], comment: "", confirmed: false }
+          : s
+      )
+    );
+  };
+
+  const handleConfirmSlot = (result: ItemSelectionResult) => {
+    setSlots((prev) =>
+      prev.map((s, i) =>
+        i === activeSlot
           ? {
               ...s,
               options: result.options,
@@ -71,8 +81,7 @@ export default function OfferForm({
           : s
       )
     );
-    // Advance to next unconfirmed slot
-    const nextIdx = slots.findIndex((s, i) => i > slotIdx && !s.confirmed);
+    const nextIdx = slots.findIndex((s, i) => i > activeSlot && !s.confirmed);
     if (nextIdx >= 0) setActiveSlot(nextIdx);
   };
 
@@ -94,7 +103,7 @@ export default function OfferForm({
       if (!item) continue;
       const baseCents = Math.round(item.price * 100);
       const optionsCents = state.options.reduce(
-        (s, o) => s + (o.priceCents ?? 0),
+        (sum, opt) => sum + (opt.priceCents ?? 0),
         0
       );
       const itemTotal = baseCents + optionsCents;
@@ -126,7 +135,7 @@ export default function OfferForm({
       const item = items[state.selectedSlug!];
       const baseCents = Math.round(item.price * 100);
       const optionsCents = state.options.reduce(
-        (s, o) => s + (o.priceCents ?? 0),
+        (sum, opt) => sum + (opt.priceCents ?? 0),
         0
       );
       return {
@@ -147,168 +156,35 @@ export default function OfferForm({
 
   return (
     <div className="stack-md">
-      {/* Slot stepper */}
-      <div className={styles['offer-stepper']}>
-        {offer.slots.map((slot, i) => (
-          <button
-            key={i}
-            type="button"
-            className={`${styles['offer-stepper__step']}${i === activeSlot ? ` ${styles['offer-stepper__step--active']}` : ""}${slots[i].confirmed ? ` ${styles['offer-stepper__step--done']}` : ""}`}
-            onClick={() => setActiveSlot(i)}
-          >
-            {slots[i].confirmed ? "✓ " : ""}
-            {slot.label[locale]}
-          </button>
-        ))}
-      </div>
+      <SlotStepper
+        offer={offer}
+        activeSlot={activeSlot}
+        setActiveSlot={setActiveSlot}
+        confirmedSlots={slots.map((s) => s.confirmed)}
+        locale={locale}
+      />
 
-      {/* Active slot panel */}
       {!allConfirmed && (
-        <div className={styles['offer-slot']}>
-          <h3 className={styles['offer-slot__label']}>
-            {t("step", {
-              current: activeSlot + 1,
-              total: offer.slots.length,
-            })}
-            {" — "}
-            {offer.slots[activeSlot].label[locale]}
-          </h3>
-
-          {!slots[activeSlot].selectedSlug ? (
-            // Item selection
-            <div>
-              <p className={styles['pick-hint']}>
-                {t("pickItem")}
-              </p>
-              {offer.slots[activeSlot].eligibleItems
-                .map((slug) => items[slug])
-                .filter(Boolean)
-                .map((item) => {
-                  const slot = offer.slots[activeSlot];
-                  const baseCents = Math.round(item.price * 100);
-                  const discount = computeSlotDiscountCents(slot, baseCents);
-                  return (
-                    <button
-                      key={item.slug}
-                      type="button"
-                      className={styles['offer-item-pick']}
-                      onClick={() => handleSelectItem(activeSlot, item.slug)}
-                    >
-                      <span className={styles['offer-item-pick__title']}>
-                        {item.title[locale]}
-                      </span>
-                      <span className={styles['offer-item-pick__price']}>
-                        <PriceWithDiscount
-                          originalCents={baseCents}
-                          discountCents={discount}
-                          locale={locale}
-                        />
-                      </span>
-                    </button>
-                  );
-                })}
-            </div>
-          ) : (
-            // Options for selected item
-            <div>
-              <div className={styles['selected-item-header']}>
-                <strong>
-                  {items[slots[activeSlot].selectedSlug!]?.title[locale]}
-                </strong>
-                <button
-                  type="button"
-                  className="btn btn--ghost btn--small"
-                  onClick={() =>
-                    setSlots((prev) =>
-                      prev.map((s, i) =>
-                        i === activeSlot
-                          ? {
-                              selectedSlug: null,
-                              options: [],
-                              comment: "",
-                              confirmed: false,
-                            }
-                          : s
-                      )
-                    )
-                  }
-                >
-                  ← {t("pickItem")}
-                </button>
-              </div>
-              <ItemOptionSelector
-                key={`${activeSlot}-${slots[activeSlot].selectedSlug}`}
-                item={{
-                  ...items[slots[activeSlot].selectedSlug!],
-                  optionGroups: applySlotOverrides(
-                    items[slots[activeSlot].selectedSlug!].optionGroups,
-                    offer.slots[activeSlot].optionGroupOverrides
-                  ),
-                }}
-                locale={locale}
-                submitLabel={t("confirmSlot")}
-                onComplete={(result) => handleConfirmSlot(activeSlot, result)}
-              />
-            </div>
-          )}
-        </div>
+        <ItemPicker
+          offer={offer}
+          items={items}
+          locale={locale}
+          activeSlot={activeSlot}
+          slotState={slots[activeSlot]}
+          onSelectItem={handleSelectItem}
+          onClearItem={handleClearItem}
+          onConfirmSlot={handleConfirmSlot}
+        />
       )}
 
-      {/* Confirmed slots summary */}
-      {slots.some((s) => s.confirmed) && (
-        <div className={styles['offer-summary']}>
-          {slots.map((state, i) => {
-            if (!state.confirmed || !state.selectedSlug) return null;
-            const item = items[state.selectedSlug];
-            if (!item) return null;
-            const slot = offer.slots[i];
-            const baseCents = Math.round(item.price * 100);
-            const optionsCents = state.options.reduce(
-              (s, o) => s + (o.priceCents ?? 0),
-              0
-            );
-            const itemTotal = baseCents + optionsCents;
-            const discount = computeSlotDiscountCents(slot, itemTotal);
-            return (
-              <div key={i} className={styles['offer-summary__slot']}>
-                <div className={styles['offer-summary__slot-header']}>
-                  <span className={styles['offer-summary__slot-label']}>
-                    {slot.label[locale]}
-                  </span>
-                  <button
-                    type="button"
-                    className="btn btn--ghost btn--small"
-                    onClick={() => handleEdit(i)}
-                  >
-                    {t("editSlot")}
-                  </button>
-                </div>
-                <div className={styles['offer-summary__slot-item']}>
-                  {item.title[locale]}
-                  {state.options.length > 0 && (
-                    <span className={styles['slot-options-meta']}>
-                      (
-                      {state.options
-                        .map((o) => o.optionName[locale])
-                        .join(", ")}
-                      )
-                    </span>
-                  )}
-                </div>
-                <div className={styles['offer-summary__slot-price']}>
-                  <PriceWithDiscount
-                    originalCents={itemTotal}
-                    discountCents={discount}
-                    locale={locale}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <ConfirmedSlots
+        offer={offer}
+        items={items}
+        locale={locale}
+        slots={slots}
+        onEdit={handleEdit}
+      />
 
-      {/* Final summary + add to cart */}
       {allConfirmed && summary && (
         <div className={styles['offer-total']}>
           <div className={styles['offer-total__final']}>

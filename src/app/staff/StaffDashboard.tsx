@@ -2,42 +2,9 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { assignDeliveryGuyAction, updateStatusAction } from "./actions";
-import OrderCard, {
-  type OrderDTO,
-  STATUS_LABEL,
-} from "./OrderCard";
+import { type OrderDTO, STATUS_LABEL } from "./OrderCard";
+import { OrderColumn } from "./OrderColumn";
 import styles from "./Staff.module.css";
-
-// Staff flow: received -> preparing -> on_its_way (delivery) or completed (takeaway).
-// After on_its_way, orders auto-complete one hour after they were placed (server-side).
-const DELIVERY_NEXT_STATUS: Record<OrderDTO["status"], OrderDTO["status"] | null> = {
-  received: "preparing",
-  preparing: "on_its_way",
-  on_its_way: null,
-  completed: null,
-  cancelled: null,
-};
-const TAKEAWAY_NEXT_STATUS: Record<OrderDTO["status"], OrderDTO["status"] | null> = {
-  received: "preparing",
-  preparing: "completed",
-  on_its_way: null,
-  completed: null,
-  cancelled: null,
-};
-
-function getNextStatus(order: OrderDTO): OrderDTO["status"] | null {
-  return order.type === "takeaway"
-    ? TAKEAWAY_NEXT_STATUS[order.status]
-    : DELIVERY_NEXT_STATUS[order.status];
-}
-
-function getNextLabel(order: OrderDTO): string {
-  if (order.status === "received") return "Έναρξη ετοιμασίας";
-  if (order.status === "preparing") {
-    return order.type === "takeaway" ? "Έτοιμο" : "Αποστολή";
-  }
-  return "";
-}
 
 async function fetchStaffOrders(): Promise<OrderDTO[] | null> {
   const res = await fetch("/api/staff/orders", { cache: "no-store" });
@@ -47,130 +14,6 @@ async function fetchStaffOrders(): Promise<OrderDTO[] | null> {
 }
 
 type Tab = "active" | "completed";
-
-function ActionButtons({
-  order,
-  isTerminal,
-  next,
-  onTransition,
-}: {
-  order: OrderDTO;
-  isTerminal: boolean;
-  next: OrderDTO["status"] | null;
-  onTransition: (id: string, status: OrderDTO["status"]) => void;
-}) {
-  return (
-    <div className={styles['action-buttons']}>
-      {!isTerminal && (
-        <button
-          className="btn btn--danger btn--small"
-          onClick={() => onTransition(order.id, "cancelled")}
-        >
-          Ακύρωση
-        </button>
-      )}
-      {next && (
-        <button
-          className="btn btn--primary btn--small"
-          onClick={() => onTransition(order.id, next)}
-        >
-          {getNextLabel(order)}
-        </button>
-      )}
-    </div>
-  );
-}
-
-function DeliveryGuySelect({
-  order,
-  deliveryGuys,
-  onAssign,
-}: {
-  order: OrderDTO;
-  deliveryGuys: string[];
-  onAssign: (orderId: string, guy: string | null) => void;
-}) {
-  if (deliveryGuys.length === 0) return null;
-  return (
-    <div className={styles['delivery-guy-select']}>
-      <label
-        htmlFor={`dg-${order.id}`}
-        className={styles['delivery-guy-select__label']}
-      >
-        Διανομέας
-      </label>
-      <select
-        id={`dg-${order.id}`}
-        value={order.deliveryGuy ?? ""}
-        onChange={(e) => onAssign(order.id, e.target.value || null)}
-        className={styles['delivery-guy-select__input']}
-      >
-        <option value="">—</option>
-        {deliveryGuys.map((name) => (
-          <option key={name} value={name}>
-            {name}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
-function OrderColumn({
-  label,
-  orders,
-  deliveryGuys,
-  onTransition,
-  onAssign,
-}: {
-  label: string;
-  orders: OrderDTO[];
-  deliveryGuys: string[];
-  onTransition: (id: string, status: OrderDTO["status"]) => void;
-  onAssign: (orderId: string, guy: string | null) => void;
-}) {
-  const isTerminal = (s: OrderDTO["status"]) =>
-    s === "completed" || s === "cancelled" || s === "on_its_way";
-
-  return (
-    <div>
-      <div className={styles['staff-column__header']}>
-        {label}
-        <span className={styles['staff-column__count']}>{orders.length}</span>
-      </div>
-      {orders.length === 0 && (
-        <p className="empty" style={{ fontSize: "0.85rem" }}>
-          Κενό
-        </p>
-      )}
-      <div className="stack-md">
-        {orders.map((o) => (
-          <OrderCard
-            key={o.id}
-            order={o}
-            className={o.status === "cancelled" ? styles['staff-card--cancelled'] : undefined}
-            actions={
-              <ActionButtons
-                order={o}
-                isTerminal={isTerminal(o.status)}
-                next={getNextStatus(o)}
-                onTransition={onTransition}
-              />
-            }
-          >
-            {o.type === "delivery" && (
-              <DeliveryGuySelect
-                order={o}
-                deliveryGuys={deliveryGuys}
-                onAssign={onAssign}
-              />
-            )}
-          </OrderCard>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export default function StaffDashboard({
   deliveryGuys,
@@ -211,11 +54,11 @@ export default function StaffDashboard({
     });
   };
 
-  const received = orders.filter((o) => o.status === "received");
-  const preparing = orders.filter((o) => o.status === "preparing");
-  const onItsWay = orders.filter((o) => o.status === "on_its_way");
+  const received = orders.filter((order) => order.status === "received");
+  const preparing = orders.filter((order) => order.status === "preparing");
+  const onItsWay = orders.filter((order) => order.status === "on_its_way");
   const done = orders.filter(
-    (o) => o.status === "completed" || o.status === "cancelled"
+    (order) => order.status === "completed" || order.status === "cancelled"
   );
 
   const activeCount = received.length + preparing.length;

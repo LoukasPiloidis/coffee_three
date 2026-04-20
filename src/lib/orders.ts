@@ -1,17 +1,32 @@
-"use server";
-
 import { randomBytes } from "crypto";
-import { and, desc, eq, inArray, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
-import type { AppliedOffer, CartLine } from "./cart";
-import { isWithinDeliveryHours } from "./hours";
-import { getItem, getOffer, getSettings } from "./menu";
-import { applySlotOverrides, computeSlotDiscountCents } from "./menu-types";
+import type { CartLine } from "./cart";
+import { getSettings } from "./menu";
+import { processOffers, resolveLines } from "./order-processing";
+import { validateMinOrder, validateOrderInput } from "./order-validation";
+
+// Re-export queries so existing import sites continue to work.
+export {
+  autoCompleteStaleOrders,
+  getOrderByToken,
+  getActiveStaffOrders,
+  updateOrderStatus,
+  assignDeliveryGuy,
+  getOrdersByDeliveryGuyAndDate,
+  getRecentUserOrders,
+} from "./order-queries";
 
 export type PlaceOrderInput = {
   lines: CartLine[];
-  appliedOffers?: AppliedOffer[];
+  appliedOffers?: {
+    offerSlug: string;
+    offerTitle: { en: string; el: string };
+    slotAssignments: {
+      slotIndex: number;
+      lineId: string;
+    }[];
+  }[];
   orderType: "delivery" | "takeaway";
   contact: {
     userId?: string | null;
@@ -48,193 +63,32 @@ export type PlaceOrderResult =
 export async function placeOrder(
   input: PlaceOrderInput
 ): Promise<PlaceOrderResult> {
-  if (input.lines.length === 0) return { ok: false, error: "empty" };
+  const settings = await getSettings();
+
+  const validationError = validateOrderInput(input, settings);
+  if (validationError) return { ok: false, error: validationError };
 
   const isDelivery = input.orderType === "delivery";
 
-  if (isDelivery) {
-    if (!input.contact.phone || !input.contact.phone.trim()) {
-      return { ok: false, error: "phoneRequired" };
-    }
+  // Resolve lines: re-fetch from Keystatic, validate options, compute prices
+  const resolution = await resolveLines(input.lines);
+  if (!resolution.ok) return resolution.error;
+
+  const { resolved, itemsByLineIdx } = resolution;
+  let totalCents = resolution.totalCents;
+
+  // Process offers: validate, compute discounts, apply overrides
+  const offerResult = await processOffers(input, resolved, itemsByLineIdx);
+  if (!offerResult.ok) return offerResult.error;
+
+  // Recompute total after offer overrides may have changed unitPriceCents
+  totalCents = 0;
+  for (const r of resolved) {
+    totalCents += r.unitPriceCents * r.quantity;
   }
+  totalCents -= offerResult.totalDiscountCents;
 
-  // For delivery: need userId, email, or phone. For takeaway: name suffices (DB CHECK includes guest_name).
-  if (isDelivery) {
-    if (!input.contact.userId && !input.contact.email && !input.contact.phone) {
-      return { ok: false, error: "contactRequired" };
-    }
-  } else {
-    if (!input.contact.name.trim()) {
-      return { ok: false, error: "contactRequired" };
-    }
-  }
-
-  const settings = await getSettings();
-
-  if (!isWithinDeliveryHours(settings)) {
-    return { ok: false, error: "closed" };
-  }
-
-  if (isDelivery) {
-    const postcode = input.delivery!.postcode.trim();
-    if (
-      settings.allowedPostcodes.length > 0 &&
-      !settings.allowedPostcodes.includes(postcode)
-    ) {
-      return { ok: false, error: "outOfArea" };
-    }
-  }
-
-  // Re-fetch each item from Keystatic to snapshot authoritative price/title.
-  // Reject if any item is missing or unavailable.
-  let totalCents = 0;
-  const resolved: {
-    slug: string;
-    title: { en: string; el: string };
-    basePriceCents: number;
-    optionSurchargeCents: number;
-    unitPriceCents: number;
-    quantity: number;
-    options: CartLine["options"];
-    comment: string;
-  }[] = [];
-  // Keep item references for offer override validation
-  const itemsByLineIdx = new Map<number, Awaited<ReturnType<typeof getItem>>>();
-
-  for (let li = 0; li < input.lines.length; li++) {
-    const line = input.lines[li];
-    const item = await getItem(line.slug);
-    if (!item || !item.available) return { ok: false, error: "unavailable" };
-    itemsByLineIdx.set(li, item);
-
-    // Re-validate every selected option and compute authoritative prices.
-    // Staff can toggle options off between "add to cart" and checkout, so
-    // we must not trust the client-side cart snapshot.
-    let optionSurchargeCents = 0;
-    const snapshotOptions: CartLine["options"] = [];
-    for (const selected of line.options) {
-      const group = item.optionGroups.find((g) => g.key === selected.groupKey);
-      const option = group?.options.find((o) => o.key === selected.optionKey);
-      if (!option || !option.available) {
-        return { ok: false, error: "unavailable" };
-      }
-      optionSurchargeCents += option.priceCents;
-      snapshotOptions.push({
-        ...selected,
-        priceCents: option.priceCents,
-      });
-    }
-
-    const basePriceCents = Math.round(item.price * 100);
-    const unitPriceCents = basePriceCents + optionSurchargeCents;
-    totalCents += unitPriceCents * line.quantity;
-    resolved.push({
-      slug: item.slug,
-      title: item.title,
-      basePriceCents,
-      optionSurchargeCents,
-      unitPriceCents,
-      quantity: line.quantity,
-      options: snapshotOptions,
-      comment: line.comment,
-    });
-  }
-
-  // Validate and compute authoritative offer discounts server-side.
-  // Build a map of lineIndex → discountCents and an offersJson snapshot.
-  const lineDiscounts = new Map<number, number>();
-  type OfferSnapshot = {
-    offerSlug: string;
-    offerTitle: { en: string; el: string };
-    slots: {
-      menuSlug: string;
-      slotLabel: { en: string; el: string };
-      discountCents: number;
-    }[];
-  };
-  const offersJsonData: OfferSnapshot[] = [];
-
-  if (input.appliedOffers && input.appliedOffers.length > 0) {
-    for (const ao of input.appliedOffers) {
-      const offer = await getOffer(ao.offerSlug);
-      if (!offer) return { ok: false, error: "offerUnavailable" };
-
-      const snapshotSlots: OfferSnapshot["slots"] = [];
-      for (const assignment of ao.slotAssignments) {
-        const slot = offer.slots[assignment.slotIndex];
-        if (!slot) return { ok: false, error: "offerUnavailable" };
-
-        // Find the matching line by lineId
-        const lineIdx = input.lines.findIndex(
-          (l) => l.lineId === assignment.lineId
-        );
-        if (lineIdx < 0) return { ok: false, error: "offerUnavailable" };
-
-        const r = resolved[lineIdx];
-        if (!r) return { ok: false, error: "offerUnavailable" };
-
-        // Verify eligibility
-        if (!slot.eligibleItems.includes(r.slug)) {
-          return { ok: false, error: "offerUnavailable" };
-        }
-
-        // Apply option group overrides (e.g. excludePrice) for this slot
-        if (slot.optionGroupOverrides.length > 0) {
-          const item = itemsByLineIdx.get(lineIdx)!;
-          const overriddenGroups = applySlotOverrides(
-            item.optionGroups,
-            slot.optionGroupOverrides
-          );
-          let correctedSurcharge = 0;
-          const correctedOptions: CartLine["options"] = [];
-          for (const selected of input.lines[lineIdx].options) {
-            const group = overriddenGroups.find(
-              (g) => g.key === selected.groupKey
-            );
-            const option = group?.options.find(
-              (o) => o.key === selected.optionKey
-            );
-            if (!option || !option.available) {
-              return { ok: false, error: "unavailable" };
-            }
-            correctedSurcharge += option.priceCents;
-            correctedOptions.push({ ...selected, priceCents: option.priceCents });
-          }
-          const oldUnit = r.unitPriceCents;
-          r.optionSurchargeCents = correctedSurcharge;
-          r.unitPriceCents = r.basePriceCents + correctedSurcharge;
-          r.options = correctedOptions;
-          totalCents += (r.unitPriceCents - oldUnit) * r.quantity;
-        }
-
-        // Compute authoritative discount from server-side item price
-        const discountCents = computeSlotDiscountCents(
-          slot,
-          r.unitPriceCents
-        );
-        lineDiscounts.set(lineIdx, discountCents);
-        snapshotSlots.push({
-          menuSlug: r.slug,
-          slotLabel: slot.label,
-          discountCents,
-        });
-      }
-      offersJsonData.push({
-        offerSlug: ao.offerSlug,
-        offerTitle: offer.title,
-        slots: snapshotSlots,
-      });
-    }
-  }
-
-  // Subtract offer discounts from total
-  let totalDiscountCents = 0;
-  for (const d of lineDiscounts.values()) {
-    totalDiscountCents += d;
-  }
-  totalCents -= totalDiscountCents;
-
-  if (isDelivery && totalCents < settings.minOrderCents) {
+  if (!validateMinOrder(isDelivery, totalCents, settings)) {
     return { ok: false, error: "minOrder" };
   }
 
@@ -262,7 +116,7 @@ export async function placeOrder(
       paymentMethod: input.paymentMethod,
       status: "received",
       totalCents: grandTotalCents,
-      offersJson: offersJsonData,
+      offersJson: offerResult.offersJson,
       tipCents,
       notes: input.notes,
     })
@@ -276,106 +130,10 @@ export async function placeOrder(
       unitPriceCents: r.unitPriceCents,
       quantity: r.quantity,
       optionsJson: r.options,
-      discountCents: lineDiscounts.get(idx) ?? 0,
+      discountCents: offerResult.lineDiscounts.get(idx) ?? 0,
       comment: r.comment || null,
     }))
   );
 
   return { ok: true, token };
-}
-
-// Orders auto-complete one hour after they are placed. Both the staff list
-// endpoint and the public order status endpoint call this before reading,
-// so it runs lazily without a cron job. Cancelled orders are untouched.
-export async function autoCompleteStaleOrders() {
-  await db
-    .update(orders)
-    .set({ status: "completed", updatedAt: new Date() })
-    .where(
-      and(
-        inArray(orders.status, ["received", "preparing", "on_its_way"]),
-        lt(orders.createdAt, sql`now() - interval '1 hour'`)
-      )
-    );
-}
-
-export async function getOrderByToken(token: string) {
-  await autoCompleteStaleOrders();
-  const [order] = await db
-    .select()
-    .from(orders)
-    .where(eq(orders.publicToken, token))
-    .limit(1);
-  if (!order) return null;
-  const items = await db
-    .select()
-    .from(orderItems)
-    .where(eq(orderItems.orderId, order.id));
-  return { order, items };
-}
-
-export async function getActiveStaffOrders() {
-  return db
-    .select()
-    .from(orders)
-    .where(
-      and(
-        // Exclude terminal statuses
-        // We can't negate enum easily in Drizzle short form; use sql template:
-        // but for simplicity, fetch all non-completed/cancelled client-side.
-        inArray(orders.type, ["delivery", "takeaway"])
-      )
-    )
-    .orderBy(desc(orders.createdAt))
-    .limit(100);
-}
-
-export async function updateOrderStatus(
-  orderId: string,
-  status: "received" | "preparing" | "on_its_way" | "completed" | "cancelled"
-) {
-  await db
-    .update(orders)
-    .set({ status, updatedAt: new Date() })
-    .where(eq(orders.id, orderId));
-}
-
-export async function assignDeliveryGuy(
-  orderId: string,
-  deliveryGuy: string | null
-) {
-  await db
-    .update(orders)
-    .set({ deliveryGuy, updatedAt: new Date() })
-    .where(eq(orders.id, orderId));
-}
-
-export async function getOrdersByDeliveryGuyAndDate(
-  deliveryGuy: string,
-  date: string // YYYY-MM-DD
-) {
-  const startOfDay = new Date(`${date}T00:00:00`);
-  const endOfDay = new Date(`${date}T23:59:59.999`);
-
-  return db
-    .select()
-    .from(orders)
-    .where(
-      and(
-        eq(orders.deliveryGuy, deliveryGuy),
-        sql`${orders.createdAt} >= ${startOfDay}`,
-        sql`${orders.createdAt} <= ${endOfDay}`
-      )
-    )
-    .orderBy(desc(orders.createdAt));
-}
-
-export async function getRecentUserOrders(userId: string, limit = 5) {
-  const recent = await db
-    .select()
-    .from(orders)
-    .where(eq(orders.userId, userId))
-    .orderBy(desc(orders.createdAt))
-    .limit(limit);
-  return recent;
 }

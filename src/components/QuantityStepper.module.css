@@ -1,0 +1,28 @@
+.stepper {
+  width: max-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.1rem 0.25rem;
+  background: var(--surface);
+}
+.btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  color: var(--color-green-800);
+  font-size: 1.1rem;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--color-cream-100);
+}
+.value {
+  min-width: 1.25rem;
+  text-align: center;
+  font-weight: 600;
+}

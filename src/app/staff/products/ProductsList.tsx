@@ -8,6 +8,7 @@ import {
   setItemAvailabilityAction,
   setOptionAvailabilityAction,
 } from "./actions";
+import { CategorySection } from "./CategorySection";
 import styles from "./Products.module.css";
 
 export default function ProductsList({
@@ -18,7 +19,6 @@ export default function ProductsList({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  // Track which row is currently saving so we can show feedback.
   const [saving, setSaving] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 
@@ -91,104 +91,16 @@ export default function ProductsList({
         )}
       </div>
       {filtered.map((cat) => (
-        <section key={cat.slug} data-slug={cat.slug}>
-          <h2 className={styles['section-title']}>{cat.title.el}</h2>
-          {cat.items.length === 0 && (
-            <p className={styles['no-items']}>Κανένα προϊόν.</p>
-          )}
-          <ul className={styles['item-list']}>
-            {cat.items.map((item) => {
-              const isExpanded = expanded.has(item.slug);
-              const hasOptions = item.optionGroups.length > 0;
-              const itemSaving = saving === `item:${item.slug}`;
-              const anyOptionDisabled = item.optionGroups.some((g) =>
-                g.options.some((o) => !o.available)
-              );
-              return (
-                <li key={item.slug} className={styles['item-card']}>
-                  <div className={styles['item-header']}>
-                    <div style={{ flex: 1 }}>
-                      <div className={styles['item-name']}>{item.title.el}</div>
-                      {anyOptionDisabled && (
-                        <div className={styles['item-disabled-hint']}>
-                          Κάποιες επιλογές απενεργοποιημένες
-                        </div>
-                      )}
-                    </div>
-                    {hasOptions && (
-                      <button
-                        type="button"
-                        className="btn btn--ghost btn--small"
-                        onClick={() => toggleExpanded(item.slug)}
-                      >
-                        {isExpanded ? "Απόκρυψη επιλογών" : "Επιλογές"}
-                      </button>
-                    )}
-                    <label className={styles['item-availability']}>
-                      <input
-                        type="checkbox"
-                        checked={item.available}
-                        disabled={isPending}
-                        onChange={(e) =>
-                          toggleItem(item.slug, e.target.checked)
-                        }
-                      />
-                      <span>
-                        {item.available ? "Διαθέσιμο" : "Μη διαθέσιμο"}
-                      </span>
-                      {itemSaving && (
-                        <span className={styles['saving-indicator']}>…</span>
-                      )}
-                    </label>
-                  </div>
-
-                  {isExpanded && hasOptions && (
-                    <div className={styles['options-panel']}>
-                      {item.optionGroups.map((g) => (
-                        <div key={g.key} style={{ marginBottom: "0.75rem" }}>
-                          <div className={styles['option-group-title']}>
-                            {g.name.el}
-                            {g.required && " *"}
-                          </div>
-                          <ul className={styles['option-list']}>
-                            {g.options.map((o) => {
-                              const id = `opt:${item.slug}:${g.key}:${o.key}`;
-                              return (
-                                <li key={o.key} className={styles['option-row']}>
-                                  <span className={!o.available ? styles['option-name--unavailable'] : undefined}>
-                                    {o.name.el}
-                                  </span>
-                                  <label className={styles['item-availability']}>
-                                    <input
-                                      type="checkbox"
-                                      checked={o.available}
-                                      disabled={isPending}
-                                      onChange={(e) =>
-                                        toggleOption(
-                                          item.slug,
-                                          g.key,
-                                          o.key,
-                                          e.target.checked
-                                        )
-                                      }
-                                    />
-                                    {saving === id && (
-                                      <span className={styles['saving-indicator']}>…</span>
-                                    )}
-                                  </label>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </section>
+        <CategorySection
+          key={cat.slug}
+          category={cat}
+          expanded={expanded}
+          saving={saving}
+          isPending={isPending}
+          onToggleExpanded={toggleExpanded}
+          onToggleItem={toggleItem}
+          onToggleOption={toggleOption}
+        />
       ))}
     </div>
   );

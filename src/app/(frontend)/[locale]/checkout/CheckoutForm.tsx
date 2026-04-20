@@ -15,7 +15,10 @@ import {
 import { formatPrice, type Locale } from "@/lib/menu-types";
 import type { PlaceOrderInput } from "@/lib/orders";
 import { submitOrderAction } from "./actions";
-import styles from "./CheckoutForm.module.css";
+import { AddressSection } from "./AddressSection";
+import { OrderTypeToggle } from "./OrderTypeToggle";
+import { PaymentSection } from "./PaymentSection";
+import { TipSection } from "./TipSection";
 
 export type SavedAddress = {
   id: string;
@@ -144,7 +147,6 @@ export default function CheckoutForm({
       notes: notes.trim() || null,
     };
 
-    // Don't bother re-saving an address that came from the picker.
     const shouldSave = isDelivery && saveAddress && selectedAddressId === "";
 
     startTransition(async () => {
@@ -173,22 +175,12 @@ export default function CheckoutForm({
         <h1 className="page__title">{t("title")}</h1>
 
         <form onSubmit={handleSubmit} className="card stack-md">
-          <div className={styles['order-type-toggle']}>
-            <button
-              type="button"
-              className={`${styles['order-type-toggle__btn']}${isDelivery ? ` ${styles['order-type-toggle__btn--active']}` : ""}`}
-              onClick={() => setOrderType("delivery")}
-            >
-              {t("delivery")}
-            </button>
-            <button
-              type="button"
-              className={`${styles['order-type-toggle__btn']}${!isDelivery ? ` ${styles['order-type-toggle__btn--active']}` : ""}`}
-              onClick={() => setOrderType("takeaway")}
-            >
-              {t("takeaway")}
-            </button>
-          </div>
+          <OrderTypeToggle
+            orderType={orderType}
+            setOrderType={setOrderType}
+            deliveryLabel={t("delivery")}
+            takeawayLabel={t("takeaway")}
+          />
 
           <div className={isDelivery ? "fields-row fields-row--2" : ""}>
             <FormField label={t("name")}>
@@ -234,58 +226,29 @@ export default function CheckoutForm({
             </FormField>
           )}
 
-          {isDelivery && savedAddresses.length > 0 && (
-            <FormField label={t("savedAddress")}>
-              <select
-                value={selectedAddressId}
-                onChange={(e) => onPickSavedAddress(e.target.value)}
-              >
-                {savedAddresses.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.label ?? a.street} — {a.street}, {a.city} {a.postcode}
-                  </option>
-                ))}
-                <option value="">{t("newAddress")}</option>
-              </select>
-            </FormField>
-          )}
-
           {isDelivery && (
-            <>
-              <FormField label={t("address")}>
-                <input
-                  value={street}
-                  onChange={(e) => {
-                    setStreet(e.target.value);
-                    setSelectedAddressId("");
-                  }}
-                  required
-                />
-              </FormField>
-
-              <div className="fields-row fields-row--2">
-                <FormField label={t("city")}>
-                  <input
-                    value={city}
-                    onChange={(e) => {
-                      setCity(e.target.value);
-                      setSelectedAddressId("");
-                    }}
-                    required
-                  />
-                </FormField>
-                <FormField label={t("postcode")}>
-                  <input
-                    value={postcode}
-                    onChange={(e) => {
-                      setPostcode(e.target.value);
-                      setSelectedAddressId("");
-                    }}
-                    required
-                  />
-                </FormField>
-              </div>
-            </>
+            <AddressSection
+              savedAddresses={savedAddresses}
+              selectedAddressId={selectedAddressId}
+              onPickSavedAddress={onPickSavedAddress}
+              street={street}
+              setStreet={setStreet}
+              city={city}
+              setCity={setCity}
+              postcode={postcode}
+              setPostcode={setPostcode}
+              saveAddress={saveAddress}
+              setSaveAddress={setSaveAddress}
+              loggedInEmail={loggedInEmail}
+              labels={{
+                savedAddress: t("savedAddress"),
+                newAddress: t("newAddress"),
+                address: t("address"),
+                city: t("city"),
+                postcode: t("postcode"),
+                saveAddress: t("saveAddress"),
+              }}
+            />
           )}
 
           <FormField label={t("notes")}>
@@ -295,90 +258,28 @@ export default function CheckoutForm({
             />
           </FormField>
 
-          {isDelivery && loggedInEmail && selectedAddressId === "" && (
-            <label className={styles['save-address-label']}>
-              <input
-                type="checkbox"
-                checked={saveAddress}
-                onChange={(e) => setSaveAddress(e.target.checked)}
-              />
-              {t("saveAddress")}
-            </label>
-          )}
+          <PaymentSection
+            payment={payment}
+            setPayment={setPayment}
+            labels={{
+              paymentMethod: t("paymentMethod"),
+              paymentHint: t("paymentHint"),
+              cash: t("cash"),
+              card: t("card"),
+            }}
+          />
 
-          <div className="option-group">
-            <div className="option-group__label">{t("paymentMethod")}</div>
-            <div className={styles['payment-hint']}>
-              {t("paymentHint")}
-            </div>
-            <div className="option-list">
-              <label>
-                <input
-                  type="radio"
-                  name="payment"
-                  checked={payment === "cash"}
-                  onChange={() => setPayment("cash")}
-                />
-                {t("cash")}
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="payment"
-                  checked={payment === "card"}
-                  onChange={() => setPayment("card")}
-                />
-                {t("card")}
-              </label>
-            </div>
-          </div>
-
-          <div className={styles['tip-box']}>
-            <div className={styles['tip-box__header']}>
-              <div>
-                <div className={styles['tip-box__title']}>{t("tipTitle")}</div>
-                <div className={styles['tip-box__subtitle']}>{t("tipSubtitle")}</div>
-              </div>
-              <span className={styles['tip-box__badge']}>{t("tipOptional")}</span>
-            </div>
-            <div className={styles['tip-box__presets']}>
-              {["0.5", "1", "2"].map((v) => {
-                const selected = tipInput === v;
-                return (
-                  <button
-                    key={v}
-                    type="button"
-                    className={`btn btn--small ${
-                      selected ? "btn--primary" : "btn--ghost"
-                    }`}
-                    onClick={() => setTipInput(selected ? "" : v)}
-                  >
-                    €{v}
-                  </button>
-                );
-              })}
-              <button
-                type="button"
-                className={`btn btn--small ${
-                  tipInput === "" ? "btn--primary" : "btn--ghost"
-                }`}
-                onClick={() => setTipInput("")}
-              >
-                {t("tipNone")}
-              </button>
-            </div>
-            <FormField label={t("tipCustom")} className={styles['tip-field']}>
-              <input
-                type="number"
-                inputMode="decimal"
-                min="0"
-                step="0.10"
-                placeholder="0.00"
-                value={tipInput}
-                onChange={(e) => setTipInput(e.target.value)}
-              />
-            </FormField>
-          </div>
+          <TipSection
+            tipInput={tipInput}
+            setTipInput={setTipInput}
+            labels={{
+              tipTitle: t("tipTitle"),
+              tipSubtitle: t("tipSubtitle"),
+              tipOptional: t("tipOptional"),
+              tipNone: t("tipNone"),
+              tipCustom: t("tipCustom"),
+            }}
+          />
 
           <div className="totals">
             <span>{t("title")}</span>

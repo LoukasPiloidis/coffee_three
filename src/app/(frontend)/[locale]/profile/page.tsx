@@ -3,14 +3,13 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { db } from "@/db";
 import { addresses, orderItems, orders, user } from "@/db/schema";
-import { Link } from "@/i18n/navigation";
-import { formatPrice, type Locale } from "@/lib/menu";
+import type { Locale } from "@/lib/menu";
 import { getSession } from "@/lib/session";
 import AccountDetails from "./AccountDetails";
 import AddressManager from "./AddressManager";
 import { signOutAction } from "./actions";
 import styles from "./Profile.module.css";
-import ReorderButton from "./ReorderButton";
+import { RecentOrders } from "./RecentOrders";
 
 export default async function ProfilePage({
   params,
@@ -47,16 +46,15 @@ export default async function ProfilePage({
     phone: null,
   };
 
-  // Fetch items for all recent orders in one query
   const orderIds = recent.map((o) => o.id);
   const recentItems =
     orderIds.length > 0 ? await db.select().from(orderItems) : [];
   const itemsByOrder = new Map<string, typeof recentItems>();
-  for (const it of recentItems) {
-    if (!orderIds.includes(it.orderId)) continue;
-    const arr = itemsByOrder.get(it.orderId) ?? [];
-    arr.push(it);
-    itemsByOrder.set(it.orderId, arr);
+  for (const item of recentItems) {
+    if (!orderIds.includes(item.orderId)) continue;
+    const arr = itemsByOrder.get(item.orderId) ?? [];
+    arr.push(item);
+    itemsByOrder.set(item.orderId, arr);
   }
 
   return (
@@ -95,73 +93,12 @@ export default async function ProfilePage({
 
         <section>
           <h2 className={styles['section-title']}>{t("recentOrders")}</h2>
-          {recent.length === 0 ? (
-            <p className="empty">—</p>
-          ) : (
-            <div className="stack-sm">
-              {recent.map((o) => {
-                const items = itemsByOrder.get(o.id) ?? [];
-                return (
-                  <div key={o.id} className="card stack-sm">
-                    <div className={styles['order-header']}>
-                      <div>
-                        <div className={styles['order-date']}>
-                          {new Date(o.createdAt).toLocaleString(
-                            loc === "el" ? "el-GR" : "en-US"
-                          )}
-                        </div>
-                        <div className={styles['order-total']}>
-                          {formatPrice(o.totalCents / 100, loc)}
-                        </div>
-                      </div>
-                    </div>
-                    <div className={styles['order-items']}>
-                      {items
-                        .map(
-                          (i) =>
-                            `${i.quantity}× ${
-                              (i.titleSnapshot as { en: string; el: string })[
-                                loc
-                              ]
-                            }`
-                        )
-                        .join(", ")}
-                    </div>
-                    <div className={styles['order-actions']}>
-                      <Link
-                        href={`/order/${o.publicToken}`}
-                        className="btn btn--ghost btn--small"
-                      >
-                        {t("view")}
-                      </Link>
-                      <ReorderButton
-                        items={items.map((i) => {
-                          // Historical option snapshots may or may not
-                          // carry groupKey/optionKey depending on when the
-                          // order was placed. Drop options entirely on
-                          // reorder — the customer re-selects them on the
-                          // item page, which also guarantees we never
-                          // restore an option that has since been disabled.
-                          return {
-                            slug: i.menuSlug,
-                            title: i.titleSnapshot as {
-                              en: string;
-                              el: string;
-                            },
-                            unitPrice: i.unitPriceCents / 100,
-                            quantity: i.quantity,
-                            options: [],
-                            comment: i.comment ?? "",
-                          };
-                        })}
-                        label={t("reorder")}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          <RecentOrders
+            orders={recent}
+            itemsByOrder={itemsByOrder}
+            locale={loc}
+            labels={{ view: t("view"), reorder: t("reorder") }}
+          />
         </section>
       </div>
     </main>
