@@ -63,7 +63,7 @@ export function formatEuro(cents: number) {
   }).format(cents / 100);
 }
 
-export default function OrderCard({
+export function OrderCard({
   order,
   children,
   actions,

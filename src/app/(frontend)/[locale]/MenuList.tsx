@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import ScrollPills from "@/components/ScrollPills";
+import { ScrollPills } from "@/components/ScrollPills";
 import { Link } from "@/i18n/navigation";
 import type { Locale, MenuCategory, Offer } from "@/lib/menu-types";
 import { formatPrice } from "@/lib/menu-types";
 import styles from "./MenuList.module.css";
 
-export default function MenuList({
+export function MenuList({
   categories,
   offers,
   locale,

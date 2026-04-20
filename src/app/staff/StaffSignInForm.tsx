@@ -5,7 +5,7 @@ import { FormField } from "@/components/FormField";
 import { Notice } from "@/components/Notice";
 import { signIn } from "@/lib/auth-client";
 
-export default function StaffSignInForm() {
+export function StaffSignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);

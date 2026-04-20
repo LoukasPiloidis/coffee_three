@@ -1,4 +1,4 @@
-import OrderCard, { type OrderDTO } from "./OrderCard";
+import { OrderCard, type OrderDTO } from "./OrderCard";
 import { ActionButtons, getNextStatus } from "./ActionButtons";
 import { DeliveryGuySelect } from "./DeliveryGuySelect";
 import styles from "./Staff.module.css";

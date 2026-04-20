@@ -15,7 +15,7 @@ async function fetchStaffOrders(): Promise<OrderDTO[] | null> {
 
 type Tab = "active" | "completed";
 
-export default function StaffDashboard({
+export function StaffDashboard({
   deliveryGuys,
 }: {
   deliveryGuys: string[];

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { formatPrice, getItem, type Locale } from "@/lib/menu";
-import ItemForm from "./ItemForm";
+import { ItemForm } from "./ItemForm";
 
 export default async function ItemPage({
   params,

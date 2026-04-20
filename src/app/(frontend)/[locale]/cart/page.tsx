@@ -1,5 +1,5 @@
 import { getOffers } from "@/lib/menu";
-import CartView from "./CartView";
+import { CartView } from "./CartView";
 
 export default async function CartPage({
   params,

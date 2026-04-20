@@ -1,4 +1,4 @@
-import OrderStatusView from "./OrderStatusView";
+import { OrderStatusView } from "./OrderStatusView";
 
 export default async function OrderPage({
   params,

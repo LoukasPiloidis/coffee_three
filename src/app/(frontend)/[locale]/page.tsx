@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { getMenu, getOffers } from "@/lib/menu";
 import type { Locale } from "@/lib/menu-types";
-import MenuList from "./MenuList";
+import { MenuList } from "./MenuList";
 
 export default async function HomePage({
   params,

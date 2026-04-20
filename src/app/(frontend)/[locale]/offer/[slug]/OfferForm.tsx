@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { ItemSelectionResult } from "@/components/ItemOptionSelector";
-import PriceWithDiscount from "@/components/PriceWithDiscount";
+import { PriceWithDiscount } from "@/components/PriceWithDiscount";
 import { useRouter } from "@/i18n/navigation";
 import { type CartLineOption, cartStore } from "@/lib/cart";
 import {
@@ -24,7 +24,7 @@ type SlotState = {
   confirmed: boolean;
 };
 
-export default function OfferForm({
+export function OfferForm({
   offer,
   items,
   locale,

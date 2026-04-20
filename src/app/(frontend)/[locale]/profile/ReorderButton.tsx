@@ -5,7 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 
 type Item = Omit<CartLine, "lineId">;
 
-export default function ReorderButton({
+export function ReorderButton({
   items,
   label,
 }: {

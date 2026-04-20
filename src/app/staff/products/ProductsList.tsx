@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import ScrollPills from "@/components/ScrollPills";
+import { ScrollPills } from "@/components/ScrollPills";
 import type { MenuCategory } from "@/lib/menu-types";
 import {
   setItemAvailabilityAction,
@@ -11,7 +11,7 @@ import {
 import { CategorySection } from "./CategorySection";
 import styles from "./Products.module.css";
 
-export default function ProductsList({
+export function ProductsList({
   categories,
 }: {
   categories: MenuCategory[];

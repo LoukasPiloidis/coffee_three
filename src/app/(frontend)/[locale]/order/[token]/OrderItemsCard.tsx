@@ -1,4 +1,4 @@
-import PriceWithDiscount from "@/components/PriceWithDiscount";
+import { PriceWithDiscount } from "@/components/PriceWithDiscount";
 import { formatOptionLabel, formatPrice, type Locale } from "@/lib/menu-types";
 import lineStyles from "@/components/OrderLine.module.css";
 import styles from "./OrderStatusView.module.css";

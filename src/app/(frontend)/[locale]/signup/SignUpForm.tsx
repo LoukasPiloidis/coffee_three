@@ -7,7 +7,7 @@ import { Notice } from "@/components/Notice";
 import { Link } from "@/i18n/navigation";
 import { signUp } from "@/lib/auth-client";
 
-export default function SignUpForm() {
+export function SignUpForm() {
   const t = useTranslations("auth");
   const tCommon = useTranslations("common");
   const [name, setName] = useState("");

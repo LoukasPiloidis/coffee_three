@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import PriceWithDiscount from "@/components/PriceWithDiscount";
+import { PriceWithDiscount } from "@/components/PriceWithDiscount";
 import { QuantityStepper } from "@/components/QuantityStepper";
 import { Link } from "@/i18n/navigation";
 import {
@@ -20,7 +20,7 @@ import { detectApplicableOffers } from "@/lib/offer-matching";
 import lineStyles from "@/components/OrderLine.module.css";
 import { OfferSuggestions } from "./OfferSuggestions";
 
-export default function CartView({
+export function CartView({
   locale,
   offers,
 }: {

@@ -5,7 +5,7 @@ import styles from "./PriceWithDiscount.module.css";
  * Shows a price, optionally with a crossed-out original when discounted.
  * Pure presentational — no "use client" needed, works in both server and client components.
  */
-export default function PriceWithDiscount({
+export function PriceWithDiscount({
   originalCents,
   discountCents,
   locale,

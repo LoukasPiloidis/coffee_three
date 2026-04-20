@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { formatPrice, type Locale } from "@/lib/menu";
-import ReorderButton from "./ReorderButton";
+import { ReorderButton } from "./ReorderButton";
 import styles from "./Profile.module.css";
 
 type OrderRow = {

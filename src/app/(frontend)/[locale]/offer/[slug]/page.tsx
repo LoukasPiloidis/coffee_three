@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getItem, getOffer, type Locale, type MenuItem } from "@/lib/menu";
-import OfferForm from "./OfferForm";
+import { OfferForm } from "./OfferForm";
 
 export default async function OfferPage({
   params,

@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import SignInForm from "./SignInForm";
+import { SignInForm } from "./SignInForm";
 
 export default async function SignInPage() {
   const t = await getTranslations("auth");

@@ -15,7 +15,7 @@ type Address = {
   notes: string | null;
 };
 
-export default function AddressManager({
+export function AddressManager({
   initialAddresses,
 }: {
   initialAddresses: Address[];

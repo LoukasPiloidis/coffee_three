@@ -15,7 +15,7 @@ export interface ScrollPillItem {
  * The parent must render `<section data-slug="...">` elements that correspond
  * to the `items` slugs.
  */
-export default function ScrollPills({
+export function ScrollPills({
   items,
   scrollOffset = 170,
   observerRootMargin = "-120px 0px -60% 0px",

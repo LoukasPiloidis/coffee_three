@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { cartItemCount, useCart } from "@/lib/cart";
 import styles from "./SiteHeader.module.css";
 
-export default function CartLink() {
+export function CartLink() {
   const t = useTranslations("common");
   const cart = useCart();
   const count = cartItemCount(cart);

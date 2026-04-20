@@ -22,7 +22,7 @@ export type ItemSelectionResult = {
  * Renders option-group accordions + a comment field.
  * Calls `onComplete` when the user confirms valid selections.
  */
-export default function ItemOptionSelector({
+export function ItemOptionSelector({
   item,
   locale,
   submitLabel,

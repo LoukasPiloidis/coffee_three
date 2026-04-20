@@ -2,11 +2,11 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getSession } from "@/lib/session";
-import LocaleSwitcher from "./LocaleSwitcher";
-import CartLink from "./CartLink";
+import { LocaleSwitcher } from "./LocaleSwitcher";
+import { CartLink } from "./CartLink";
 import styles from "./SiteHeader.module.css";
 
-export default async function SiteHeader({ locale }: { locale: string }) {
+export async function SiteHeader({ locale }: { locale: string }) {
   const t = await getTranslations("common");
   const session = await getSession();
   const isSignedIn = !!session?.user?.id;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import OrderCard, { formatEuro, type OrderDTO } from "../OrderCard";
+import { OrderCard, formatEuro, type OrderDTO } from "../OrderCard";
 import styles from "./Delivery.module.css";
 import { SummaryCard } from "./SummaryCard";
 
@@ -23,7 +23,7 @@ async function fetchDeliveryOrders(
   return json.orders;
 }
 
-export default function DeliveryDashboard({
+export function DeliveryDashboard({
   deliveryGuys,
 }: {
   deliveryGuys: string[];

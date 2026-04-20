@@ -26,7 +26,7 @@ type OrderDTO = {
   }[];
 };
 
-export default function OrderStatusView({
+export function OrderStatusView({
   locale,
   token,
 }: {

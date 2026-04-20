@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { FormField } from "@/components/FormField";
 import { Notice } from "@/components/Notice";
-import PriceWithDiscount from "@/components/PriceWithDiscount";
+import { PriceWithDiscount } from "@/components/PriceWithDiscount";
 import { useRouter } from "@/i18n/navigation";
 import {
   cartStore,
@@ -37,7 +37,7 @@ type Props = {
   savedAddresses: SavedAddress[];
 };
 
-export default function CheckoutForm({
+export function CheckoutForm({
   locale,
   loggedInEmail,
   loggedInName,

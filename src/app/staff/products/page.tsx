@@ -3,7 +3,7 @@ import { isDevStaffBypassActive, isStaffAuthorized } from "@/lib/staff-auth";
 import { getMenu } from "@/lib/menu";
 import { staffSignOutAction } from "../actions";
 import { StaffNav } from "../StaffNav";
-import ProductsList from "./ProductsList";
+import { ProductsList } from "./ProductsList";
 import { getTranslations } from "next-intl/server";
 
 export default async function StaffProductsPage() {

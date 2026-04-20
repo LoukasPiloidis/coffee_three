@@ -2,13 +2,13 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import ItemOptionSelector from "@/components/ItemOptionSelector";
+import { ItemOptionSelector } from "@/components/ItemOptionSelector";
 import { QuantityStepper } from "@/components/QuantityStepper";
 import { useRouter } from "@/i18n/navigation";
 import { cartStore } from "@/lib/cart";
 import type { Locale, MenuItem } from "@/lib/menu-types";
 
-export default function ItemForm({
+export function ItemForm({
   item,
   locale,
 }: {

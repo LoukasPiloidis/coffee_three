@@ -17,7 +17,7 @@ type DailyAnalytics = {
   offersUsed: number;
 };
 
-export default function AnalyticsDashboard({
+export function AnalyticsDashboard({
   todayData,
 }: {
   todayData: DailyAnalytics | null;

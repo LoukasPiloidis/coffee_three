@@ -2,7 +2,7 @@ import { getSession } from "@/lib/session";
 import { db } from "@/db";
 import { addresses } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
-import CheckoutForm from "./CheckoutForm";
+import { CheckoutForm } from "./CheckoutForm";
 
 export default async function CheckoutPage({
   params,

@@ -3,9 +3,9 @@ import { getDeliveryGuys } from "@/lib/menu";
 import { getSession } from "@/lib/session";
 import { isDevStaffBypassActive } from "@/lib/staff-auth";
 import { staffSignOutAction } from "./actions";
-import StaffDashboard from "./StaffDashboard";
+import { StaffDashboard } from "./StaffDashboard";
 import { StaffNav } from "./StaffNav";
-import StaffSignInForm from "./StaffSignInForm";
+import { StaffSignInForm } from "./StaffSignInForm";
 
 export default async function StaffPage() {
   const devBypass = isDevStaffBypassActive();

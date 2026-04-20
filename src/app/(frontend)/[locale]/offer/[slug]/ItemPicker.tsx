@@ -1,8 +1,9 @@
 import { useTranslations } from "next-intl";
-import ItemOptionSelector, {
+import {
+  ItemOptionSelector,
   type ItemSelectionResult,
 } from "@/components/ItemOptionSelector";
-import PriceWithDiscount from "@/components/PriceWithDiscount";
+import { PriceWithDiscount } from "@/components/PriceWithDiscount";
 import {
   applySlotOverrides,
   computeSlotDiscountCents,

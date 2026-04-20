@@ -3,7 +3,7 @@ import { getAnalyticsByDateRange } from "@/lib/analytics";
 import { isDevStaffBypassActive, isStaffAuthorized } from "@/lib/staff-auth";
 import { staffSignOutAction } from "../actions";
 import { StaffNav } from "../StaffNav";
-import AnalyticsDashboard from "./AnalyticsDashboard";
+import { AnalyticsDashboard } from "./AnalyticsDashboard";
 
 export default async function AnalyticsPage() {
   const devBypass = isDevStaffBypassActive();

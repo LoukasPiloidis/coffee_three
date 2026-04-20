@@ -6,7 +6,7 @@ import { FormField } from "@/components/FormField";
 import { Notice } from "@/components/Notice";
 import { updateAccountAction } from "./actions";
 
-export default function AccountDetails({
+export function AccountDetails({
   initialEmail,
   initialPhone,
 }: {

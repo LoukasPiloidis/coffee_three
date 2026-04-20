@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import PriceWithDiscount from "@/components/PriceWithDiscount";
+import { PriceWithDiscount } from "@/components/PriceWithDiscount";
 import {
   computeSlotDiscountCents,
   type Locale,
