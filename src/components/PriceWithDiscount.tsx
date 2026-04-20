@@ -1,4 +1,5 @@
 import { formatPrice, type Locale } from "@/lib/menu-types";
+import styles from "./PriceWithDiscount.module.css";
 
 /**
  * Shows a price, optionally with a crossed-out original when discounted.
@@ -18,7 +19,7 @@ export default function PriceWithDiscount({
   }
   return (
     <>
-      <span className="price-discount__original">
+      <span className={styles['price-discount__original']}>
         {formatPrice(originalCents / 100, locale)}
       </span>{" "}
       {formatPrice((originalCents - discountCents) / 100, locale)}

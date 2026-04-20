@@ -1,6 +1,9 @@
 "use client";
 
 import { formatOptionLabel } from "@/lib/menu-types";
+import lineStyles from "@/components/OrderLine.module.css";
+import pillStyles from "@/components/StatusPill.module.css";
+import styles from "./OrderCard.module.css";
 
 export type OrderDTO = {
   id: string;
@@ -78,56 +81,26 @@ export default function OrderCard({
 }) {
   return (
     <div className={`card stack-md${className ? ` ${className}` : ""}`}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "0.5rem",
-          flexWrap: "wrap",
-        }}
-      >
+      <div className={styles['order-card__header']}>
         <div>
-          <div
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.8rem",
-              color: "var(--text-muted)",
-            }}
-          >
+          <div className={styles['order-card__token']}>
             #{o.publicToken.slice(0, 6)} ·{" "}
             {new Date(o.createdAt).toLocaleTimeString("el-GR")}
           </div>
-          <div style={{ fontWeight: 600, marginTop: "0.2rem" }}>
+          <div className={styles['order-card__customer']}>
             {o.guestName ?? "—"} · {o.guestPhone ?? "χωρίς τηλέφωνο"}
           </div>
           {o.type === "delivery" && o.deliveryStreet && (
-            <div style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
+            <div className={styles['order-card__address']}>
               {o.deliveryStreet}, {o.deliveryCity} {o.deliveryPostcode}
             </div>
           )}
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
-            gap: "0.3rem",
-          }}
-        >
-          <span className={`status-pill status-pill--${o.type}`}>
+        <div className={styles['order-card__badges']}>
+          <span className={`${pillStyles['status-pill']} ${pillStyles[`status-pill--${o.type}`]}`}>
             {TYPE_LABEL[o.type]}
           </span>
-          <span
-            className={`status-pill status-pill--${o.paymentMethod}`}
-            style={{
-              background:
-                o.paymentMethod === "cash"
-                  ? "var(--color-green-700)"
-                  : "var(--color-green-900)",
-              color: "var(--color-cream-50)",
-            }}
-          >
+          <span className={`${pillStyles['status-pill']} ${styles[`payment-pill--${o.paymentMethod}`]}`}>
             {PAYMENT_LABEL[o.paymentMethod]}
           </span>
         </div>
@@ -135,21 +108,20 @@ export default function OrderCard({
 
       <div>
         {o.items.map((it, i) => (
-          <div key={i} className="cart-line">
-            <div className="cart-line__main">
-              <div className="cart-line__title">
+          <div key={i} className={lineStyles['cart-line']}>
+            <div className={lineStyles['cart-line__main']}>
+              <div className={lineStyles['cart-line__title']}>
                 {it.quantity}× {it.title.el}
                 {it.discountCents > 0 && (
                   <span
-                    className="offer-discount"
-                    style={{ marginLeft: "0.5rem", fontSize: "0.8rem" }}
+                    className={`${lineStyles['offer-discount']} ${styles['order-card__discount-inline']}`}
                   >
                     -{formatEuro(it.discountCents)}
                   </span>
                 )}
               </div>
               {it.options.length > 0 && (
-                <div className="cart-line__meta">
+                <div className={lineStyles['cart-line__meta']}>
                   {it.options
                     .map((op) =>
                       formatOptionLabel(op.optionName.el, op.priceCents, "el")
@@ -158,7 +130,7 @@ export default function OrderCard({
                 </div>
               )}
               {it.comment && (
-                <div className="cart-line__meta">&quot;{it.comment}&quot;</div>
+                <div className={lineStyles['cart-line__meta']}>&quot;{it.comment}&quot;</div>
               )}
             </div>
           </div>
@@ -166,7 +138,7 @@ export default function OrderCard({
       </div>
 
       {o.offersJson && o.offersJson.length > 0 && (
-        <div style={{ fontSize: "0.85rem" }}>
+        <div className={styles['order-card__offers']}>
           {o.offersJson.map((offer, i) => {
             const totalDiscount = offer.slots.reduce(
               (s, sl) => s + sl.discountCents,
@@ -175,10 +147,10 @@ export default function OrderCard({
             return (
               <div
                 key={i}
-                style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}
+                className={styles['order-card__offer-row']}
               >
-                <span className="offer-badge">προσφορά</span>
-                <span className="offer-discount">
+                <span className={lineStyles['offer-badge']}>προσφορά</span>
+                <span className={lineStyles['offer-discount']}>
                   -{formatEuro(totalDiscount)}
                 </span>
               </div>
@@ -188,25 +160,8 @@ export default function OrderCard({
       )}
 
       {o.notes && (
-        <div
-          style={{
-            fontSize: "0.85rem",
-            padding: "0.5rem 0.75rem",
-            background: "var(--color-cream-100)",
-            borderRadius: "var(--radius-md)",
-            whiteSpace: "pre-wrap",
-          }}
-        >
-          <strong
-            style={{
-              display: "block",
-              fontSize: "0.7rem",
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              color: "var(--text-muted)",
-              marginBottom: "0.2rem",
-            }}
-          >
+        <div className={styles['order-card__notes']}>
+          <strong className={styles['order-card__notes-label']}>
             Σημειώσεις
           </strong>
           {o.notes}
@@ -215,24 +170,11 @@ export default function OrderCard({
 
       {children}
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <strong style={{ fontFamily: "var(--font-mono)" }}>
+      <div className={styles['order-card__footer']}>
+        <strong className={styles['order-card__total']}>
           {formatEuro(o.totalCents)} · {PAYMENT_LABEL[o.paymentMethod]}
           {o.tipCents > 0 && (
-            <span
-              style={{
-                display: "block",
-                fontSize: "0.7rem",
-                fontWeight: 500,
-                color: "var(--color-green-700)",
-              }}
-            >
+            <span className={styles['order-card__tip']}>
               + {formatEuro(o.tipCents)} φιλοδώρημα
             </span>
           )}

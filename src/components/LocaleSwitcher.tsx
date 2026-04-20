@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import styles from "./SiteHeader.module.css";
 
 export default function LocaleSwitcher({
   currentLocale,
@@ -23,12 +24,12 @@ export default function LocaleSwitcher({
   };
 
   return (
-    <div className="locale-switcher" role="group" aria-label="Language">
+    <div className={styles['locale-switcher']} role="group" aria-label="Language">
       {routing.locales.map((loc) => (
         <a
           key={loc}
           href="#"
-          className={loc === currentLocale ? "active" : ""}
+          className={loc === currentLocale ? styles['locale-switcher__active'] : ""}
           onClick={(e) => {
             e.preventDefault();
             switchTo(loc);

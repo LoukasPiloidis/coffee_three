@@ -6,6 +6,7 @@ import OrderCard, {
   type OrderDTO,
   STATUS_LABEL,
 } from "./OrderCard";
+import styles from "./Staff.module.css";
 
 // Staff flow: received -> preparing -> on_its_way (delivery) or completed (takeaway).
 // After on_its_way, orders auto-complete one hour after they were placed (server-side).
@@ -59,7 +60,7 @@ function ActionButtons({
   onTransition: (id: string, status: OrderDTO["status"]) => void;
 }) {
   return (
-    <div style={{ display: "flex", gap: "0.5rem" }}>
+    <div className={styles['action-buttons']}>
       {!isTerminal && (
         <button
           className="btn btn--danger btn--small"
@@ -91,21 +92,10 @@ function DeliveryGuySelect({
 }) {
   if (deliveryGuys.length === 0) return null;
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "0.5rem",
-        fontSize: "0.85rem",
-      }}
-    >
+    <div className={styles['delivery-guy-select']}>
       <label
         htmlFor={`dg-${order.id}`}
-        style={{
-          fontWeight: 600,
-          color: "var(--text-muted)",
-          whiteSpace: "nowrap",
-        }}
+        className={styles['delivery-guy-select__label']}
       >
         Διανομέας
       </label>
@@ -113,15 +103,7 @@ function DeliveryGuySelect({
         id={`dg-${order.id}`}
         value={order.deliveryGuy ?? ""}
         onChange={(e) => onAssign(order.id, e.target.value || null)}
-        style={{
-          flex: 1,
-          padding: "0.3rem 0.5rem",
-          border: "1px solid var(--color-cream-300)",
-          borderRadius: "var(--radius-md)",
-          background: "var(--color-cream-50)",
-          fontFamily: "var(--font-body)",
-          fontSize: "0.85rem",
-        }}
+        className={styles['delivery-guy-select__input']}
       >
         <option value="">—</option>
         {deliveryGuys.map((name) => (
@@ -152,9 +134,9 @@ function OrderColumn({
 
   return (
     <div>
-      <div className="staff-column__header">
+      <div className={styles['staff-column__header']}>
         {label}
-        <span className="staff-column__count">{orders.length}</span>
+        <span className={styles['staff-column__count']}>{orders.length}</span>
       </div>
       {orders.length === 0 && (
         <p className="empty" style={{ fontSize: "0.85rem" }}>
@@ -166,7 +148,7 @@ function OrderColumn({
           <OrderCard
             key={o.id}
             order={o}
-            className={o.status === "cancelled" ? "staff-card--cancelled" : undefined}
+            className={o.status === "cancelled" ? styles['staff-card--cancelled'] : undefined}
             actions={
               <ActionButtons
                 order={o}
@@ -241,27 +223,27 @@ export default function StaffDashboard({
 
   return (
     <div>
-      <div className="staff-tabs">
+      <div className={styles['staff-tabs']}>
         <button
           type="button"
-          className={`staff-tabs__tab${tab === "active" ? " staff-tabs__tab--active" : ""}`}
+          className={`${styles['staff-tabs__tab']}${tab === "active" ? ` ${styles['staff-tabs__tab--active']}` : ""}`}
           onClick={() => setTab("active")}
         >
           Ενεργές
-          <span className="staff-tabs__count">{activeCount}</span>
+          <span className={styles['staff-tabs__count']}>{activeCount}</span>
         </button>
         <button
           type="button"
-          className={`staff-tabs__tab${tab === "completed" ? " staff-tabs__tab--active" : ""}`}
+          className={`${styles['staff-tabs__tab']}${tab === "completed" ? ` ${styles['staff-tabs__tab--active']}` : ""}`}
           onClick={() => setTab("completed")}
         >
           Ολοκληρωμένες
-          <span className="staff-tabs__count">{completedCount}</span>
+          <span className={styles['staff-tabs__count']}>{completedCount}</span>
         </button>
       </div>
 
       {tab === "active" && (
-        <div className="staff-columns">
+        <div className={styles['staff-columns']}>
           <OrderColumn
             label={STATUS_LABEL.received}
             orders={received}
@@ -280,7 +262,7 @@ export default function StaffDashboard({
       )}
 
       {tab === "completed" && (
-        <div className="staff-columns">
+        <div className={styles['staff-columns']}>
           <OrderColumn
             label={STATUS_LABEL.on_its_way}
             orders={onItsWay}

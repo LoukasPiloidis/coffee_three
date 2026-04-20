@@ -1,0 +1,32 @@
+.status-steps {
+  display: grid;
+  gap: 0.5rem;
+}
+.status-step {
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.status-step--active {
+  background: var(--color-green-800);
+  color: var(--color-cream-50);
+}
+.status-step--inactive {
+  background: var(--color-cream-100);
+  color: var(--color-muted);
+}
+
+.tip-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: -0.5rem;
+  text-align: right;
+}
+
+.cancelled-center {
+  text-align: center;
+}

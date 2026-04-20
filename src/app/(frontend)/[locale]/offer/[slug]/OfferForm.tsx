@@ -15,6 +15,7 @@ import {
   type MenuItem,
   type Offer,
 } from "@/lib/menu-types";
+import styles from "./OfferForm.module.css";
 
 type SlotState = {
   selectedSlug: string | null;
@@ -147,12 +148,12 @@ export default function OfferForm({
   return (
     <div className="stack-md">
       {/* Slot stepper */}
-      <div className="offer-stepper">
+      <div className={styles['offer-stepper']}>
         {offer.slots.map((slot, i) => (
           <button
             key={i}
             type="button"
-            className={`offer-stepper__step${i === activeSlot ? " offer-stepper__step--active" : ""}${slots[i].confirmed ? " offer-stepper__step--done" : ""}`}
+            className={`${styles['offer-stepper__step']}${i === activeSlot ? ` ${styles['offer-stepper__step--active']}` : ""}${slots[i].confirmed ? ` ${styles['offer-stepper__step--done']}` : ""}`}
             onClick={() => setActiveSlot(i)}
           >
             {slots[i].confirmed ? "✓ " : ""}
@@ -163,8 +164,8 @@ export default function OfferForm({
 
       {/* Active slot panel */}
       {!allConfirmed && (
-        <div className="offer-slot">
-          <h3 className="offer-slot__label">
+        <div className={styles['offer-slot']}>
+          <h3 className={styles['offer-slot__label']}>
             {t("step", {
               current: activeSlot + 1,
               total: offer.slots.length,
@@ -176,9 +177,7 @@ export default function OfferForm({
           {!slots[activeSlot].selectedSlug ? (
             // Item selection
             <div>
-              <p
-                style={{ color: "var(--text-muted)", marginBottom: "0.75rem" }}
-              >
+              <p className={styles['pick-hint']}>
                 {t("pickItem")}
               </p>
               {offer.slots[activeSlot].eligibleItems
@@ -192,13 +191,13 @@ export default function OfferForm({
                     <button
                       key={item.slug}
                       type="button"
-                      className="offer-item-pick"
+                      className={styles['offer-item-pick']}
                       onClick={() => handleSelectItem(activeSlot, item.slug)}
                     >
-                      <span className="offer-item-pick__title">
+                      <span className={styles['offer-item-pick__title']}>
                         {item.title[locale]}
                       </span>
-                      <span className="offer-item-pick__price">
+                      <span className={styles['offer-item-pick__price']}>
                         <PriceWithDiscount
                           originalCents={baseCents}
                           discountCents={discount}
@@ -212,14 +211,7 @@ export default function OfferForm({
           ) : (
             // Options for selected item
             <div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "0.75rem",
-                }}
-              >
+              <div className={styles['selected-item-header']}>
                 <strong>
                   {items[slots[activeSlot].selectedSlug!]?.title[locale]}
                 </strong>
@@ -240,7 +232,6 @@ export default function OfferForm({
                       )
                     )
                   }
-                  style={{ marginLeft: "0.5rem" }}
                 >
                   ← {t("pickItem")}
                 </button>
@@ -265,7 +256,7 @@ export default function OfferForm({
 
       {/* Confirmed slots summary */}
       {slots.some((s) => s.confirmed) && (
-        <div className="offer-summary">
+        <div className={styles['offer-summary']}>
           {slots.map((state, i) => {
             if (!state.confirmed || !state.selectedSlug) return null;
             const item = items[state.selectedSlug];
@@ -279,9 +270,9 @@ export default function OfferForm({
             const itemTotal = baseCents + optionsCents;
             const discount = computeSlotDiscountCents(slot, itemTotal);
             return (
-              <div key={i} className="offer-summary__slot">
-                <div className="offer-summary__slot-header">
-                  <span className="offer-summary__slot-label">
+              <div key={i} className={styles['offer-summary__slot']}>
+                <div className={styles['offer-summary__slot-header']}>
+                  <span className={styles['offer-summary__slot-label']}>
                     {slot.label[locale]}
                   </span>
                   <button
@@ -292,13 +283,10 @@ export default function OfferForm({
                     {t("editSlot")}
                   </button>
                 </div>
-                <div className="offer-summary__slot-item">
+                <div className={styles['offer-summary__slot-item']}>
                   {item.title[locale]}
                   {state.options.length > 0 && (
-                    <span
-                      className="cart-line__meta"
-                      style={{ marginLeft: "0.5rem" }}
-                    >
+                    <span className={styles['slot-options-meta']}>
                       (
                       {state.options
                         .map((o) => o.optionName[locale])
@@ -307,7 +295,7 @@ export default function OfferForm({
                     </span>
                   )}
                 </div>
-                <div className="offer-summary__slot-price">
+                <div className={styles['offer-summary__slot-price']}>
                   <PriceWithDiscount
                     originalCents={itemTotal}
                     discountCents={discount}
@@ -322,8 +310,8 @@ export default function OfferForm({
 
       {/* Final summary + add to cart */}
       {allConfirmed && summary && (
-        <div className="offer-total">
-          <div className="offer-total__final">
+        <div className={styles['offer-total']}>
+          <div className={styles['offer-total__final']}>
             <strong>
               <PriceWithDiscount
                 originalCents={summary.originalCents}

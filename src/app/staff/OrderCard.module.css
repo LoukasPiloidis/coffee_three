@@ -1,0 +1,78 @@
+.order-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.order-card__token {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.order-card__customer {
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+.order-card__address {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.order-card__badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+.order-card__notes {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-cream-100);
+  border-radius: var(--radius-md);
+  white-space: pre-wrap;
+}
+.order-card__notes-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+  font-weight: 700;
+}
+.order-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.order-card__total {
+  font-family: var(--font-mono);
+}
+.order-card__tip {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-green-700);
+}
+.order-card__offers {
+  font-size: 0.85rem;
+}
+.order-card__offer-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.order-card__discount-inline {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* --- Payment method pills --- */
+.payment-pill--cash {
+  background: var(--color-green-700);
+  color: var(--color-cream-50);
+}
+.payment-pill--card {
+  background: var(--color-green-900);
+  color: var(--color-cream-50);
+}

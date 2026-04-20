@@ -1,0 +1,5 @@
+.price-discount__original {
+  text-decoration: line-through;
+  color: var(--text-muted);
+  font-weight: 400;
+}

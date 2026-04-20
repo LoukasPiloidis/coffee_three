@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { useCallback, useEffect, useRef, useState } from "react";
+import styles from "./Analytics.module.css";
 
 Chart.register(
   BarController,
@@ -159,9 +160,9 @@ export default function AnalyticsDashboard({
     <div className="stack-md">
       {/* Today's summary */}
       <div className="card">
-        <h2 style={{ marginBottom: "0.75rem" }}>Today</h2>
+        <h2 className={styles['section-title']}>Today</h2>
         {d ? (
-          <table className="analytics-table">
+          <table className={styles['analytics-table']}>
             <thead>
               <tr>
                 <th>Metric</th>
@@ -172,49 +173,49 @@ export default function AnalyticsDashboard({
             <tbody>
               <tr>
                 <td>Delivery</td>
-                <td className="mono">{formatEuro(d.deliveryRevenue)}</td>
-                <td className="mono">{d.deliveryCount}</td>
+                <td className={styles.mono}>{formatEuro(d.deliveryRevenue)}</td>
+                <td className={styles.mono}>{d.deliveryCount}</td>
               </tr>
               <tr>
                 <td>Takeaway</td>
-                <td className="mono">{formatEuro(d.takeawayRevenue)}</td>
-                <td className="mono">{d.takeawayCount}</td>
+                <td className={styles.mono}>{formatEuro(d.takeawayRevenue)}</td>
+                <td className={styles.mono}>{d.takeawayCount}</td>
               </tr>
               <tr>
                 <td>Cash</td>
-                <td className="mono">{formatEuro(d.cashRevenue)}</td>
-                <td className="mono">{d.cashCount}</td>
+                <td className={styles.mono}>{formatEuro(d.cashRevenue)}</td>
+                <td className={styles.mono}>{d.cashCount}</td>
               </tr>
               <tr>
                 <td>Card</td>
-                <td className="mono">{formatEuro(d.cardRevenue)}</td>
-                <td className="mono">{d.cardCount}</td>
+                <td className={styles.mono}>{formatEuro(d.cardRevenue)}</td>
+                <td className={styles.mono}>{d.cardCount}</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td>Total</td>
-                <td className="mono">
+                <td className={styles.mono}>
                   {formatEuro(d.deliveryRevenue + d.takeawayRevenue)}
                 </td>
-                <td className="mono">{d.totalOrders}</td>
+                <td className={styles.mono}>{d.totalOrders}</td>
               </tr>
               <tr>
                 <td>Offers used</td>
                 <td></td>
-                <td className="mono">{d.offersUsed}</td>
+                <td className={styles.mono}>{d.offersUsed}</td>
               </tr>
             </tfoot>
           </table>
         ) : (
-          <p style={{ color: "var(--text-muted)" }}>No orders today.</p>
+          <p className={styles['no-data']}>No orders today.</p>
         )}
       </div>
 
       {/* Chart section */}
       <div className="card">
-        <h2 style={{ marginBottom: "0.75rem" }}>History</h2>
-        <div className="analytics-range">
+        <h2 className={styles['section-title']}>History</h2>
+        <div className={styles['analytics-range']}>
           <label>
             From
             <input
@@ -241,17 +242,14 @@ export default function AnalyticsDashboard({
         </div>
 
         {error && (
-          <div
-            className="notice notice--error"
-            style={{ marginTop: "0.75rem" }}
-          >
+          <div className={`notice notice--error ${styles['error-notice']}`}>
             {error}
           </div>
         )}
 
-        <div className="analytics-chart-wrap">
+        <div className={styles['analytics-chart-wrap']}>
           {chartData.length === 0 && !loading && !error ? (
-            <p style={{ color: "var(--text-muted)", paddingTop: "2rem" }}>
+            <p className={styles['no-data--padded']}>
               No data for selected range.
             </p>
           ) : (

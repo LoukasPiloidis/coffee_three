@@ -8,6 +8,7 @@ import {
   setItemAvailabilityAction,
   setOptionAvailabilityAction,
 } from "./actions";
+import styles from "./Products.module.css";
 
 export default function ProductsList({
   categories,
@@ -70,18 +71,10 @@ export default function ProductsList({
 
   return (
     <div className="stack-md">
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 15,
-          background: "var(--bg)",
-          paddingBlock: "0.75rem",
-        }}
-      >
+      <div className={styles['search-wrapper']}>
         <input
           type="search"
-          className="search-bar"
+          className={styles['search-bar']}
           placeholder="Αναζήτηση προϊόντων…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -99,20 +92,11 @@ export default function ProductsList({
       </div>
       {filtered.map((cat) => (
         <section key={cat.slug} data-slug={cat.slug}>
-          <h2 style={{ marginBottom: "0.5rem" }}>{cat.title.el}</h2>
+          <h2 className={styles['section-title']}>{cat.title.el}</h2>
           {cat.items.length === 0 && (
-            <p style={{ color: "var(--text-muted)" }}>Κανένα προϊόν.</p>
+            <p className={styles['no-items']}>Κανένα προϊόν.</p>
           )}
-          <ul
-            style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.5rem",
-            }}
-          >
+          <ul className={styles['item-list']}>
             {cat.items.map((item) => {
               const isExpanded = expanded.has(item.slug);
               const hasOptions = item.optionGroups.length > 0;
@@ -121,32 +105,12 @@ export default function ProductsList({
                 g.options.some((o) => !o.available)
               );
               return (
-                <li
-                  key={item.slug}
-                  style={{
-                    border: "1px solid var(--color-cream-300)",
-                    borderRadius: "var(--radius-md)",
-                    padding: "0.75rem 1rem",
-                    background: "var(--color-cream-50)",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: "1rem",
-                    }}
-                  >
+                <li key={item.slug} className={styles['item-card']}>
+                  <div className={styles['item-header']}>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600 }}>{item.title.el}</div>
+                      <div className={styles['item-name']}>{item.title.el}</div>
                       {anyOptionDisabled && (
-                        <div
-                          style={{
-                            fontSize: "0.8rem",
-                            color: "var(--text-muted)",
-                          }}
-                        >
+                        <div className={styles['item-disabled-hint']}>
                           Κάποιες επιλογές απενεργοποιημένες
                         </div>
                       )}
@@ -160,13 +124,7 @@ export default function ProductsList({
                         {isExpanded ? "Απόκρυψη επιλογών" : "Επιλογές"}
                       </button>
                     )}
-                    <label
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "0.4rem",
-                      }}
-                    >
+                    <label className={styles['item-availability']}>
                       <input
                         type="checkbox"
                         checked={item.available}
@@ -179,78 +137,28 @@ export default function ProductsList({
                         {item.available ? "Διαθέσιμο" : "Μη διαθέσιμο"}
                       </span>
                       {itemSaving && (
-                        <span
-                          style={{
-                            fontSize: "0.75rem",
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          …
-                        </span>
+                        <span className={styles['saving-indicator']}>…</span>
                       )}
                     </label>
                   </div>
 
                   {isExpanded && hasOptions && (
-                    <div
-                      style={{
-                        marginTop: "0.75rem",
-                        paddingTop: "0.75rem",
-                        borderTop: "1px solid var(--color-cream-300)",
-                      }}
-                    >
+                    <div className={styles['options-panel']}>
                       {item.optionGroups.map((g) => (
                         <div key={g.key} style={{ marginBottom: "0.75rem" }}>
-                          <div
-                            style={{
-                              fontSize: "0.85rem",
-                              fontWeight: 600,
-                              color: "var(--text-muted)",
-                              marginBottom: "0.25rem",
-                            }}
-                          >
+                          <div className={styles['option-group-title']}>
                             {g.name.el}
                             {g.required && " *"}
                           </div>
-                          <ul
-                            style={{
-                              listStyle: "none",
-                              padding: 0,
-                              margin: 0,
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "0.25rem",
-                            }}
-                          >
+                          <ul className={styles['option-list']}>
                             {g.options.map((o) => {
                               const id = `opt:${item.slug}:${g.key}:${o.key}`;
                               return (
-                                <li
-                                  key={o.key}
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    padding: "0.25rem 0.5rem",
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      opacity: o.available ? 1 : 0.5,
-                                      textDecoration: o.available
-                                        ? "none"
-                                        : "line-through",
-                                    }}
-                                  >
+                                <li key={o.key} className={styles['option-row']}>
+                                  <span className={!o.available ? styles['option-name--unavailable'] : undefined}>
                                     {o.name.el}
                                   </span>
-                                  <label
-                                    style={{
-                                      display: "inline-flex",
-                                      alignItems: "center",
-                                      gap: "0.4rem",
-                                    }}
-                                  >
+                                  <label className={styles['item-availability']}>
                                     <input
                                       type="checkbox"
                                       checked={o.available}
@@ -265,14 +173,7 @@ export default function ProductsList({
                                       }
                                     />
                                     {saving === id && (
-                                      <span
-                                        style={{
-                                          fontSize: "0.75rem",
-                                          color: "var(--text-muted)",
-                                        }}
-                                      >
-                                        …
-                                      </span>
+                                      <span className={styles['saving-indicator']}>…</span>
                                     )}
                                   </label>
                                 </li>

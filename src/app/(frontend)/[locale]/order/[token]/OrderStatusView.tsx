@@ -4,6 +4,9 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import PriceWithDiscount from "@/components/PriceWithDiscount";
 import { formatOptionLabel, formatPrice, type Locale } from "@/lib/menu-types";
+import lineStyles from "@/components/OrderLine.module.css";
+import pillStyles from "@/components/StatusPill.module.css";
+import styles from "./OrderStatusView.module.css";
 
 type OrderDTO = {
   type: "delivery" | "takeaway";
@@ -113,8 +116,8 @@ export default function OrderStatusView({
         <h1 className="page__title">{t("status")}</h1>
 
         {isCancelled && (
-          <div style={{ textAlign: "center" }}>
-            <span className={`status-pill status-pill--${data.status}`}>
+          <div className={styles['cancelled-center']}>
+            <span className={`${pillStyles['status-pill']} ${pillStyles['status-pill--cancelled']}`}>
               {t(data.status)}
             </span>
           </div>
@@ -129,30 +132,13 @@ export default function OrderStatusView({
             if (next) visible.push({ step: next, active: false });
             return (
               <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: `repeat(${visible.length}, 1fr)`,
-                  gap: "0.5rem",
-                }}
+                className={styles['status-steps']}
+                style={{ gridTemplateColumns: `repeat(${visible.length}, 1fr)` }}
               >
                 {visible.map(({ step, active }) => (
                   <div
                     key={step}
-                    style={{
-                      padding: "0.5rem",
-                      borderRadius: "var(--radius-md)",
-                      background: active
-                        ? "var(--color-green-800)"
-                        : "var(--color-cream-100)",
-                      color: active
-                        ? "var(--color-cream-50)"
-                        : "var(--color-muted)",
-                      textAlign: "center",
-                      fontSize: "0.75rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                      fontWeight: 600,
-                    }}
+                    className={`${styles['status-step']} ${active ? styles['status-step--active'] : styles['status-step--inactive']}`}
                   >
                     {t(DISPLAY_KEY[step])}
                   </div>
@@ -163,13 +149,13 @@ export default function OrderStatusView({
 
         <div className="card">
           {data.items.map((it, i) => (
-            <div key={i} className="cart-line">
-              <div className="cart-line__main">
-                <div className="cart-line__title">
+            <div key={i} className={lineStyles['cart-line']}>
+              <div className={lineStyles['cart-line__main']}>
+                <div className={lineStyles['cart-line__title']}>
                   {it.quantity}× {it.title[locale]}
                 </div>
                 {it.options.length > 0 && (
-                  <div className="cart-line__meta">
+                  <div className={lineStyles['cart-line__meta']}>
                     {it.options
                       .map((o) =>
                         formatOptionLabel(
@@ -182,11 +168,11 @@ export default function OrderStatusView({
                   </div>
                 )}
                 {it.comment && (
-                  <div className="cart-line__meta">“{it.comment}”</div>
+                  <div className={lineStyles['cart-line__meta']}>”{it.comment}”</div>
                 )}
               </div>
-              <div className="cart-line__right">
-                <div className="item-row__price">
+              <div className={lineStyles['cart-line__right']}>
+                <div className={lineStyles['item-row__price']}>
                   <PriceWithDiscount
                     originalCents={it.unitPriceCents * it.quantity}
                     discountCents={it.discountCents}
@@ -201,14 +187,7 @@ export default function OrderStatusView({
             <strong>{formatPrice(data.totalCents / 100, locale)}</strong>
           </div>
           {data.tipCents > 0 && (
-            <div
-              style={{
-                fontSize: "0.8rem",
-                color: "var(--text-muted)",
-                marginTop: "-0.5rem",
-                textAlign: "right",
-              }}
-            >
+            <div className={styles['tip-note']}>
               {t("tipIncluded", {
                 amount: formatPrice(data.tipCents / 100, locale),
               })}

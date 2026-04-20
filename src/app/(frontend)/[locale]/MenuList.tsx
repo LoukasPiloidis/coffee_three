@@ -5,6 +5,7 @@ import ScrollPills from "@/components/ScrollPills";
 import { Link } from "@/i18n/navigation";
 import type { Locale, MenuCategory, Offer } from "@/lib/menu-types";
 import { formatPrice } from "@/lib/menu-types";
+import styles from "./MenuList.module.css";
 
 export default function MenuList({
   categories,
@@ -35,10 +36,10 @@ export default function MenuList({
 
   return (
     <>
-      <div className="menu-nav">
+      <div className={styles['menu-nav']}>
         <input
           type="search"
-          className="search-bar"
+          className={styles['search-bar']}
           placeholder={translations.search}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -54,18 +55,18 @@ export default function MenuList({
       </div>
 
       {offers.length > 0 && !q && (
-        <section className="offers-section">
-          <h2 className="offers-section__title">{translations.offersTitle}</h2>
-          <div className="offers-section__list">
+        <section className={styles['offers-section']}>
+          <h2 className={styles['offers-section__title']}>{translations.offersTitle}</h2>
+          <div className={styles['offers-section__list']}>
             {offers.map((offer) => (
               <Link
                 key={offer.slug}
                 href={`/offer/${offer.slug}`}
-                className="offer-card"
+                className={styles['offer-card']}
               >
-                <div className="offer-card__title">{offer.title[locale]}</div>
+                <div className={styles['offer-card__title']}>{offer.title[locale]}</div>
                 {offer.description[locale] && (
-                  <div className="offer-card__desc">
+                  <div className={styles['offer-card__desc']}>
                     {offer.description[locale]}
                   </div>
                 )}
@@ -80,31 +81,31 @@ export default function MenuList({
       )}
 
       {filtered.map((cat) => (
-        <section key={cat.slug} className="category" data-slug={cat.slug}>
-          <h2 className="category__title">{cat.title[locale]}</h2>
+        <section key={cat.slug} className={styles['category']} data-slug={cat.slug}>
+          <h2 className={styles['category__title']}>{cat.title[locale]}</h2>
           <div>
             {cat.items.map((item) => {
               const inner = (
                 <>
-                  <div className="item-row__main">
-                    <div className="item-row__title">{item.title[locale]}</div>
+                  <div className={styles['item-row__main']}>
+                    <div className={styles['item-row__title']}>{item.title[locale]}</div>
                     {item.description[locale] && (
-                      <div className="item-row__desc">
+                      <div className={styles['item-row__desc']}>
                         {item.description[locale]}
                       </div>
                     )}
                     {!item.available && (
-                      <div className="item-row__unavailable">
+                      <div className={styles['item-row__unavailable']}>
                         {translations.unavailable}
                       </div>
                     )}
                   </div>
-                  <div className="item-row__right">
-                    <span className="item-row__price">
+                  <div className={styles['item-row__right']}>
+                    <span className={styles['item-row__price']}>
                       {formatPrice(item.price, locale)}
                     </span>
                     {item.available && (
-                      <span className="item-row__add" aria-hidden="true">
+                      <span className={styles['item-row__add']} aria-hidden="true">
                         <svg
                           width="16"
                           height="16"
@@ -127,14 +128,14 @@ export default function MenuList({
                 <Link
                   key={item.slug}
                   href={`/item/${item.slug}`}
-                  className="item-row"
+                  className={styles['item-row']}
                 >
                   {inner}
                 </Link>
               ) : (
                 <div
                   key={item.slug}
-                  className="item-row item-row--disabled"
+                  className={`${styles['item-row']} ${styles['item-row--disabled']}`}
                   aria-disabled="true"
                 >
                   {inner}

@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { AccordionControlled } from "@/components/Accordion";
+import { AccordionControlled, accordionStyles } from "@/components/Accordion";
 import type { CartLineOption } from "@/lib/cart";
 import {
   formatOptionLabel,
@@ -153,7 +153,7 @@ export default function ItemOptionSelector({
       key: g.key,
       summary: selectedSummary(gi),
       title: (
-        <span className="option-accordion__title">
+        <span className={accordionStyles['option-accordion__title']}>
           {g.name[locale]}
           {g.required && <span className="option-group__required">*</span>}
         </span>

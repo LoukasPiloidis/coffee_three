@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import styles from "./ScrollPills.module.css";
 
 export interface ScrollPillItem {
   slug: string;
@@ -70,13 +71,13 @@ export default function ScrollPills({
   if (items.length <= 1) return null;
 
   return (
-    <div className="menu-nav__pills">
+    <div className={styles['menu-nav__pills']}>
       {items.map((item) => (
         <button
           key={item.slug}
           type="button"
-          className={`menu-nav__pill${
-            activeSlug === item.slug ? " menu-nav__pill--active" : ""
+          className={`${styles['menu-nav__pill']}${
+            activeSlug === item.slug ? ` ${styles['menu-nav__pill--active']}` : ""
           }`}
           onClick={() => scrollTo(item.slug)}
         >

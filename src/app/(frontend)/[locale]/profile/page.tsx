@@ -9,6 +9,7 @@ import { getSession } from "@/lib/session";
 import AccountDetails from "./AccountDetails";
 import AddressManager from "./AddressManager";
 import { signOutAction } from "./actions";
+import styles from "./Profile.module.css";
 import ReorderButton from "./ReorderButton";
 
 export default async function ProfilePage({
@@ -61,13 +62,7 @@ export default async function ProfilePage({
   return (
     <main className="page">
       <div className="container stack-lg">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+        <div className={styles.header}>
           <h1>{t("title")}</h1>
           <form action={signOutAction.bind(null, `/${locale}`)}>
             <button className="btn btn--ghost btn--small">
@@ -77,7 +72,7 @@ export default async function ProfilePage({
         </div>
 
         <section>
-          <h2 style={{ marginBottom: "0.75rem" }}>{t("accountTitle")}</h2>
+          <h2 className={styles['section-title']}>{t("accountTitle")}</h2>
           <AccountDetails
             initialEmail={account.email}
             initialPhone={account.phone ?? ""}
@@ -85,7 +80,7 @@ export default async function ProfilePage({
         </section>
 
         <section>
-          <h2 style={{ marginBottom: "0.75rem" }}>{t("addresses")}</h2>
+          <h2 className={styles['section-title']}>{t("addresses")}</h2>
           <AddressManager
             initialAddresses={savedAddresses.map((a) => ({
               id: a.id,
@@ -99,7 +94,7 @@ export default async function ProfilePage({
         </section>
 
         <section>
-          <h2 style={{ marginBottom: "0.75rem" }}>{t("recentOrders")}</h2>
+          <h2 className={styles['section-title']}>{t("recentOrders")}</h2>
           {recent.length === 0 ? (
             <p className="empty">—</p>
           ) : (
@@ -108,36 +103,19 @@ export default async function ProfilePage({
                 const items = itemsByOrder.get(o.id) ?? [];
                 return (
                   <div key={o.id} className="card stack-sm">
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
+                    <div className={styles['order-header']}>
                       <div>
-                        <div
-                          style={{
-                            fontFamily: "var(--font-mono)",
-                            fontSize: "0.75rem",
-                            color: "var(--text-muted)",
-                          }}
-                        >
+                        <div className={styles['order-date']}>
                           {new Date(o.createdAt).toLocaleString(
                             loc === "el" ? "el-GR" : "en-US"
                           )}
                         </div>
-                        <div style={{ fontWeight: 600 }}>
+                        <div className={styles['order-total']}>
                           {formatPrice(o.totalCents / 100, loc)}
                         </div>
                       </div>
                     </div>
-                    <div
-                      style={{
-                        fontSize: "0.85rem",
-                        color: "var(--text-muted)",
-                      }}
-                    >
+                    <div className={styles['order-items']}>
                       {items
                         .map(
                           (i) =>
@@ -149,13 +127,7 @@ export default async function ProfilePage({
                         )
                         .join(", ")}
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        gap: "0.5rem",
-                      }}
-                    >
+                    <div className={styles['order-actions']}>
                       <Link
                         href={`/order/${o.publicToken}`}
                         className="btn btn--ghost btn--small"

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import OrderCard, { formatEuro, type OrderDTO } from "../OrderCard";
+import styles from "./Delivery.module.css";
 
 function todayStr() {
   const d = new Date();
@@ -53,30 +54,13 @@ export default function DeliveryDashboard({
     .reduce((sum, o) => sum + o.totalCents, 0);
   const totalTips = activeOrders.reduce((sum, o) => sum + o.tipCents, 0);
 
-  const selectStyle: React.CSSProperties = {
-    padding: "0.4rem 0.6rem",
-    border: "1px solid var(--color-cream-300)",
-    borderRadius: "var(--radius-md)",
-    background: "var(--color-cream-50)",
-    fontFamily: "var(--font-body)",
-    fontSize: "0.9rem",
-    flex: 1,
-  };
-
   return (
     <div className="stack-md">
-      <div
-        style={{
-          display: "flex",
-          gap: "0.75rem",
-          flexWrap: "wrap",
-          alignItems: "center",
-        }}
-      >
+      <div className={styles.controls}>
         <select
           value={selectedGuy}
           onChange={(e) => setSelectedGuy(e.target.value)}
-          style={selectStyle}
+          className={styles['select-input']}
         >
           {deliveryGuys.length === 0 && (
             <option value="">Κανένας διανομέας</option>
@@ -91,87 +75,27 @@ export default function DeliveryDashboard({
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          style={selectStyle}
+          className={styles['select-input']}
         />
       </div>
 
       {selectedGuy && (
-        <div
-          className="card"
-          style={{
-            display: "flex",
-            gap: "1rem",
-            justifyContent: "space-around",
-            textAlign: "center",
-            padding: "1rem",
-          }}
-        >
+        <div className={`card ${styles.summary}`}>
           <div>
-            <div
-              style={{
-                fontSize: "0.7rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                color: "var(--text-muted)",
-                marginBottom: "0.25rem",
-              }}
-            >
-              Μετρητά
-            </div>
-            <div
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontWeight: 700,
-                fontSize: "1.1rem",
-                color: "var(--color-green-700)",
-              }}
-            >
+            <div className={styles['summary__label']}>Μετρητά</div>
+            <div className={`${styles['summary__value']} ${styles['summary__value--green']}`}>
               {formatEuro(totalCash)}
             </div>
           </div>
           <div>
-            <div
-              style={{
-                fontSize: "0.7rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                color: "var(--text-muted)",
-                marginBottom: "0.25rem",
-              }}
-            >
-              Κάρτα
-            </div>
-            <div
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontWeight: 700,
-                fontSize: "1.1rem",
-                color: "var(--color-green-900)",
-              }}
-            >
+            <div className={styles['summary__label']}>Κάρτα</div>
+            <div className={`${styles['summary__value']} ${styles['summary__value--dark']}`}>
               {formatEuro(totalCard)}
             </div>
           </div>
           <div>
-            <div
-              style={{
-                fontSize: "0.7rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                color: "var(--text-muted)",
-                marginBottom: "0.25rem",
-              }}
-            >
-              Φιλοδωρήματα
-            </div>
-            <div
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontWeight: 700,
-                fontSize: "1.1rem",
-                color: "var(--color-green-700)",
-              }}
-            >
+            <div className={styles['summary__label']}>Φιλοδωρήματα</div>
+            <div className={`${styles['summary__value']} ${styles['summary__value--green']}`}>
               {formatEuro(totalTips)}
             </div>
           </div>

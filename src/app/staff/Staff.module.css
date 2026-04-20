@@ -1,0 +1,110 @@
+/* --- Staff tabs --- */
+.staff-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--color-cream-200);
+  margin-bottom: 1.5rem;
+}
+.staff-tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  background: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.staff-tabs__tab:hover {
+  color: var(--color-green-700);
+}
+.staff-tabs__tab--active {
+  color: var(--color-green-900);
+  border-bottom-color: var(--color-green-800);
+}
+.staff-tabs__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  padding: 0 0.35rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.1);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+.staff-tabs__tab--active .staff-tabs__count {
+  background: var(--color-green-800);
+  color: var(--color-cream-50);
+}
+
+/* --- Staff two-column grid --- */
+.staff-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+.staff-column__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-cream-200);
+}
+.staff-column__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  padding: 0 0.35rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.1);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+.staff-card--cancelled {
+  opacity: 0.55;
+}
+
+/* --- Action buttons --- */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* --- Delivery guy select --- */
+.delivery-guy-select {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+.delivery-guy-select__label {
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.delivery-guy-select__input {
+  flex: 1;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--color-cream-300);
+  border-radius: var(--radius-md);
+  background: var(--color-cream-50);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}

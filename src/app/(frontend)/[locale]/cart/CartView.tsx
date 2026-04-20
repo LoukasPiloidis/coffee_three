@@ -16,6 +16,8 @@ import {
 import type { Offer } from "@/lib/menu-types";
 import { formatOptionLabel, formatPrice, type Locale } from "@/lib/menu-types";
 import { detectApplicableOffers } from "@/lib/offer-matching";
+import lineStyles from "@/components/OrderLine.module.css";
+import styles from "./CartView.module.css";
 
 export default function CartView({
   locale,
@@ -66,14 +68,14 @@ export default function CartView({
 
         {/* Offer suggestions */}
         {suggestions.map((suggestion) => (
-          <div key={suggestion.offer.slug} className="offer-suggestion">
-            <div className="offer-suggestion__text">
+          <div key={suggestion.offer.slug} className={styles['offer-suggestion']}>
+            <div className={styles['offer-suggestion__text']}>
               {tOffers("suggestion", {
                 amount: formatPrice(suggestion.totalSavingsCents / 100, locale),
                 offerName: suggestion.offer.title[locale],
               })}
             </div>
-            <div className="offer-suggestion__actions">
+            <div className={styles['offer-suggestion__actions']}>
               <button
                 type="button"
                 className="btn btn--primary btn--small"
@@ -103,18 +105,18 @@ export default function CartView({
               const discount = lineDiscountCents(line.lineId, cart);
               const lineTotal = lineTotalCents(line);
               return (
-                <div key={line.lineId} className="cart-line">
-                  <div className="cart-line__main">
-                    <div className="cart-line__title">
+                <div key={line.lineId} className={lineStyles['cart-line']}>
+                  <div className={lineStyles['cart-line__main']}>
+                    <div className={lineStyles['cart-line__title']}>
                       {line.title[locale]}
                       {offer && (
-                        <span className="offer-badge">
+                        <span className={lineStyles['offer-badge']}>
                           {tOffers("offer")}
                         </span>
                       )}
                     </div>
                     {line.options.length > 0 && (
-                      <div className="cart-line__meta">
+                      <div className={lineStyles['cart-line__meta']}>
                         {line.options
                           .map((o) =>
                             formatOptionLabel(
@@ -127,20 +129,20 @@ export default function CartView({
                       </div>
                     )}
                     {line.comment && (
-                      <div className="cart-line__meta">
+                      <div className={lineStyles['cart-line__meta']}>
                         &quot;{line.comment}&quot;
                       </div>
                     )}
                   </div>
-                  <div className="cart-line__right">
-                    <div className="item-row__price">
+                  <div className={lineStyles['cart-line__right']}>
+                    <div className={lineStyles['item-row__price']}>
                       <PriceWithDiscount
                         originalCents={lineTotal}
                         discountCents={discount}
                         locale={locale}
                       />
                     </div>
-                    <div className="qty">
+                    <div className={styles.qty}>
                       <button
                         type="button"
                         onClick={() =>
@@ -150,7 +152,7 @@ export default function CartView({
                       >
                         −
                       </button>
-                      <span className="qty__value">{line.quantity}</span>
+                      <span className={styles['qty__value']}>{line.quantity}</span>
                       <button
                         type="button"
                         onClick={() =>

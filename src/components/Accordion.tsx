@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useState } from "react";
+import styles from "./Accordion.module.css";
 
 interface AccordionItem {
   key: string;
@@ -39,18 +40,18 @@ export function AccordionControlled({
   onToggle: (index: number) => void;
 }) {
   return (
-    <div className="accordion">
+    <div>
       {items.map((item, i) => {
         const isOpen = openIndex === i;
         return (
           <div
             key={item.key}
-            className={`option-accordion${isOpen ? " option-accordion--open" : ""}`}
+            className={`${styles['option-accordion']}${isOpen ? ` ${styles['option-accordion--open']}` : ""}`}
           >
             <div
               role="button"
               tabIndex={0}
-              className="option-accordion__header"
+              className={styles['option-accordion__header']}
               onClick={() => onToggle(i)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -61,15 +62,15 @@ export function AccordionControlled({
             >
               {item.title}
               {item.summary && !isOpen && (
-                <span className="option-accordion__summary">
+                <span className={styles['option-accordion__summary']}>
                   {item.summary}
                 </span>
               )}
-              <span className="option-accordion__chevron" aria-hidden="true" />
+              <span className={styles['option-accordion__chevron']} aria-hidden="true" />
             </div>
 
             {isOpen && (
-              <div className="option-accordion__inner">{item.content}</div>
+              <div className={styles['option-accordion__inner']}>{item.content}</div>
             )}
           </div>
         );
@@ -78,4 +79,5 @@ export function AccordionControlled({
   );
 }
 
+export { styles as accordionStyles };
 export type { AccordionItem };

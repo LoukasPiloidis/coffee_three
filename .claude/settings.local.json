@@ -6,7 +6,13 @@
       "Bash(pnpm exec:*)",
       "Bash(pnpm remove:*)",
       "WebSearch",
-      "WebFetch(domain:www.better-auth.com)"
+      "WebFetch(domain:www.better-auth.com)",
+      "Bash(wc -l /Users/loukaspiloidis/Documents/Programming/coffee_three/src/lib/*.ts /Users/loukaspiloidis/Documents/Programming/coffee_three/src/db/*.ts /Users/loukaspiloidis/Documents/Programming/coffee_three/src/i18n/*.ts /Users/loukaspiloidis/Documents/Programming/coffee_three/src/middleware.ts /Users/loukaspiloidis/Documents/Programming/coffee_three/keystatic.config.ts /Users/loukaspiloidis/Documents/Programming/coffee_three/src/app/api/*/*.ts)",
+      "Bash(find /Users/loukaspiloidis/Documents/Programming/coffee_three/src/app/staff -name \"*.tsx\" -exec wc -l {} +)",
+      "Bash(find /Users/loukaspiloidis/Documents/Programming/coffee_three/src/components -name \"*.tsx\" -exec wc -l {} +)",
+      "Bash(wc:*)",
+      "Bash(find:*)",
+      "Read(//tmp/**)"
     ]
   }
 }

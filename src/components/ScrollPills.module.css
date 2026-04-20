@@ -1,0 +1,39 @@
+.menu-nav__pills {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin-top: 0.6rem;
+  padding-bottom: 2px;
+}
+.menu-nav__pills::-webkit-scrollbar {
+  display: none;
+}
+.menu-nav__pill {
+  flex-shrink: 0;
+  padding: 0.3rem 0.85rem;
+  border: 1px solid var(--color-cream-300);
+  border-radius: 999px;
+  background: var(--surface);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.menu-nav__pill:hover {
+  border-color: var(--color-green-700);
+  color: var(--color-green-800);
+}
+.menu-nav__pill--active {
+  background: var(--color-green-800);
+  border-color: var(--color-green-800);
+  color: var(--color-cream-50);
+}
+.menu-nav__pill--active:hover {
+  background: var(--color-green-700);
+  border-color: var(--color-green-700);
+  color: var(--color-cream-50);
+}

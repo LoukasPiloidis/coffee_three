@@ -13,6 +13,7 @@ import {
 import { formatPrice, type Locale } from "@/lib/menu-types";
 import type { PlaceOrderInput } from "@/lib/orders";
 import { submitOrderAction } from "./actions";
+import styles from "./CheckoutForm.module.css";
 
 export type SavedAddress = {
   id: string;
@@ -170,17 +171,17 @@ export default function CheckoutForm({
         <h1 className="page__title">{t("title")}</h1>
 
         <form onSubmit={handleSubmit} className="card stack-md">
-          <div className="order-type-toggle">
+          <div className={styles['order-type-toggle']}>
             <button
               type="button"
-              className={`order-type-toggle__btn${isDelivery ? " order-type-toggle__btn--active" : ""}`}
+              className={`${styles['order-type-toggle__btn']}${isDelivery ? ` ${styles['order-type-toggle__btn--active']}` : ""}`}
               onClick={() => setOrderType("delivery")}
             >
               {t("delivery")}
             </button>
             <button
               type="button"
-              className={`order-type-toggle__btn${!isDelivery ? " order-type-toggle__btn--active" : ""}`}
+              className={`${styles['order-type-toggle__btn']}${!isDelivery ? ` ${styles['order-type-toggle__btn--active']}` : ""}`}
               onClick={() => setOrderType("takeaway")}
             >
               {t("takeaway")}
@@ -304,14 +305,7 @@ export default function CheckoutForm({
           </div>
 
           {isDelivery && loggedInEmail && selectedAddressId === "" && (
-            <label
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                fontSize: "0.9rem",
-              }}
-            >
+            <label className={styles['save-address-label']}>
               <input
                 type="checkbox"
                 checked={saveAddress}
@@ -323,7 +317,7 @@ export default function CheckoutForm({
 
           <div className="option-group">
             <div className="option-group__label">{t("paymentMethod")}</div>
-            <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.35rem" }}>
+            <div className={styles['payment-hint']}>
               {t("paymentHint")}
             </div>
             <div className="option-list">
@@ -348,15 +342,15 @@ export default function CheckoutForm({
             </div>
           </div>
 
-          <div className="tip-box">
-            <div className="tip-box__header">
+          <div className={styles['tip-box']}>
+            <div className={styles['tip-box__header']}>
               <div>
-                <div className="tip-box__title">{t("tipTitle")}</div>
-                <div className="tip-box__subtitle">{t("tipSubtitle")}</div>
+                <div className={styles['tip-box__title']}>{t("tipTitle")}</div>
+                <div className={styles['tip-box__subtitle']}>{t("tipSubtitle")}</div>
               </div>
-              <span className="tip-box__badge">{t("tipOptional")}</span>
+              <span className={styles['tip-box__badge']}>{t("tipOptional")}</span>
             </div>
-            <div className="tip-box__presets">
+            <div className={styles['tip-box__presets']}>
               {["0.5", "1", "2"].map((v) => {
                 const selected = tipInput === v;
                 return (
@@ -382,7 +376,7 @@ export default function CheckoutForm({
                 {t("tipNone")}
               </button>
             </div>
-            <div className="field" style={{ marginTop: "0.5rem" }}>
+            <div className={`field ${styles['tip-field']}`}>
               <label>{t("tipCustom")}</label>
               <input
                 type="number"

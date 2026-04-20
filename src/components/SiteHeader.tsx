@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { getSession } from "@/lib/session";
 import LocaleSwitcher from "./LocaleSwitcher";
 import CartLink from "./CartLink";
+import styles from "./SiteHeader.module.css";
 
 export default async function SiteHeader({ locale }: { locale: string }) {
   const t = await getTranslations("common");
@@ -13,9 +14,9 @@ export default async function SiteHeader({ locale }: { locale: string }) {
   const userLabel = isSignedIn ? t("profile") : t("signIn");
 
   return (
-    <header className="site-header">
-      <div className="site-header__inner">
-        <Link href="/" className="site-header__brand" aria-label="Coffee Three">
+    <header className={styles['site-header']}>
+      <div className={styles['site-header__inner']}>
+        <Link href="/" className={styles['site-header__brand']} aria-label="Coffee Three">
           <Image
             src="/logo.jpeg"
             alt="Coffee Three"
@@ -24,13 +25,13 @@ export default async function SiteHeader({ locale }: { locale: string }) {
             priority
           />
         </Link>
-        <nav className="site-header__nav">
+        <nav className={styles['site-header__nav']}>
           <LocaleSwitcher currentLocale={locale} />
           <CartLink />
           <Link
             href={userHref}
-            className={`site-header__icon-btn${
-              isSignedIn ? " site-header__icon-btn--active" : ""
+            className={`${styles['site-header__icon-btn']}${
+              isSignedIn ? ` ${styles['site-header__icon-btn--active']}` : ""
             }`}
             aria-label={userLabel}
             title={userLabel}
