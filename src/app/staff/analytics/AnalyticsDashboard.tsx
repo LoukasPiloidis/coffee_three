@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Notice } from "@/components/Notice";
 import styles from "./Analytics.module.css";
 
 Chart.register(
@@ -242,9 +243,9 @@ export default function AnalyticsDashboard({
         </div>
 
         {error && (
-          <div className={`notice notice--error ${styles['error-notice']}`}>
+          <Notice type="error" className={styles['error-notice']}>
             {error}
-          </div>
+          </Notice>
         )}
 
         <div className={styles['analytics-chart-wrap']}>

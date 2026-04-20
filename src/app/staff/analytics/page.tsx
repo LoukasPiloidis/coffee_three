@@ -1,7 +1,8 @@
-import Link from "next/link";
+import { Notice } from "@/components/Notice";
 import { getAnalyticsByDateRange } from "@/lib/analytics";
 import { isDevStaffBypassActive, isStaffAuthorized } from "@/lib/staff-auth";
 import { staffSignOutAction } from "../actions";
+import { StaffNav } from "../StaffNav";
 import AnalyticsDashboard from "./AnalyticsDashboard";
 
 export default async function AnalyticsPage() {
@@ -12,9 +13,9 @@ export default async function AnalyticsPage() {
     return (
       <main className="page">
         <div className="container">
-          <div className="notice notice--error">
+          <Notice type="error">
             Access denied. Staff login required.
-          </div>
+          </Notice>
         </div>
       </main>
     );
@@ -28,34 +29,11 @@ export default async function AnalyticsPage() {
   return (
     <main className="page">
       <div className="container">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
-          }}
-        >
-          <h1>Analytics{devBypass && " (dev bypass)"}</h1>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            <Link href="/staff" className="btn btn--ghost btn--small">
-              Παραγγελίες
-            </Link>
-            <Link href="/staff/delivery" className="btn btn--ghost btn--small">
-              Διανομές
-            </Link>
-            <Link href="/staff/products" className="btn btn--ghost btn--small">
-              Προϊόντα
-            </Link>
-            {!devBypass && (
-              <form action={staffSignOutAction}>
-                <button className="btn btn--ghost btn--small">
-                  Αποσύνδεση
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
+        <StaffNav
+          activePage="analytics"
+          devBypass={devBypass}
+          signOutAction={staffSignOutAction}
+        />
         <AnalyticsDashboard todayData={todayData[0] ?? null} />
       </div>
     </main>

@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { signUp } from "@/lib/auth-client";
+import { useState } from "react";
+import { FormField } from "@/components/FormField";
+import { Notice } from "@/components/Notice";
 import { Link } from "@/i18n/navigation";
+import { signUp } from "@/lib/auth-client";
 
 export default function SignUpForm() {
   const t = useTranslations("auth");
@@ -29,8 +31,7 @@ export default function SignUpForm() {
 
   return (
     <form onSubmit={onSubmit} className="card stack-md">
-      <div className="field">
-        <label>{t("name")}</label>
+      <FormField label={t("name")}>
         <input
           type="text"
           value={name}
@@ -38,9 +39,8 @@ export default function SignUpForm() {
           required
           autoComplete="name"
         />
-      </div>
-      <div className="field">
-        <label>{t("email")}</label>
+      </FormField>
+      <FormField label={t("email")}>
         <input
           type="email"
           value={email}
@@ -48,9 +48,8 @@ export default function SignUpForm() {
           required
           autoComplete="email"
         />
-      </div>
-      <div className="field">
-        <label>{t("password")}</label>
+      </FormField>
+      <FormField label={t("password")} hint={t("passwordHint")}>
         <input
           type="password"
           value={password}
@@ -59,11 +58,8 @@ export default function SignUpForm() {
           minLength={8}
           autoComplete="new-password"
         />
-        <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-          {t("passwordHint")}
-        </div>
-      </div>
-      {error && <div className="notice notice--error">{error}</div>}
+      </FormField>
+      {error && <Notice type="error">{error}</Notice>}
       <button className="btn btn--primary btn--block" disabled={pending}>
         {pending ? t("submitting") : t("submit")}
       </button>

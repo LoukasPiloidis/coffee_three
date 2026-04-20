@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { FormField } from "@/components/FormField";
+import { Notice } from "@/components/Notice";
 import { signIn } from "@/lib/auth-client";
 
 export default function StaffSignInForm() {
@@ -28,17 +30,15 @@ export default function StaffSignInForm() {
 
   return (
     <form onSubmit={onSubmit} className="card stack-md">
-      <div className="field">
-        <label>Email</label>
+      <FormField label="Email">
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-      </div>
-      <div className="field">
-        <label>Κωδικός</label>
+      </FormField>
+      <FormField label="Κωδικός">
         <input
           type="password"
           value={password}
@@ -46,8 +46,8 @@ export default function StaffSignInForm() {
           required
           minLength={8}
         />
-      </div>
-      {error && <div className="notice notice--error">{error}</div>}
+      </FormField>
+      {error && <Notice type="error">{error}</Notice>}
       <button className="btn btn--primary btn--block" disabled={pending}>
         {pending ? "Σύνδεση…" : "Σύνδεση"}
       </button>

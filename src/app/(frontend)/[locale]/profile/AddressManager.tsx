@@ -2,6 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
+import { FormField } from "@/components/FormField";
+import { Notice } from "@/components/Notice";
 import { addAddressAction, deleteAddressAction } from "./actions";
 
 type Address = {
@@ -130,48 +132,43 @@ export default function AddressManager({
 
       {adding ? (
         <form onSubmit={onSubmit} className="card stack-md">
-          <div className="field">
-            <label>{t("addressLabel")}</label>
+          <FormField label={t("addressLabel")}>
             <input
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder={t("addressLabelPlaceholder")}
             />
-          </div>
-          <div className="field">
-            <label>{t("addressStreet")}</label>
+          </FormField>
+          <FormField label={t("addressStreet")}>
             <input
               value={street}
               onChange={(e) => setStreet(e.target.value)}
               required
             />
-          </div>
+          </FormField>
           <div className="fields-row fields-row--2">
-            <div className="field">
-              <label>{t("addressCity")}</label>
+            <FormField label={t("addressCity")}>
               <input
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 required
               />
-            </div>
-            <div className="field">
-              <label>{t("addressPostcode")}</label>
+            </FormField>
+            <FormField label={t("addressPostcode")}>
               <input
                 value={postcode}
                 onChange={(e) => setPostcode(e.target.value)}
                 required
               />
-            </div>
+            </FormField>
           </div>
-          <div className="field">
-            <label>{t("addressNotes")}</label>
+          <FormField label={t("addressNotes")}>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
             />
-          </div>
-          {error && <div className="notice notice--error">{error}</div>}
+          </FormField>
+          {error && <Notice type="error">{error}</Notice>}
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <button
               type="submit"

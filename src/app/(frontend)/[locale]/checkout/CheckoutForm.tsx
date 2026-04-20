@@ -2,6 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
+import { FormField } from "@/components/FormField";
+import { Notice } from "@/components/Notice";
 import PriceWithDiscount from "@/components/PriceWithDiscount";
 import { useRouter } from "@/i18n/navigation";
 import {
@@ -189,58 +191,51 @@ export default function CheckoutForm({
           </div>
 
           <div className={isDelivery ? "fields-row fields-row--2" : ""}>
-            <div className="field">
-              <label>{t("name")}</label>
+            <FormField label={t("name")}>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
-            </div>
+            </FormField>
             {isDelivery && (
-              <div className="field">
-                <label>
-                  {t("phone")}
-                  <span className="option-group__required">*</span>
-                </label>
+              <FormField
+                label={<>{t("phone")}<span className="option-group__required">*</span></>}
+                hint={t("phoneHint")}
+              >
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
                 />
-                <div className="field__hint">{t("phoneHint")}</div>
-              </div>
+              </FormField>
             )}
           </div>
 
           {!isDelivery && (
-            <div className="field">
-              <label>{t("phone")}</label>
+            <FormField label={t("phone")} hint={t("phoneOptional")}>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
-              <div className="field__hint">{t("phoneOptional")}</div>
-            </div>
+            </FormField>
           )}
 
           {isDelivery && (
-            <div className="field">
-              <label>{t("email")}</label>
+            <FormField label={t("email")}>
               <input
                 type="email"
                 value={email}
                 disabled={!!loggedInEmail}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </div>
+            </FormField>
           )}
 
           {isDelivery && savedAddresses.length > 0 && (
-            <div className="field">
-              <label>{t("savedAddress")}</label>
+            <FormField label={t("savedAddress")}>
               <select
                 value={selectedAddressId}
                 onChange={(e) => onPickSavedAddress(e.target.value)}
@@ -252,13 +247,12 @@ export default function CheckoutForm({
                 ))}
                 <option value="">{t("newAddress")}</option>
               </select>
-            </div>
+            </FormField>
           )}
 
           {isDelivery && (
             <>
-              <div className="field">
-                <label>{t("address")}</label>
+              <FormField label={t("address")}>
                 <input
                   value={street}
                   onChange={(e) => {
@@ -267,11 +261,10 @@ export default function CheckoutForm({
                   }}
                   required
                 />
-              </div>
+              </FormField>
 
               <div className="fields-row fields-row--2">
-                <div className="field">
-                  <label>{t("city")}</label>
+                <FormField label={t("city")}>
                   <input
                     value={city}
                     onChange={(e) => {
@@ -280,9 +273,8 @@ export default function CheckoutForm({
                     }}
                     required
                   />
-                </div>
-                <div className="field">
-                  <label>{t("postcode")}</label>
+                </FormField>
+                <FormField label={t("postcode")}>
                   <input
                     value={postcode}
                     onChange={(e) => {
@@ -291,18 +283,17 @@ export default function CheckoutForm({
                     }}
                     required
                   />
-                </div>
+                </FormField>
               </div>
             </>
           )}
 
-          <div className="field">
-            <label>{t("notes")}</label>
+          <FormField label={t("notes")}>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
             />
-          </div>
+          </FormField>
 
           {isDelivery && loggedInEmail && selectedAddressId === "" && (
             <label className={styles['save-address-label']}>
@@ -376,8 +367,7 @@ export default function CheckoutForm({
                 {t("tipNone")}
               </button>
             </div>
-            <div className={`field ${styles['tip-field']}`}>
-              <label>{t("tipCustom")}</label>
+            <FormField label={t("tipCustom")} className={styles['tip-field']}>
               <input
                 type="number"
                 inputMode="decimal"
@@ -387,7 +377,7 @@ export default function CheckoutForm({
                 value={tipInput}
                 onChange={(e) => setTipInput(e.target.value)}
               />
-            </div>
+            </FormField>
           </div>
 
           <div className="totals">
@@ -415,7 +405,7 @@ export default function CheckoutForm({
             </div>
           )}
 
-          {error && <div className="notice notice--error">{error}</div>}
+          {error && <Notice type="error">{error}</Notice>}
 
           <button
             type="submit"

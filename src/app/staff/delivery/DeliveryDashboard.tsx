@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, useTransition } from "react";
 import OrderCard, { formatEuro, type OrderDTO } from "../OrderCard";
 import styles from "./Delivery.module.css";
+import { SummaryCard } from "./SummaryCard";
 
 function todayStr() {
   const d = new Date();
@@ -80,26 +81,13 @@ export default function DeliveryDashboard({
       </div>
 
       {selectedGuy && (
-        <div className={`card ${styles.summary}`}>
-          <div>
-            <div className={styles['summary__label']}>Μετρητά</div>
-            <div className={`${styles['summary__value']} ${styles['summary__value--green']}`}>
-              {formatEuro(totalCash)}
-            </div>
-          </div>
-          <div>
-            <div className={styles['summary__label']}>Κάρτα</div>
-            <div className={`${styles['summary__value']} ${styles['summary__value--dark']}`}>
-              {formatEuro(totalCard)}
-            </div>
-          </div>
-          <div>
-            <div className={styles['summary__label']}>Φιλοδωρήματα</div>
-            <div className={`${styles['summary__value']} ${styles['summary__value--green']}`}>
-              {formatEuro(totalTips)}
-            </div>
-          </div>
-        </div>
+        <SummaryCard
+          stats={[
+            { label: "Μετρητά", value: formatEuro(totalCash), variant: "green" },
+            { label: "Κάρτα", value: formatEuro(totalCard), variant: "dark" },
+            { label: "Φιλοδωρήματα", value: formatEuro(totalTips), variant: "green" },
+          ]}
+        />
       )}
 
       {isPending && <p className="empty">Φόρτωση…</p>}

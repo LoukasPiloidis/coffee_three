@@ -1,9 +1,10 @@
+import { Notice } from "@/components/Notice";
 import { isDevStaffBypassActive, isStaffAuthorized } from "@/lib/staff-auth";
 import { getMenu } from "@/lib/menu";
 import { staffSignOutAction } from "../actions";
+import { StaffNav } from "../StaffNav";
 import ProductsList from "./ProductsList";
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
 
 export default async function StaffProductsPage() {
   const devBypass = isDevStaffBypassActive();
@@ -14,7 +15,7 @@ export default async function StaffProductsPage() {
     return (
       <main className="page">
         <div className="container">
-          <div className="notice notice--error">{t("forbidden")}</div>
+          <Notice type="error">{t("forbidden")}</Notice>
         </div>
       </main>
     );
@@ -25,34 +26,12 @@ export default async function StaffProductsPage() {
   return (
     <main className="page">
       <div className="container">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
-          }}
-        >
-          <h1>
-            {t("orders.title")}
-            {devBypass && " (dev bypass)"}
-          </h1>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            <Link href="/staff" className="btn btn--ghost btn--small">
-              {t("title")}
-            </Link>
-            <Link href="/staff/analytics" className="btn btn--ghost btn--small">
-              Analytics
-            </Link>
-            {!devBypass && (
-              <form action={staffSignOutAction}>
-                <button className="btn btn--ghost btn--small">
-                  {t("signOut")}
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
+        <StaffNav
+          activePage="products"
+          title={t("orders.title")}
+          devBypass={devBypass}
+          signOutAction={staffSignOutAction}
+        />
         <p style={{ color: "var(--text-muted)", marginBottom: "1rem" }}>
           {t("orders.explanation")}
         </p>

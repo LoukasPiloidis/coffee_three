@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { useState, useTransition } from "react";
+import { FormField } from "@/components/FormField";
+import { Notice } from "@/components/Notice";
 import { updateAccountAction } from "./actions";
 
 export default function AccountDetails({
@@ -42,8 +44,7 @@ export default function AccountDetails({
 
   return (
     <form onSubmit={onSubmit} className="card stack-md">
-      <div className="field">
-        <label>{t("accountEmail")}</label>
+      <FormField label={t("accountEmail")}>
         <input
           type="email"
           value={email}
@@ -53,9 +54,8 @@ export default function AccountDetails({
           }}
           required
         />
-      </div>
-      <div className="field">
-        <label>{t("accountPhone")}</label>
+      </FormField>
+      <FormField label={t("accountPhone")}>
         <input
           type="tel"
           value={phone}
@@ -65,12 +65,10 @@ export default function AccountDetails({
           }}
           placeholder={t("accountPhonePlaceholder")}
         />
-      </div>
+      </FormField>
 
-      {error && <div className="notice notice--error">{error}</div>}
-      {saved && !error && (
-        <div className="notice notice--success">{t("accountSaved")}</div>
-      )}
+      {error && <Notice type="error">{error}</Notice>}
+      {saved && !error && <Notice type="success">{t("accountSaved")}</Notice>}
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button
