@@ -64,15 +64,17 @@ export default function ItemOptionSelector({
     (g, gi) => g.required && !selections[gi]?.length
   );
   const firstRequiredIdx = item.optionGroups.findIndex((g) => g.required);
-  const [openGroup, setOpenGroup] = useState<number | null>(
-    hasOptions
-      ? firstUnfilledRequiredIdx >= 0
-        ? firstUnfilledRequiredIdx
-        : firstRequiredIdx >= 0
-          ? firstRequiredIdx
-          : 0
-      : null
-  );
+  let initialGroup: number | null = null;
+  if (hasOptions) {
+    if (firstUnfilledRequiredIdx >= 0) {
+      initialGroup = firstUnfilledRequiredIdx;
+    } else if (firstRequiredIdx >= 0) {
+      initialGroup = firstRequiredIdx;
+    } else {
+      initialGroup = 0;
+    }
+  }
+  const [openGroup, setOpenGroup] = useState<number | null>(initialGroup);
 
   const selectedSummary = (gi: number) => {
     const sel = selections[gi] ?? [];
