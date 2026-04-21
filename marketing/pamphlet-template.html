@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coffee Three — Φυλλάδιο</title>
+<style>
+  /* ── Page setup: A5 (148 × 210 mm) ── */
+  @page {
+    size: 148mm 210mm;
+    margin: 0;
+  }
+
+  /* ── Reset ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── Brand tokens (from globals.css) ── */
+  :root {
+    --green-900: #1f3328;
+    --green-800: #2b4433;
+    --green-700: #355340;
+    --green-600: #446a52;
+    --cream-50:  #faf6ec;
+    --cream-100: #f5eedc;
+    --cream-200: #ecdfbf;
+    --cream-300: #dcc79a;
+    --ink:       #1b2a22;
+  }
+
+  html, body {
+    width: 148mm;
+    height: 210mm;
+    overflow: hidden;
+    background: var(--cream-50);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 11pt;
+    line-height: 1.45;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    width: 148mm;
+    height: 210mm;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--green-900);
+    color: var(--cream-50);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12mm 8mm 10mm;
+  }
+  .header img {
+    width: 28mm;
+    height: 28mm;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--cream-200);
+  }
+  .header-text h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 18pt;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .header-text p {
+    font-size: 8.5pt;
+    color: var(--cream-200);
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Body ── */
+  .body {
+    flex: 1;
+    padding: 7mm 8mm 5mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .body h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 16pt;
+    color: var(--green-900);
+    margin-bottom: 4mm;
+  }
+  .body .copy {
+    font-size: 10pt;
+    color: var(--ink);
+    max-width: 120mm;
+    margin-bottom: 5mm;
+    line-height: 1.55;
+  }
+  .body .copy strong {
+    color: var(--green-800);
+  }
+
+  /* ── QR section ── */
+  .qr-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: auto;
+    margin-bottom: 2mm;
+  }
+  .qr-section .qr-code {
+    width: 32mm;
+    height: 32mm;
+    margin-bottom: 3mm;
+  }
+  .qr-section .qr-code svg {
+    width: 100%;
+    height: 100%;
+  }
+  .qr-label {
+    font-size: 8.5pt;
+    color: var(--green-800);
+    max-width: 110mm;
+  }
+  .qr-label strong {
+    font-weight: 700;
+  }
+
+  /* ── Coupon ── */
+  .coupon {
+    background: var(--green-900);
+    color: var(--cream-50);
+    padding: 5mm 8mm;
+    position: relative;
+  }
+  .coupon::before {
+    content: "✂ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
+    display: block;
+    position: absolute;
+    top: -3mm;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 7pt;
+    color: var(--cream-300);
+    letter-spacing: 1px;
+  }
+  .coupon-header {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 12pt;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2mm;
+    letter-spacing: 0.5px;
+  }
+  .coupon-offer {
+    text-align: center;
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--cream-300);
+    margin-bottom: 2mm;
+    padding: 2mm 0;
+    border: 1px dashed var(--cream-300);
+    border-radius: 4px;
+
+    /* ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+       ✏️  ΑΛΛΑΞΤΕ ΤΗΝ ΠΡΟΣΦΟΡΑ ΣΤΟ HTML ΠΑΡΑΚΑΤΩ
+       ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+  }
+  .coupon-terms {
+    text-align: center;
+    font-size: 7pt;
+    color: var(--cream-200);
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ═══════════════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════════════ -->
+  <div class="header">
+    <img src="data:image/jpeg;base64,{{LOGO_BASE64}}" alt="Coffee Three logo">
+    <div class="header-text">
+      <h1>Coffee Three</h1>
+      <p>A TASTE OF ECLECTIC</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       BODY — Επεξεργαστείτε το κείμενο παρακάτω
+       ═══════════════════════════════════════════════ -->
+  <div class="body">
+
+    <h2>Παραγγείλτε εύκολα online!</h2>
+
+    <p class="copy">
+      Ανακαλύψτε τον πλήρη κατάλογο του <strong>Coffee Three</strong>
+      από το κινητό σας — ροφήματα, σνακ και γλυκά, ό,τι αγαπάτε.
+      Επιλέξτε, παραγγείλτε, και φέρνουμε εμείς τον αγαπημένο σας
+      καφέ στην πόρτα σας!
+    </p>
+
+    <!-- QR code (auto-generated — μην τροποποιείτε) -->
+    <div class="qr-section">
+      <div class="qr-code">
+        {{QR_CODE}}
+      </div>
+      <p class="qr-label">
+        Σκανάρετε τον κωδικό ή επισκεφθείτε το
+        <strong>coffeethree.gr</strong> για αποκλειστικές προσφορές
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       ΚΟΥΠΟΝΙ — Αλλάξτε την προσφορά & ημερομηνία
+       ═══════════════════════════════════════════════ -->
+  <div class="coupon">
+    <div class="coupon-header">ΚΟΥΠΟΝΙ ΕΚΠΤΩΣΗΣ</div>
+    <div class="coupon-offer">
+      <!-- ✏️  ΑΛΛΑΞΤΕ ΤΗΝ ΠΡΟΣΦΟΡΑ ΕΔΩ  ✏️ -->
+      [ΣΥΜΠΛΗΡΩΣΤΕ ΤΗΝ ΠΡΟΣΦΟΡΑ ΕΔΩ]
+    </div>
+    <p class="coupon-terms">
+      Ισχύει έως: [ΗΗ/ΜΜ/ΕΕΕΕ] · Μία χρήση ανά παραγγελία · Ισχύει μόνο μέσω coffeethree.gr
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
