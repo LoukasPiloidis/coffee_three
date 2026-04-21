@@ -42,6 +42,9 @@ next-env.d.ts
 .env
 .env.local
 
+# Generated pamphlet (build artifact — regenerate with: node scripts/generate-pamphlet.mjs)
+marketing/pamphlet.html
+
 # Drizzle generated output
 # (committed by default but ignore meta if desired)
 
