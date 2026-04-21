@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { PageShell } from "@/components/PageShell";
 import { formatPrice, type Locale } from "@/lib/menu-types";
 import { OrderItemsCard } from "./OrderItemsCard";
 import { StatusSteps } from "./StatusSteps";
@@ -62,41 +63,33 @@ export function OrderStatusView({
 
   if (notFound) {
     return (
-      <main className="page">
-        <div className="container">
-          <p className="empty">Order not found.</p>
-        </div>
-      </main>
+      <PageShell>
+        <p className="empty">Order not found.</p>
+      </PageShell>
     );
   }
 
   if (!data) {
     return (
-      <main className="page">
-        <div className="container">
-          <p className="empty">…</p>
-        </div>
-      </main>
+      <PageShell>
+        <p className="empty">…</p>
+      </PageShell>
     );
   }
 
   return (
-    <main className="page">
-      <div className="container stack-lg">
-        <h1 className="page__title">{t("status")}</h1>
+    <PageShell title={t("status")} containerClassName="stack-lg">
+      <StatusSteps type={data.type} status={data.status} t={t} />
 
-        <StatusSteps type={data.type} status={data.status} t={t} />
-
-        <OrderItemsCard
-          items={data.items}
-          totalCents={data.totalCents}
-          tipCents={data.tipCents}
-          locale={locale}
-          tipLabel={t("tipIncluded", {
-            amount: formatPrice(data.tipCents / 100, locale),
-          })}
-        />
-      </div>
-    </main>
+      <OrderItemsCard
+        items={data.items}
+        totalCents={data.totalCents}
+        tipCents={data.tipCents}
+        locale={locale}
+        tipLabel={t("tipIncluded", {
+          amount: formatPrice(data.tipCents / 100, locale),
+        })}
+      />
+    </PageShell>
   );
 }

@@ -1,4 +1,5 @@
 import { Notice } from "@/components/Notice";
+import { PageShell } from "@/components/PageShell";
 import { getDeliveryGuys } from "@/lib/menu";
 import { getSession } from "@/lib/session";
 import { isDevStaffBypassActive } from "@/lib/staff-auth";
@@ -13,45 +14,38 @@ export default async function DeliveryPage() {
 
   if (!devBypass && !session?.user) {
     return (
-      <main className="page">
-        <div className="container stack-md" style={{ maxWidth: "400px" }}>
-          <h1 className="page__title">Σύνδεση προσωπικού</h1>
-          <StaffSignInForm />
-        </div>
-      </main>
+      <PageShell title="Σύνδεση προσωπικού" containerClassName="stack-md" maxWidth="400px">
+        <StaffSignInForm />
+      </PageShell>
     );
   }
 
   const role = (session?.user as { role?: string } | undefined)?.role;
   if (!devBypass && role !== "staff") {
     return (
-      <main className="page">
-        <div className="container">
-          <Notice type="error">
-            Είστε συνδεδεμένος ως {session!.user!.email}, αλλά αυτός ο
-            λογαριασμός δεν έχει πρόσβαση προσωπικού.
-          </Notice>
-          <form action={staffSignOutAction} style={{ marginTop: "1rem" }}>
-            <button className="btn btn--ghost">Αποσύνδεση</button>
-          </form>
-        </div>
-      </main>
+      <PageShell>
+        <Notice type="error">
+          Είστε συνδεδεμένος ως {session!.user!.email}, αλλά αυτός ο
+          λογαριασμός δεν έχει πρόσβαση προσωπικού.
+        </Notice>
+        <form action={staffSignOutAction} style={{ marginTop: "1rem" }}>
+          <button className="btn btn--ghost">Αποσύνδεση</button>
+        </form>
+      </PageShell>
     );
   }
 
   const deliveryGuys = await getDeliveryGuys();
 
   return (
-    <main className="page">
-      <div className="container">
-        <StaffNav
-          activePage="delivery"
-          devBypass={devBypass}
-          signOutAction={staffSignOutAction}
-        />
-        <DeliveryDashboard deliveryGuys={deliveryGuys} />
-      </div>
-    </main>
+    <PageShell>
+      <StaffNav
+        activePage="delivery"
+        devBypass={devBypass}
+        signOutAction={staffSignOutAction}
+      />
+      <DeliveryDashboard deliveryGuys={deliveryGuys} />
+    </PageShell>
   );
 }
 

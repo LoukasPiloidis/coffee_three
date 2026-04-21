@@ -1,6 +1,7 @@
 import { desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { PageShell } from "@/components/PageShell";
 import { db } from "@/db";
 import { addresses, orderItems, orders, user } from "@/db/schema";
 import type { Locale } from "@/lib/menu";
@@ -58,50 +59,48 @@ export default async function ProfilePage({
   }
 
   return (
-    <main className="page">
-      <div className="container stack-lg">
-        <div className={styles.header}>
-          <h1>{t("title")}</h1>
-          <form action={signOutAction.bind(null, `/${locale}`)}>
-            <button className="btn btn--ghost btn--small">
-              {tCommon("signOut")}
-            </button>
-          </form>
-        </div>
-
-        <section>
-          <h2 className={styles['section-title']}>{t("accountTitle")}</h2>
-          <AccountDetails
-            initialEmail={account.email}
-            initialPhone={account.phone ?? ""}
-          />
-        </section>
-
-        <section>
-          <h2 className={styles['section-title']}>{t("addresses")}</h2>
-          <AddressManager
-            initialAddresses={savedAddresses.map((a) => ({
-              id: a.id,
-              label: a.label,
-              street: a.street,
-              city: a.city,
-              postcode: a.postcode,
-              notes: a.notes,
-            }))}
-          />
-        </section>
-
-        <section>
-          <h2 className={styles['section-title']}>{t("recentOrders")}</h2>
-          <RecentOrders
-            orders={recent}
-            itemsByOrder={itemsByOrder}
-            locale={loc}
-            labels={{ view: t("view"), reorder: t("reorder") }}
-          />
-        </section>
+    <PageShell containerClassName="stack-lg">
+      <div className={styles.header}>
+        <h1>{t("title")}</h1>
+        <form action={signOutAction.bind(null, `/${locale}`)}>
+          <button className="btn btn--ghost btn--small">
+            {tCommon("signOut")}
+          </button>
+        </form>
       </div>
-    </main>
+
+      <section>
+        <h2 className={styles['section-title']}>{t("accountTitle")}</h2>
+        <AccountDetails
+          initialEmail={account.email}
+          initialPhone={account.phone ?? ""}
+        />
+      </section>
+
+      <section>
+        <h2 className={styles['section-title']}>{t("addresses")}</h2>
+        <AddressManager
+          initialAddresses={savedAddresses.map((a) => ({
+            id: a.id,
+            label: a.label,
+            street: a.street,
+            city: a.city,
+            postcode: a.postcode,
+            notes: a.notes,
+          }))}
+        />
+      </section>
+
+      <section>
+        <h2 className={styles['section-title']}>{t("recentOrders")}</h2>
+        <RecentOrders
+          orders={recent}
+          itemsByOrder={itemsByOrder}
+          locale={loc}
+          labels={{ view: t("view"), reorder: t("reorder") }}
+        />
+      </section>
+    </PageShell>
   );
 }
 

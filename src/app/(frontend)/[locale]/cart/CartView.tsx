@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { PageShell } from "@/components/PageShell";
 import { PriceWithDiscount } from "@/components/PriceWithDiscount";
 import { QuantityStepper } from "@/components/QuantityStepper";
 import { Link } from "@/i18n/navigation";
@@ -39,26 +40,20 @@ export function CartView({
 
   if (cart.lines.length === 0) {
     return (
-      <main className="page">
-        <div className="container">
-          <h1 className="page__title">{t("title")}</h1>
-          <p className="empty">{t("empty")}</p>
-          <div style={{ textAlign: "center" }}>
-            <Link href="/" className="btn btn--ghost">
-              ← {t("title")}
-            </Link>
-          </div>
+      <PageShell title={t("title")}>
+        <p className="empty">{t("empty")}</p>
+        <div style={{ textAlign: "center" }}>
+          <Link href="/" className="btn btn--ghost">
+            ← {t("title")}
+          </Link>
         </div>
-      </main>
+      </PageShell>
     );
   }
 
   return (
-    <main className="page">
-      <div className="container">
-        <h1 className="page__title">{t("title")}</h1>
-
-        <OfferSuggestions
+    <PageShell title={t("title")}>
+      <OfferSuggestions
           suggestions={suggestions}
           locale={locale}
           onDismiss={(slug) =>
@@ -136,7 +131,6 @@ export function CartView({
             {t("proceed")}
           </Link>
         </div>
-      </div>
-    </main>
+    </PageShell>
   );
 }

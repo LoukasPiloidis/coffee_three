@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { FormField } from "@/components/FormField";
 import { Notice } from "@/components/Notice";
+import { PageShell } from "@/components/PageShell";
 import { PriceWithDiscount } from "@/components/PriceWithDiscount";
 import { useRouter } from "@/i18n/navigation";
 import {
@@ -98,12 +99,9 @@ export function CheckoutForm({
 
   if (cart.lines.length === 0) {
     return (
-      <main className="page">
-        <div className="container">
-          <h1 className="page__title">{t("title")}</h1>
-          <p className="empty">{/* empty cart */}</p>
-        </div>
-      </main>
+      <PageShell title={t("title")}>
+        <p className="empty">{/* empty cart */}</p>
+      </PageShell>
     );
   }
 
@@ -170,11 +168,8 @@ export function CheckoutForm({
   };
 
   return (
-    <main className="page">
-      <div className="container">
-        <h1 className="page__title">{t("title")}</h1>
-
-        <form onSubmit={handleSubmit} className="card stack-md">
+    <PageShell title={t("title")}>
+      <form onSubmit={handleSubmit} className="card stack-md">
           <OrderTypeToggle
             orderType={orderType}
             setOrderType={setOrderType}
@@ -315,8 +310,7 @@ export function CheckoutForm({
           >
             {isPending ? "…" : t("submit")}
           </button>
-        </form>
-      </div>
-    </main>
+      </form>
+    </PageShell>
   );
 }
