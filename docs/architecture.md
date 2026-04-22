@@ -29,6 +29,12 @@
    checkout in `placeOrder`. No delivery fee (by design, for now).
 8. **Staff dashboard lives OUTSIDE the locale tree** at `/staff` (EN only).
    Customer-facing routes are under `(frontend)/[locale]/`.
+9. **Email verification + password reset** — better-auth's built-in
+   `requireEmailVerification` blocks sign-in until the user clicks a
+   verification link sent via Resend (`src/lib/email.ts`). Existing
+   unverified users receive a fresh link on each sign-in attempt
+   (`sendOnSignIn: true`). Password reset uses the same email infra.
+   In dev, when `RESEND_API_KEY` is unset, emails log to console.
 
 ## Directory layout
 
@@ -45,17 +51,21 @@ src/
   app/
     (frontend)/[locale]/       customer UI: /, /item/[slug], /cart,
                                  /checkout, /order/[token], /profile,
-                                 /signin, /signin/verify
+                                 /signin, /signup,
+                                 /forgot-password, /reset-password
     staff/                     staff dashboard (outside locale)
     keystatic/                 CMS admin UI mount
     api/
-      auth/[...all]/           better-auth handler
+      auth/[...all]/           better-auth handler (incl. verify-email, reset-password callbacks)
       keystatic/[...params]/   Keystatic route handler
       keystatic-webhook/       GitHub webhook → revalidateTag('keystatic-menu')
       orders/[token]/          public order status (GET)
       staff/orders/            staff orders list (GET, role-gated)
     globals.css                full design system (CSS variables, all classes)
-  auth.ts                      better-auth config (email/password, role promotion via databaseHooks)
+  auth.ts                      better-auth config (email/password, email verification, password reset, role promotion)
+  lib/
+    email.ts                   Resend SDK wrapper (console fallback in dev)
+    email-templates.ts         bilingual HTML email templates
   components/
     SiteHeader.tsx             header w/ logo + locale switcher + cart link
     LocaleSwitcher.tsx         client component, preserves pathname

@@ -1,8 +1,16 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "@/db";
-import { user, session, account, verification } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { account, session, user, verification } from "@/db/schema";
+import { sendEmail } from "@/lib/email";
+import { resetPasswordEmail, verificationEmail } from "@/lib/email-templates";
+
+const extractLocale = (request: Request | undefined): "en" | "el" => {
+  const referer = request?.headers.get("referer") ?? "";
+  if (referer.includes("/en/") || referer.endsWith("/en")) return "en";
+  return "el";
+};
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -16,6 +24,22 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
     minPasswordLength: 8,
+    requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }, request) => {
+      const locale = extractLocale(request);
+      const { subject, html } = resetPasswordEmail({ url, locale });
+      await sendEmail({ to: user.email, subject, html });
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }, request) => {
+      const locale = extractLocale(request);
+      const { subject, html } = verificationEmail({ url, locale });
+      await sendEmail({ to: user.email, subject, html });
+    },
   },
   user: {
     additionalFields: {

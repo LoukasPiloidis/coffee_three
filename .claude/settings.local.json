@@ -12,7 +12,8 @@
       "Bash(find /Users/loukaspiloidis/Documents/Programming/coffee_three/src/components -name \"*.tsx\" -exec wc -l {} +)",
       "Bash(wc:*)",
       "Bash(find:*)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "WebFetch(domain:better-auth.com)"
     ]
   }
 }

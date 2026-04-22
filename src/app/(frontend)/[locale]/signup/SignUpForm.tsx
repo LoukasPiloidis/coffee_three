@@ -13,20 +13,38 @@ export function SignUpForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+    if (password !== confirmPassword) {
+      setError(t("passwordMismatch"));
+      return;
+    }
     setPending(true);
-    const { error } = await signUp.email({ name, email, password });
+    const { error } = await signUp.email({ name, email, password, phone });
     setPending(false);
     if (error) {
       setError(error.message ?? t("errorGeneric"));
       return;
     }
-    window.location.href = "/";
+    setSuccess(true);
+  }
+
+  if (success) {
+    return (
+      <div className="card stack-md">
+        <Notice type="success">{t("signUpSuccess")}</Notice>
+        <Link href="/signin" className="btn btn--primary btn--block">
+          {t("signUpSignIn")}
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -57,6 +75,26 @@ export function SignUpForm() {
           required
           minLength={8}
           autoComplete="new-password"
+        />
+      </FormField>
+      <FormField label={t("confirmPassword")}>
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          minLength={8}
+          autoComplete="new-password"
+        />
+      </FormField>
+      <FormField label={t("phone")} hint={t("phoneHint")}>
+        <input
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          required
+          autoComplete="tel"
+          placeholder="+30 69…"
         />
       </FormField>
       {error && <Notice type="error">{error}</Notice>}
