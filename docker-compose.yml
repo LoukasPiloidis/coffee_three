@@ -81,6 +81,8 @@ services:
       KEYSTATIC_GITHUB_TOKEN: ${KEYSTATIC_GITHUB_TOKEN:-}
       KEYSTATIC_GITHUB_REF: ${KEYSTATIC_GITHUB_REF:-}
       KEYSTATIC_WEBHOOK_SECRET: ${KEYSTATIC_WEBHOOK_SECRET:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-}
     expose:
       - "3000"
     # Content is baked into the image; for live Keystatic edits in dev you can mount:
