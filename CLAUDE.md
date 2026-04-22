@@ -56,6 +56,9 @@ dashboard for personnel. See `requirements.md` for the original brief.
     objects with `Cannot read properties of null (reading 'user')`. Put the
     action in a sibling `actions.ts` file with `"use server"` at the top and
     have it call `auth()` itself — see `checkout/actions.ts` for the pattern.
+12. **Email in dev** — `RESEND_API_KEY` is optional; when unset, emails are
+    logged to console. Check terminal output for verification/reset links
+    during development.
 
 ## Common commands
 

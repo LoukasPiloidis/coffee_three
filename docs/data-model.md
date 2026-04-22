@@ -10,3 +10,7 @@
   moment of ordering
 - `order_items.optionsJson`: jsonb array of `{ groupName, optionName }` where
   both are `{ en, el }` bilingual objects
+- `users.emailVerified`: boolean, set to `true` by better-auth when the user
+  clicks the verification link. Sign-in is blocked while `false`.
+- `verification`: used internally by better-auth for email verification JWTs
+  and password reset tokens. Do not query directly.

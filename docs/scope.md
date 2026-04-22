@@ -4,7 +4,9 @@ Check here before building any of these — they were explicitly scoped out:
 
 - **Payment processing** — requirements say "no payments", cash/card selection
   is informational only.
-- **Customer notifications** (SMS/email on status change) — skipped for now.
+- **Customer notifications** (SMS/email on order status change) — skipped for
+  now. Note: transactional auth emails (verification, password reset) ARE
+  implemented via Resend.
 - **Multiple staff accounts UI** — only `STAFF_EMAIL` is promoted; add more
   staff manually via SQL or a future admin view.
 - **Store QR flow beyond menu browsing** — users scan, look, walk to cashier.

@@ -22,7 +22,9 @@ export function SignInForm() {
     const { error } = await signIn.email({ email, password });
     setPending(false);
     if (error) {
-      setError(t("errorInvalid"));
+      const isUnverified =
+        error.status === 403 || error.code === "EMAIL_NOT_VERIFIED";
+      setError(isUnverified ? t("emailNotVerified") : t("errorInvalid"));
       return;
     }
     window.location.href = "/";
@@ -50,6 +52,12 @@ export function SignInForm() {
         />
       </FormField>
       {error && <Notice type="error">{error}</Notice>}
+      <Link
+        href="/forgot-password"
+        style={{ fontSize: "0.85rem", textAlign: "right" }}
+      >
+        {t("forgotPassword")}
+      </Link>
       <button className="btn btn--primary btn--block" disabled={pending}>
         {pending ? t("submitting") : t("submit")}
       </button>
