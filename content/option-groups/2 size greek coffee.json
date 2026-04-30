@@ -1,0 +1,29 @@
+{
+  "key": "",
+  "name": {
+    "en": "Size",
+    "el": "Μέγεθος "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "Single",
+      "name": {
+        "en": "Single",
+        "el": "Μονός"
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Double",
+      "name": {
+        "en": "Double",
+        "el": "Διπλός"
+      },
+      "priceCents": 50,
+      "available": true
+    }
+  ]
+}
