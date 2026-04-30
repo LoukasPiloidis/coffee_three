@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "mushroom pie",
+  "title": {
+    "en": "Mushroom pie",
+    "el": "Μανιταρόπιτα"
+  },
+  "description": {},
+  "category": "pastries",
+  "price": 2.5,
+  "displayOrder": 0,
+  "optionGroups": []
+}
