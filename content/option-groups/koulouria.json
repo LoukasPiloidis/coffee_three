@@ -1,0 +1,29 @@
+{
+  "key": "Koulouria",
+  "name": {
+    "en": "Koulouria",
+    "el": "Κουλούρια "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "Koulouri Thessalonikis",
+      "name": {
+        "en": "Koulouri Thessalonikis",
+        "el": "Κουλούρι Θεσσαλονίκης"
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Koulouri with gouda",
+      "name": {
+        "en": "Koulouri with gouda",
+        "el": "Κουλούρι με gouda"
+      },
+      "priceCents": 0,
+      "available": true
+    }
+  ]
+}
