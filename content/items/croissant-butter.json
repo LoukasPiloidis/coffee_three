@@ -5,8 +5,11 @@
     "en": "Croissant butter",
     "el": "Κρουασάν Βουτύρου "
   },
-  "description": {},
-  "category": "food",
+  "description": {
+    "en": "With chocolate or without chocolate",
+    "el": "Με σοκολάτα ή χωρίς σοκολάτα"
+  },
+  "category": "sweets",
   "price": 2,
   "displayOrder": 0,
   "optionGroups": []
