@@ -12,5 +12,7 @@
   "category": "sweets",
   "price": 2.5,
   "displayOrder": 0,
-  "optionGroups": []
+  "optionGroups": [
+    "cakes"
+  ]
 }
