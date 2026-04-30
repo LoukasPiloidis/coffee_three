@@ -1,0 +1,38 @@
+{
+  "key": "muffins",
+  "name": {
+    "en": "Flavours",
+    "el": "Γεύσεις "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "Vanilla ",
+      "name": {
+        "en": "Vanilla ",
+        "el": "Βανίλια"
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Chocolate",
+      "name": {
+        "en": "Chocolate",
+        "el": "Σοκολάτα "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Salted caramel ",
+      "name": {
+        "en": "Salted caramel ",
+        "el": "Αλμυρή καραμέλα "
+      },
+      "priceCents": 0,
+      "available": true
+    }
+  ]
+}
