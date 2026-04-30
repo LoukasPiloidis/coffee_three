@@ -9,5 +9,8 @@
   "category": "koulouria",
   "price": 2,
   "displayOrder": 0,
-  "optionGroups": []
+  "optionGroups": [
+    "koulouria",
+    "gemiseis-koulouri"
+  ]
 }
