@@ -1,0 +1,38 @@
+{
+  "key": "Donuts",
+  "name": {
+    "en": "Flavours",
+    "el": "Γεύσεις "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "Hazelnut praline",
+      "name": {
+        "en": "Hazelnut praline",
+        "el": "Πραλίνα Φουντουκιού "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Bueno",
+      "name": {
+        "en": "Bueno",
+        "el": "Bueno"
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Biscuit ",
+      "name": {
+        "en": "Biscuit",
+        "el": "Μπισκότο "
+      },
+      "priceCents": 0,
+      "available": true
+    }
+  ]
+}
