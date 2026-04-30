@@ -1,0 +1,16 @@
+{
+  "available": true,
+  "slug": "Donuts",
+  "title": {
+    "en": "Donuts",
+    "el": "Donuts"
+  },
+  "description": {
+    "en": "Hazelnut praline, Bueno, Bisquit",
+    "el": "Πραλίνα Φουντουκιού, Bueno, Μπισκότο "
+  },
+  "category": "sweets",
+  "price": 3,
+  "displayOrder": 0,
+  "optionGroups": []
+}
