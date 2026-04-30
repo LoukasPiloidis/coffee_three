@@ -1,0 +1,29 @@
+{
+  "key": "croissant ",
+  "name": {
+    "en": "Flavours",
+    "el": "Γεύσεις "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "with Chocolate",
+      "name": {
+        "en": "With chocolate",
+        "el": "Με σοκολάτα "
+      },
+      "priceCents": 50,
+      "available": true
+    },
+    {
+      "key": "Without chocolate",
+      "name": {
+        "en": "Without chocolate",
+        "el": "Χωρίς σοκολάτα "
+      },
+      "priceCents": 0,
+      "available": true
+    }
+  ]
+}
