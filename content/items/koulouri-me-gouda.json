@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "slug": "Koulouri me gouda",
+  "title": {
+    "en": "Koulouri with gouda cheese",
+    "el": "Κουλούρι με gouda"
+  },
+  "description": {},
+  "category": "koulouria",
+  "price": 1.5,
+  "displayOrder": 0,
+  "optionGroups": []
+}
