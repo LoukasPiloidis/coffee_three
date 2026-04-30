@@ -1,0 +1,16 @@
+{
+  "available": true,
+  "slug": "Cakes",
+  "title": {
+    "en": "Cakes",
+    "el": "Κέικ "
+  },
+  "description": {
+    "en": "Chocolate, Vanilla-orange, Mixed",
+    "el": "Σοκολάτα, Βανίλια-πορτοκάλι, Ανάμεικτο"
+  },
+  "category": "sweets",
+  "price": 2.5,
+  "displayOrder": 0,
+  "optionGroups": []
+}
