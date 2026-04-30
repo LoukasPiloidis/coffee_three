@@ -1,0 +1,29 @@
+{
+  "key": "gemiseis koulouri",
+  "name": {
+    "en": "Options",
+    "el": "Επιλογές "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "Filled with cream cheese & smoked turkey",
+      "name": {
+        "en": "Filled with cream cheese & smoked turkey",
+        "el": "Γεμιστό με τυρί κρέμα & καπνιστή γαλοπούλα "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Filled with mayo, cheese & smoked turkey",
+      "name": {
+        "en": "Filled with mayo, cheese & smoked turkey",
+        "el": "Γεμιστό με μαγιονέζα, τυρί & καπνιστή γαλοπούλα "
+      },
+      "priceCents": 0,
+      "available": true
+    }
+  ]
+}
