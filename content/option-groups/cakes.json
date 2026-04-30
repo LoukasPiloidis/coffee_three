@@ -1,0 +1,38 @@
+{
+  "key": "Cakes",
+  "name": {
+    "en": "Flavours",
+    "el": "Γεύσεις "
+  },
+  "selectionType": "single",
+  "required": true,
+  "options": [
+    {
+      "key": "Chocolate",
+      "name": {
+        "en": "Chocolate",
+        "el": "Σοκολάτα "
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Vanilla-orange",
+      "name": {
+        "en": "Vanilla-Orange",
+        "el": "Βανίλια-Πορτοκάλι"
+      },
+      "priceCents": 0,
+      "available": true
+    },
+    {
+      "key": "Mixed",
+      "name": {
+        "en": "Mixed",
+        "el": "Ανάμεικτο "
+      },
+      "priceCents": 0,
+      "available": true
+    }
+  ]
+}
